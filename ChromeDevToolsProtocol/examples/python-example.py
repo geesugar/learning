@@ -1,6 +1,34 @@
 #!/usr/bin/env python3
-# 使用uv安装依赖: uv pip install playwright
-# 安装浏览器: python -m playwright install
+# =============================================================================
+# Chrome DevTools Protocol Python示例
+# =============================================================================
+#
+# 【运行前准备】
+# 1. 切换到examples目录
+#    cd ChromeDevToolsProtocol/examples
+#
+# 2. 使用uv创建虚拟环境
+#    uv venv
+#
+# 3. 激活虚拟环境
+#    source .venv/bin/activate  # macOS/Linux 
+#    # 或
+#    .venv\Scripts\activate     # Windows
+#
+# 4. 使用uv安装依赖
+#    uv pip install playwright
+#
+# 5. 安装浏览器驱动
+#    python -m playwright install
+#
+# 【运行示例】
+# 默认网站:
+#    python python-example.py
+#
+# 指定网站:
+#    python python-example.py https://www.google.com
+#
+# =============================================================================
 
 from playwright.sync_api import sync_playwright
 import time
