@@ -212,6 +212,21 @@ if __name__ == "__main__":
 - [GitHub仓库](https://github.com/ChromeDevTools/devtools-protocol)
 - [Playwright文档](https://playwright.dev/docs/intro)
 
+## 目录结构
+
+本仓库包含以下内容：
+
+- [protocol/](./protocol/) - 包含Chrome DevTools Protocol的详细文档
+  - [protocol/README.md](./protocol/README.md) - CDP协议概述
+  - [protocol/domains.md](./protocol/domains.md) - 主要域(Domains)详细介绍
+  - [protocol/usage.md](./protocol/usage.md) - 在不同语言和框架中使用CDP
+  - [protocol/use-cases.md](./protocol/use-cases.md) - 主要用例与应用场景
+  - [protocol/protocol-structure.md](./protocol/protocol-structure.md) - 消息格式与结构
+  - [protocol/index.md](./protocol/index.md) - 文档索引
+- [examples/](./examples/) - 包含各种CDP应用示例
+  - [网络拦截示例](./examples/network-interception.js)
+  - [其他示例...]
+
 ## 总结
 
 Chrome DevTools Protocol是一个强大的工具，它开启了浏览器自动化和高级调试的新可能性。通过直接与浏览器通信，开发者可以创建各种工具来改进测试、调试和性能监控流程。它已经成为现代Web开发生态系统中不可或缺的一部分，为许多流行的开发工具和库提供了基础。
