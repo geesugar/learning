@@ -28,8 +28,8 @@ CDP将浏览器功能划分为多个领域（DOM、调试器、网络等），�
 
 基于CDP开发的主要工具和库包括：
 
-1. **Puppeteer**：由Google开发的高级API，简化了对Chrome的控制
-2. **Playwright**：由微软开发，支持多种浏览器的自动化测试框架
+1. **Playwright**：由微软开发，支持多种浏览器的自动化测试框架，基于CDP与Chromium浏览器通信
+2. **Puppeteer**：由Google开发的高级API，简化了对Chrome的控制
 3. **Selenium 4 (WebDriver BiDi)**：新版Selenium支持CDP作为底层协议
 4. **Chrome扩展**：可以使用chrome.debugger扩展API访问CDP
 5. **自定义调试工具**：开发者可以直接使用CDP创建自定义调试工具
@@ -50,33 +50,51 @@ CDP划分为多个领域(domains)，包括：
 
 ## 使用CDP的代码示例
 
-### 截图示例（JavaScript）
+### 截图示例（使用Playwright）
 
 ```javascript
-const puppeteer = require('puppeteer');
+// 安装依赖: npm install playwright
+
+const { chromium } = require('playwright');
 
 (async () => {
-  const browser = await puppeteer.launch();
+  // 启动浏览器
+  const browser = await chromium.launch();
+  
+  // 创建新页面
   const page = await browser.newPage();
+  
+  // 导航到目标网站
   await page.goto('https://example.com');
-  await page.screenshot({path: 'example.png'});
+  
+  // 截取页面截图并保存
+  await page.screenshot({ path: 'example.png' });
+  
+  // 关闭浏览器
   await browser.close();
+  
+  console.log('截图已保存为 example.png');
 })();
 ```
 
-### 网络拦截和修改（JavaScript）
+### 网络拦截和修改（使用Playwright与CDP）
 
 ```javascript
-const puppeteer = require('puppeteer');
+// 安装依赖: npm install playwright
+
+const { chromium } = require('playwright');
 
 (async () => {
-  const browser = await puppeteer.launch();
+  // 启动浏览器
+  const browser = await chromium.launch();
+  
+  // 创建新页面
   const page = await browser.newPage();
   
-  // 获取CDP会话
-  const client = await page.target().createCDPSession();
+  // 获取CDP会话 - Playwright允许直接访问CDP
+  const client = await page.context().newCDPSession(page);
   
-  // 启用网络功能
+  // 启用网络域功能
   await client.send('Network.enable');
   
   // 设置请求拦截
@@ -98,7 +116,7 @@ const puppeteer = require('puppeteer');
     });
     
     const originalBody = response.base64Encoded ? 
-      atob(response.body) : response.body;
+      Buffer.from(response.body, 'base64').toString('utf8') : response.body;
     
     // 修改响应体
     const newBody = originalBody.replace('某些内容', '替换的内容');
@@ -117,38 +135,56 @@ const puppeteer = require('puppeteer');
     // 继续请求，但使用修改后的响应
     client.send('Network.continueInterceptedRequest', {
       interceptionId,
-      rawResponse: btoa(httpResponse)
+      rawResponse: Buffer.from(httpResponse).toString('base64')
     });
   });
   
+  // 导航到目标网站
   await page.goto('https://example.com');
-  // 其他操作...
+  
+  // 等待5秒以便观察
+  await page.waitForTimeout(5000);
+  
+  // 关闭浏览器
   await browser.close();
 })();
 ```
 
-### Python示例（使用PyChromeDevTools）
+### Python示例（使用Playwright）
 
 ```python
-import PyChromeDevTools
+# 安装依赖: pip install playwright
+# 安装浏览器: python -m playwright install
+
+from playwright.sync_api import sync_playwright
 import time
 
-# 连接到Chrome
-chrome = PyChromeDevTools.ChromeInterface()
+def main():
+    with sync_playwright() as p:
+        # 启动Chrome浏览器
+        browser = p.chromium.launch()
+        
+        # 创建新页面
+        page = browser.new_page()
+        
+        # 导航到目标网站
+        page.goto("https://example.com/")
+        
+        # 等待页面加载完成
+        page.wait_for_load_state("networkidle")
+        
+        # 截图
+        page.screenshot(path="screenshot.png")
+        
+        # 获取cookies
+        cookies = page.context.cookies()
+        print("Cookies:", cookies)
+        
+        # 关闭浏览器
+        browser.close()
 
-# 启用所需的域
-chrome.Network.enable()
-chrome.Page.enable()
-
-# 导航到页面
-chrome.Page.navigate(url="https://example.com/")
-
-# 等待页面加载完成
-chrome.wait_event("Page.loadEventFired", timeout=60)
-
-# 获取cookies
-cookies, messages = chrome.Network.getCookies()
-print(cookies["result"]["cookies"])
+if __name__ == "__main__":
+    main()
 ```
 
 ## HTTP端点
@@ -174,7 +210,7 @@ print(cookies["result"]["cookies"])
 
 - [Chrome DevTools Protocol官方文档](https://chromedevtools.github.io/devtools-protocol/)
 - [GitHub仓库](https://github.com/ChromeDevTools/devtools-protocol)
-- [Puppeteer文档](https://developer.chrome.com/docs/puppeteer)
+- [Playwright文档](https://playwright.dev/docs/intro)
 
 ## 总结
 
