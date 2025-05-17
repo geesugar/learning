@@ -8,7 +8,7 @@
 
 ```bash
 # 切换到examples目录
-cd ChromeDevToolsProtocol/examples
+cd chrome-devtools-protocol/examples
 
 # 安装依赖
 npm install

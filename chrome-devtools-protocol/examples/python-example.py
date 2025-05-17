@@ -5,7 +5,7 @@
 #
 # 【运行前准备】
 # 1. 切换到examples目录
-#    cd ChromeDevToolsProtocol/examples
+#    cd chrome-devtools-protocol/examples
 #
 # 2. 使用uv创建虚拟环境
 #    uv venv
