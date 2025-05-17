@@ -47,6 +47,93 @@
 | 使用者 | 页面渲染和JavaScript | 辅助技术和自动化工具 |
 | 变化 | 随页面DOM变化而实时更新 | 在DOM变化后更新，有时有延迟 |
 
+### 可访问性树示例
+
+以下是一个简单的HTML表单和它对应的可访问性树表示：
+
+#### HTML代码:
+
+```html
+<form id="loginForm">
+  <h2>用户登录</h2>
+  <div class="form-group">
+    <label for="username">用户名:</label>
+    <input type="text" id="username" name="username" required>
+  </div>
+  <div class="form-group">
+    <label for="password">密码:</label>
+    <input type="password" id="password" name="password" required>
+  </div>
+  <div class="actions">
+    <button type="submit" id="loginBtn">登录</button>
+    <a href="/forgot-password" class="help-link">忘记密码?</a>
+  </div>
+  <div class="decoration-element"></div>
+</form>
+```
+
+#### DOM树表示:
+
+```
+form#loginForm
+├── h2 "用户登录"
+├── div.form-group
+│   ├── label[for="username"] "用户名:"
+│   └── input#username[type="text"][name="username"][required]
+├── div.form-group
+│   ├── label[for="password"] "密码:"
+│   └── input#password[type="password"][name="password"][required]
+├── div.actions
+│   ├── button#loginBtn[type="submit"] "登录"
+│   └── a.help-link[href="/forgot-password"] "忘记密码?"
+└── div.decoration-element
+```
+
+#### 可访问性树表示:
+
+```
+AXForm "用户登录" (role: form, id: "loginForm")
+├── AXHeading "用户登录" (role: heading, level: 2)
+├── AXGroup (role: group)
+│   ├── AXLabel "用户名:" (role: label, for: "username")
+│   └── AXTextField (role: textbox, name: "用户名:", required: true, id: "username")
+├── AXGroup (role: group)
+│   ├── AXLabel "密码:" (role: label, for: "password")
+│   └── AXSecureTextField (role: textbox, name: "密码:", required: true, id: "password")
+└── AXGroup (role: group)
+    ├── AXButton "登录" (role: button, type: "submit", id: "loginBtn")
+    └── AXLink "忘记密码?" (role: link, url: "/forgot-password")
+```
+
+#### 主要区别分析:
+
+1. **简化结构**: 可访问性树省略了纯装饰性的`div.decoration-element`元素，因为它不包含有意义的交互内容
+
+2. **语义角色**: 每个元素都有明确的角色(role)，如form、heading、textbox、button等
+
+3. **关系映射**: 输入框与其标签之间的关联被明确保留(name属性继承了标签文本)
+
+4. **命名规范**: 元素名称采用`AX`前缀，表明这是可访问性树的节点
+
+5. **状态信息**: 保留了关键状态信息，如required属性
+
+6. **分组优化**: div容器在可访问性树中变成了语义化的group，更清晰地表达分组意图
+
+### AI Agent使用可访问性树的实例
+
+当用户请求"在登录表单中输入用户名admin并点击登录按钮"时，AI Agent会：
+
+1. 获取页面的可访问性树
+2. 识别出表单结构(AXForm)及其名称"用户登录"
+3. 找到名为"用户名:"的文本框(AXTextField)
+4. 确认其ID为"username"并生成操作引用
+5. 向该文本框输入"admin"
+6. 找到文本为"登录"的按钮(AXButton)
+7. 确认其ID为"loginBtn"并生成操作引用
+8. 点击该按钮
+
+这一过程得益于可访问性树提供的清晰语义结构和角色信息，使AI能够准确理解页面组件并执行精确操作。
+
 ### 可访问性树中的核心信息
 
 可访问性树中的每个节点通常包含以下关键信息：
