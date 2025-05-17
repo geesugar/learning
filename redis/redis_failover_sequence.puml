@@ -1,0 +1,44 @@
+@startuml
+title Redis Cluster Failover 处理流程
+
+participant "Client" as C
+participant "Redis Proxy" as P
+participant "Redis Master\n(Failed)" as RM
+participant "Redis Slave\n(Promoted)" as RS
+
+== 故障检测和转移开始 ==
+RM -> RM: 主节点失败
+RS -> RS: 从节点被选为新主节点
+
+== 客户端请求处理 ==
+C -> P: 发送请求
+P -> RM: 转发请求到旧主节点
+
+alt 节点不可达
+    RM --> P: 连接失败
+    P -> P: 尝试其他节点
+else 节点返回MOVED错误
+    RM --> P: 返回MOVED错误(新主节点地址)
+    P -> P: 更新路由表
+    P -> RS: 重定向请求到新主节点
+    RS --> P: 成功响应
+else 节点返回LOADING错误
+    RS --> P: 返回LOADING错误
+    P -> P: 标记节点loading状态
+    P -> RM: 尝试主节点
+    note right: 如果主节点可用
+else 节点返回ASK错误
+    RM --> P: 返回ASK错误
+    P -> RS: 发送ASKING命令和原始请求
+    RS --> P: 成功响应
+end
+
+P --> C: 返回响应给客户端
+
+== 路由表更新 ==
+P -> P: 调用proxyUpdateNode()
+P -> RS: 发送CLUSTER NODES命令
+RS --> P: 返回最新集群信息
+P -> P: 更新内部路由表
+
+@enduml 

@@ -1,0 +1,55 @@
+@startuml
+title Redis Proxy重试与错误处理流程
+
+start
+:客户端发起请求;
+:Redis Proxy查找对应slot的节点;
+
+if (找到节点?) then (是)
+  :发送请求到Redis节点;
+else (否)
+  :调用proxyUpdateNode()更新路由表;
+  if (更新后找到节点?) then (是)
+    :发送请求到Redis节点;
+  else (否)
+    :返回"No available node temporarily"错误;
+    stop
+  endif
+endif
+
+:接收Redis响应;
+
+if (响应是MOVED错误?) then (是)
+  :增加moved计数;
+  if (moved计数 > roundtrip_times?) then (是)
+    :返回"-Roundtrip MOVED"错误;
+    stop
+  else (否)
+    :更新路由表;
+    :重定向请求到新节点;
+    goto 接收Redis响应;
+  endif
+elseif (响应是ASK错误?) then (是)
+  :增加asking计数;
+  if (asking计数 > roundtrip_times?) then (是)
+    :返回"-Roundtrip ASK"错误;
+    stop
+  else (否)
+    :发送ASKING命令;
+    :重定向请求到目标节点;
+    goto 接收Redis响应;
+  endif
+elseif (响应是LOADING错误?) then (是)
+  :增加loading计数;
+  if (loading计数 > roundtrip_times?) then (是)
+    :返回"-Roundtrip"错误;
+    stop
+  else (否)
+    :尝试使用主节点;
+    goto 接收Redis响应;
+  endif
+else (正常响应)
+  :处理响应并返回给客户端;
+  stop
+endif
+@enduml 
