@@ -1,0 +1,119 @@
+@startuml Playwright与Chrome通过CDP交互流程图
+
+!theme plain
+skinparam backgroundColor white
+skinparam DefaultFontName Microsoft YaHei
+skinparam DefaultFontSize 14
+skinparam Padding 2
+skinparam ParticipantPadding 20
+skinparam sequence {
+  ArrowThickness 1.5
+  LifeLineBorderColor grey
+  LifeLineBackgroundColor white
+  ActorBorderColor grey
+  ActorBackgroundColor white
+  ParticipantBorderColor grey
+  ParticipantBackgroundColor white
+  BoxPadding 10
+}
+
+title Playwright与Chrome通过CDP的交互流程
+
+' 定义参与者
+actor 用户 as User
+participant "playwright-mcp\n(Cursor内置模块)" as MCP
+participant "Node.js\nplaywright库" as PW
+participant "CDP客户端\n(ChromeDevToolsProtocol)" as CDP
+participant "Chrome浏览器\n(CDP服务端)" as Chrome
+
+' 启动浏览器阶段
+box "启动与连接阶段" #f0f0f0
+User -> MCP: 调用playwright浏览器操作\n(如打开网页、截图等)
+MCP -> PW: 调用playwright API
+PW -> Chrome: 启动浏览器或连接到已有实例\n携带--remote-debugging-port参数
+activate Chrome
+Chrome --> PW: 返回WebSocket地址\nws://localhost:端口号/devtools/browser/id
+end box
+
+' CDP连接与通信阶段
+box "CDP协议通信阶段" #f5f5f5
+PW -> CDP: 创建CDP会话连接
+activate CDP
+CDP -> Chrome: 建立WebSocket连接
+Chrome --> CDP: 连接确认
+CDP --> PW: 会话已建立
+
+' 详细说明几种典型操作
+group 页面导航操作
+  PW -> CDP: 发送Page.navigate命令
+  CDP -> Chrome: 通过CDP协议发送
+  Chrome -> Chrome: 执行页面导航
+  Chrome --> CDP: 发送加载事件
+  CDP --> PW: 页面已加载通知
+  PW --> MCP: 操作结果
+  MCP --> User: 显示执行结果
+end
+
+group DOM操作
+  PW -> CDP: 发送DOM.getDocument命令
+  CDP -> Chrome: 通过CDP协议发送
+  Chrome --> CDP: 返回DOM结构
+  CDP --> PW: 解析DOM结构
+  
+  PW -> CDP: 发送DOM.querySelector命令
+  CDP -> Chrome: 查找元素
+  Chrome --> CDP: 返回元素NodeId
+  CDP --> PW: 解析结果给Playwright
+  
+  PW -> PW: 构建ElementHandle对象
+end
+
+group 网络监控与拦截
+  PW -> CDP: 发送Network.enable命令
+  CDP -> Chrome: 启用网络监控
+  Chrome --> CDP: 确认启用
+  
+  PW -> CDP: Network.setRequestInterception
+  CDP -> Chrome: 设置请求拦截
+  
+  Chrome -> Chrome: 发起网络请求
+  Chrome -> CDP: Network.requestWillBeSent事件
+  CDP -> PW: 转发请求事件
+  PW -> PW: 执行请求处理逻辑
+  PW -> CDP: 继续或修改请求
+  CDP -> Chrome: 继续处理请求
+end
+end box
+
+' 截图操作
+box "典型用例：截图操作" #e0f0e0
+User -> MCP: 请求网页截图
+MCP -> PW: 调用screenshot方法
+PW -> CDP: 发送Page.captureScreenshot命令
+CDP -> Chrome: 通过CDP协议发送
+Chrome -> Chrome: 生成页面截图
+Chrome --> CDP: 返回Base64图像数据
+CDP --> PW: 解码图像数据
+PW -> PW: 将图像保存为文件
+PW --> MCP: 返回截图路径
+MCP --> User: 展示截图结果
+end box
+
+' 关闭阶段
+box "关闭阶段" #f0e0e0
+User -> MCP: 关闭浏览器
+MCP -> PW: 调用close方法
+PW -> CDP: 发送Browser.close命令
+CDP -> Chrome: 关闭浏览器
+Chrome --> CDP: 关闭确认
+CDP --> PW: 浏览器已关闭
+deactivate CDP
+Chrome --> PW: 进程已终止
+deactivate Chrome
+PW --> MCP: 操作完成
+MCP --> User: 浏览器已关闭
+end box
+
+footer 由Claude生成 | %date("yyyy-MM-dd")
+
+@enduml 

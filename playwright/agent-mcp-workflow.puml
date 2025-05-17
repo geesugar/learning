@@ -1,0 +1,125 @@
+@startuml Agent通过playwright-mcp操作网页元素
+
+!theme plain
+skinparam backgroundColor white
+skinparam DefaultFontName Microsoft YaHei
+skinparam DefaultFontSize 14
+skinparam Padding 2
+skinparam sequenceMessageAlign center
+skinparam ParticipantPadding 30
+skinparam sequence {
+  ArrowThickness 1.5
+  LifeLineBorderColor grey
+  LifeLineBackgroundColor white
+  ActorBorderColor grey
+  ActorBackgroundColor white
+  ParticipantBorderColor grey
+  ParticipantBackgroundColor white
+  BoxPadding 10
+}
+
+title AI Agent通过playwright-mcp识别与操作网页元素
+
+' 定义参与者
+actor 用户 as User
+participant "AI Agent\n(Claude)" as Agent
+participant "playwright-mcp\n服务" as MCP
+participant "Playwright库" as PW
+participant "Chrome浏览器\n(CDP服务端)" as Chrome
+database "可访问性树\n(Accessibility Tree)" as AXTree
+
+' 初始阶段 - 用户请求
+User -> Agent: 请求执行网页操作\n(如"点击登录按钮")
+activate Agent
+
+' 第一阶段 - 打开网页
+group 1. 页面导航
+    Agent -> MCP: 调用browser_navigate\n{url: "网站地址"}
+    activate MCP
+    MCP -> PW: 调用navigateTo方法
+    PW -> Chrome: 发送CDP命令\nPage.navigate
+    Chrome -> Chrome: 加载网页
+    Chrome --> PW: 页面已加载
+    PW --> MCP: 导航完成
+    MCP --> Agent: 返回成功状态
+    deactivate MCP
+end
+
+' 第二阶段 - 获取页面信息
+group 2. 获取页面信息与分析
+    Agent -> MCP: 调用browser_snapshot
+    activate MCP
+    MCP -> PW: 获取页面快照
+    PW -> Chrome: 发送CDP命令\nAccessibility.getFullAXTree
+    Chrome -> AXTree: 生成可访问性树
+    Chrome <-- AXTree: 返回完整的树
+    Chrome --> PW: 返回可访问性数据
+    PW --> MCP: 解析为结构化快照
+    MCP --> Agent: 返回页面快照数据
+    deactivate MCP
+    
+    Agent -> Agent: 分析页面结构\n识别所有交互元素
+    note right of Agent
+      分析可访问性树结构:
+      - 识别按钮、表单、链接等
+      - 提取元素文本和状态
+      - 理解元素层次关系
+    end note
+end
+
+' 第三阶段 - 元素定位
+group 3. 元素定位与选择
+    Agent -> Agent: 使用多种策略定位目标元素
+    note right of Agent
+      元素匹配策略:
+      1. 文本内容匹配
+      2. ARIA角色和属性匹配
+      3. 元素类型匹配
+      4. 上下文关系匹配
+    end note
+    
+    Agent -> Agent: 找到"登录"按钮
+    Agent -> Agent: 提取元素引用ID和描述
+    note right of Agent
+      确定:
+      - 元素引用ID: "button-123"
+      - 人类可读描述: "'登录'按钮"
+    end note
+end
+
+' 第四阶段 - 执行操作
+group 4. 操作执行
+    Agent -> MCP: 调用browser_click\n{element: "'登录'按钮", ref: "button-123"}
+    activate MCP
+    MCP -> MCP: 验证元素引用有效性
+    MCP -> PW: 执行点击操作
+    PW -> Chrome: 发送CDP命令\nInput.dispatchMouseEvent
+    Chrome -> Chrome: 执行点击
+    Chrome -> Chrome: 触发点击事件
+    Chrome --> PW: 操作完成
+    PW --> MCP: 点击执行成功
+    MCP --> Agent: 返回操作结果
+    deactivate MCP
+    
+    ' 验证结果
+    Agent -> MCP: 再次调用browser_snapshot
+    activate MCP
+    MCP -> PW: 获取更新后的页面快照
+    PW -> Chrome: 发送CDP命令
+    Chrome -> AXTree: 生成新的可访问性树
+    Chrome <-- AXTree: 返回更新后的树
+    Chrome --> PW: 返回新的可访问性数据
+    PW --> MCP: 返回更新的快照
+    MCP --> Agent: 返回新页面状态
+    deactivate MCP
+    
+    Agent -> Agent: 分析页面变化\n确认操作结果
+end
+
+' 结果报告
+Agent --> User: 报告操作已完成\n并描述页面变化结果
+deactivate Agent
+
+footer 由Claude生成 | %date("yyyy-MM-dd")
+
+@enduml 
