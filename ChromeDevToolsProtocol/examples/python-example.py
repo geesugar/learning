@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# 安装依赖: pip install playwright
+# 使用uv安装依赖: uv pip install playwright
 # 安装浏览器: python -m playwright install
 
 from playwright.sync_api import sync_playwright

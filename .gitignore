@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+.env
+.uv/
+.venv-local/
+
+# Node.js
+node_modules/
+npm-debug.log
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 测试和截图相关
+*.png
+*.jpg
+*.jpeg
+*.pdf
+*.log
+
+# 操作系统相关
+.DS_Store
+Thumbs.db 
