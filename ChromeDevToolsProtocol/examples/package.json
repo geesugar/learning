@@ -1,0 +1,16 @@
+{
+  "name": "cdp-examples",
+  "version": "1.0.0",
+  "description": "Chrome DevTools Protocol 示例代码",
+  "scripts": {
+    "screenshot": "node screenshot.js",
+    "network": "node network-interception.js",
+    "mobile": "node mobile-emulation.js",
+    "python": "python3 python-example.py"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "playwright": "^1.42.1"
+  }
+} 
