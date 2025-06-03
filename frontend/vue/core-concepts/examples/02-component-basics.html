@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue.js 组件基础示例</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    .task {
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #eee;
+      border-radius: 4px;
+    }
+    .task.completed {
+      background-color: #e7f7e7;
+      text-decoration: line-through;
+    }
+    .button-container {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Vue.js 组件基础示例</h1>
+  
+  <div id="components-demo">
+    <!-- 注册的组件可以在模板中以标签形式使用 -->
+    <h2>任务列表</h2>
+    <button @click="addTask">添加任务</button>
+    
+    <!-- 使用组件并传递属性 -->
+    <task-item 
+      v-for="(task, index) in tasks" 
+      :key="task.id"
+      :title="task.title"
+      :completed="task.completed"
+      @toggle-status="toggleTaskStatus(index)"
+      @delete="deleteTask(index)"
+    ></task-item>
+    
+    <!-- 使用具有插槽的组件 -->
+    <h2>消息框</h2>
+    <message-box type="info">
+      这是一条信息提示
+    </message-box>
+    <message-box type="warning">
+      <strong>注意！</strong> 这是一条警告信息
+    </message-box>
+  </div>
+
+  <script>
+    // 定义一个任务项组件
+    const TaskItem = {
+      // 组件接受的属性
+      props: {
+        title: {
+          type: String,
+          required: true
+        },
+        completed: {
+          type: Boolean,
+          default: false
+        }
+      },
+      template: `
+        <div class="task" :class="{ completed: completed }">
+          <h3>{{ title }}</h3>
+          <div class="button-container">
+            <button @click="$emit('toggle-status')">
+              {{ completed ? '标记为未完成' : '标记为已完成' }}
+            </button>
+            <button @click="$emit('delete')">删除</button>
+          </div>
+        </div>
+      `
+    }
+    
+    // 定义一个消息框组件，使用插槽
+    const MessageBox = {
+      props: {
+        type: {
+          type: String,
+          default: 'info',
+          validator: (value) => ['info', 'warning', 'error', 'success'].includes(value)
+        }
+      },
+      template: `
+        <div class="message" :style="messageStyle">
+          <!-- 默认插槽 -->
+          <slot>默认消息内容</slot>
+        </div>
+      `,
+      computed: {
+        messageStyle() {
+          let bgColor, color;
+          
+          switch(this.type) {
+            case 'warning':
+              bgColor = '#fff3cd';
+              color = '#856404';
+              break;
+            case 'error':
+              bgColor = '#f8d7da';
+              color = '#721c24';
+              break;
+            case 'success':
+              bgColor = '#d4edda';
+              color = '#155724';
+              break;
+            default: // info
+              bgColor = '#d1ecf1';
+              color = '#0c5460';
+          }
+          
+          return {
+            padding: '10px',
+            margin: '10px 0',
+            backgroundColor: bgColor,
+            color: color,
+            borderRadius: '4px'
+          };
+        }
+      }
+    }
+
+    const app = Vue.createApp({
+      data() {
+        return {
+          tasks: [
+            { id: 1, title: '学习 Vue 组件', completed: false },
+            { id: 2, title: '完成项目', completed: false },
+            { id: 3, title: '阅读文档', completed: true }
+          ],
+          nextTaskId: 4
+        }
+      },
+      methods: {
+        toggleTaskStatus(index) {
+          this.tasks[index].completed = !this.tasks[index].completed;
+        },
+        deleteTask(index) {
+          this.tasks.splice(index, 1);
+        },
+        addTask() {
+          this.tasks.push({
+            id: this.nextTaskId++,
+            title: '新任务 ' + (this.nextTaskId - 1),
+            completed: false
+          });
+        }
+      },
+      components: {
+        // 注册局部组件
+        'task-item': TaskItem,
+        'message-box': MessageBox
+      }
+    })
+
+    app.mount('#components-demo')
+  </script>
+</body>
+</html> 

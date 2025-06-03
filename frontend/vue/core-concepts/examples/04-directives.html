@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue.js 指令系统示例</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      padding: 20px;
+    }
+    .section {
+      margin-bottom: 30px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .highlight {
+      background-color: #fffacd;
+      padding: 2px;
+    }
+    .fade-enter-active,
+    .fade-leave-active {
+      transition: opacity 0.5s;
+    }
+    .fade-enter-from,
+    .fade-leave-to {
+      opacity: 0;
+    }
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      border-bottom: 1px dotted black;
+    }
+    .tooltip .tooltip-text {
+      visibility: hidden;
+      width: 120px;
+      background-color: #555;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -60px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <h1>Vue.js 指令系统示例</h1>
+  
+  <div id="directives-demo">
+    <!-- 内置指令演示 -->
+    <div class="section">
+      <h2>内置指令演示</h2>
+      
+      <!-- v-text 演示 -->
+      <h3>v-text</h3>
+      <p v-text="textContent"></p>
+      <p>使用插值: {{ textContent }}</p>
+      
+      <!-- v-html 演示 -->
+      <h3>v-html</h3>
+      <p v-html="htmlContent"></p>
+      <p>使用插值: {{ htmlContent }}</p>
+      
+      <!-- v-show 演示 -->
+      <h3>v-show</h3>
+      <p v-show="isVisible">v-show: 这段文字通过 CSS display 属性控制显示/隐藏</p>
+      <button @click="toggleVisible">切换显示</button>
+      
+      <!-- v-if, v-else-if, v-else 演示 -->
+      <h3>v-if / v-else-if / v-else</h3>
+      <p>当前值: {{ conditionalValue }}</p>
+      <p v-if="conditionalValue > 5">v-if: 值大于 5</p>
+      <p v-else-if="conditionalValue > 0">v-else-if: 值大于 0</p>
+      <p v-else>v-else: 值小于或等于 0</p>
+      <button @click="incrementConditional">增加值</button>
+      <button @click="decrementConditional">减少值</button>
+      
+      <!-- v-for 演示 -->
+      <h3>v-for</h3>
+      <ul>
+        <li v-for="(item, index) in items" :key="index">
+          {{ index + 1 }}. {{ item }}
+        </li>
+      </ul>
+      
+      <!-- v-on 演示 -->
+      <h3>v-on (@)</h3>
+      <button v-on:click="handleClick">v-on:click</button>
+      <button @click="handleClick">@click 简写</button>
+      <div @mouseover="handleMouseOver" @mouseout="handleMouseOut" style="padding: 10px; background-color: #f0f0f0;">
+        鼠标悬停在这里: {{ mouseoverMessage }}
+      </div>
+      
+      <!-- v-bind 演示 -->
+      <h3>v-bind (:)</h3>
+      <img v-bind:src="imageSrc" v-bind:alt="imageAlt" style="max-width: 100px;">
+      <img :src="imageSrc" :alt="imageAlt" style="max-width: 100px;">
+      <div :class="{ highlight: isHighlighted }">
+        这段文字可以高亮显示
+      </div>
+      <button @click="toggleHighlight">切换高亮</button>
+      
+      <!-- v-model 演示 -->
+      <h3>v-model</h3>
+      <p>文本输入:</p>
+      <input v-model="inputText" placeholder="请输入文字">
+      <p>输入的内容: {{ inputText }}</p>
+      
+      <p>复选框:</p>
+      <input type="checkbox" id="checkbox" v-model="checked">
+      <label for="checkbox">{{ checked ? '已选中' : '未选中' }}</label>
+      
+      <p>单选按钮:</p>
+      <input type="radio" id="one" value="One" v-model="picked">
+      <label for="one">选项一</label>
+      <input type="radio" id="two" value="Two" v-model="picked">
+      <label for="two">选项二</label>
+      <p>选择的选项: {{ picked }}</p>
+      
+      <p>下拉选择:</p>
+      <select v-model="selected">
+        <option disabled value="">请选择</option>
+        <option>A</option>
+        <option>B</option>
+        <option>C</option>
+      </select>
+      <p>选择的选项: {{ selected }}</p>
+      
+      <!-- v-model 修饰符 -->
+      <h3>v-model 修饰符</h3>
+      <p>.lazy (在 "change" 事件后更新):</p>
+      <input v-model.lazy="lazyInput" placeholder="失去焦点后更新">
+      <p>输入的内容: {{ lazyInput }}</p>
+      
+      <p>.number (自动转为数字):</p>
+      <input v-model.number="numberInput" type="number">
+      <p>输入值 x 2 = {{ numberInput * 2 }}</p>
+      
+      <p>.trim (自动去除首尾空格):</p>
+      <input v-model.trim="trimInput" placeholder="输入带空格的文字">
+      <p>处理后内容: "{{ trimInput }}"</p>
+      
+      <!-- v-once 演示 -->
+      <h3>v-once</h3>
+      <p v-once>只渲染一次的内容: {{ onceContent }}</p>
+      <p>正常渲染内容: {{ onceContent }}</p>
+      <button @click="updateOnceContent">更新内容</button>
+      
+      <!-- v-pre 演示 -->
+      <h3>v-pre</h3>
+      <p v-pre>{{ 这段文字不会被编译，会原样显示 }}</p>
+    </div>
+    
+    <!-- 自定义指令演示 -->
+    <div class="section">
+      <h2>自定义指令演示</h2>
+      
+      <!-- 自动聚焦指令 -->
+      <h3>v-focus (自动聚焦)</h3>
+      <input v-focus placeholder="这个输入框会自动获取焦点">
+      
+      <!-- 自定义悬浮提示指令 -->
+      <h3>v-tooltip (悬浮提示)</h3>
+      <p>
+        <span v-tooltip="'这是一个自定义悬浮提示内容'">
+          鼠标悬停在这里查看提示
+        </span>
+      </p>
+      
+      <!-- 自定义颜色指令 -->
+      <h3>v-color (文字颜色)</h3>
+      <p v-color="color">这段文字的颜色可以动态改变</p>
+      <button @click="changeColor">更改颜色</button>
+    </div>
+  </div>
+  
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          // v-text 和 v-html
+          textContent: '这是文本内容',
+          htmlContent: '<strong>这是 HTML 内容</strong>',
+          
+          // v-show
+          isVisible: true,
+          
+          // v-if, v-else-if, v-else
+          conditionalValue: 0,
+          
+          // v-for
+          items: ['苹果', '香蕉', '橙子', '草莓'],
+          
+          // v-on
+          mouseoverMessage: '',
+          
+          // v-bind
+          imageSrc: 'https://vuejs.org/images/logo.png',
+          imageAlt: 'Vue Logo',
+          isHighlighted: false,
+          
+          // v-model
+          inputText: '',
+          checked: false,
+          picked: '',
+          selected: '',
+          
+          // v-model 修饰符
+          lazyInput: '',
+          numberInput: 0,
+          trimInput: '',
+          
+          // v-once
+          onceContent: '初始内容',
+          
+          // 自定义指令
+          color: 'red'
+        }
+      },
+      methods: {
+        toggleVisible() {
+          this.isVisible = !this.isVisible;
+        },
+        incrementConditional() {
+          this.conditionalValue++;
+        },
+        decrementConditional() {
+          this.conditionalValue--;
+        },
+        handleClick() {
+          alert('按钮被点击了！');
+        },
+        handleMouseOver() {
+          this.mouseoverMessage = '鼠标悬停中';
+        },
+        handleMouseOut() {
+          this.mouseoverMessage = '';
+        },
+        toggleHighlight() {
+          this.isHighlighted = !this.isHighlighted;
+        },
+        updateOnceContent() {
+          this.onceContent = '更新后的内容';
+        },
+        changeColor() {
+          const colors = ['red', 'blue', 'green', 'purple', 'orange'];
+          const currentIndex = colors.indexOf(this.color);
+          const nextIndex = (currentIndex + 1) % colors.length;
+          this.color = colors[nextIndex];
+        }
+      },
+      // 注册自定义指令
+      directives: {
+        // 自动聚焦指令
+        focus: {
+          mounted(el) {
+            el.focus();
+          }
+        },
+        // 悬浮提示指令
+        tooltip: {
+          mounted(el, binding) {
+            el.classList.add('tooltip');
+            const tooltipText = document.createElement('span');
+            tooltipText.classList.add('tooltip-text');
+            tooltipText.textContent = binding.value;
+            el.appendChild(tooltipText);
+          }
+        },
+        // 文字颜色指令
+        color: {
+          mounted(el, binding) {
+            el.style.color = binding.value;
+          },
+          updated(el, binding) {
+            el.style.color = binding.value;
+          }
+        }
+      }
+    });
+    
+    app.mount('#directives-demo');
+  </script>
+</body>
+</html> 

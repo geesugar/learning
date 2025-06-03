@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue.js 声明式渲染示例</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+  <h1>Vue.js 声明式渲染示例</h1>
+  
+  <!-- 示例1: 文本插值 -->
+  <div id="text-interpolation">
+    <h2>文本插值</h2>
+    <p>{{ message }}</p>
+    <button @click="changeMessage">修改消息</button>
+  </div>
+
+  <!-- 示例2: 属性绑定 -->
+  <div id="attribute-binding">
+    <h2>属性绑定</h2>
+    <a v-bind:href="url" v-bind:title="title">{{ linkText }}</a>
+    <p>简写形式：</p>
+    <img :src="imgSrc" :alt="imgAlt" style="max-width: 200px;">
+  </div>
+
+  <!-- 示例3: 条件与循环 -->
+  <div id="conditional-rendering">
+    <h2>条件渲染</h2>
+    <p v-if="seen">现在你看到我了</p>
+    <button @click="toggleSeen">切换显示</button>
+    
+    <h2>列表渲染</h2>
+    <ul>
+      <li v-for="item in items" :key="item.id">
+        {{ item.text }}
+      </li>
+    </ul>
+    <button @click="addItem">添加项目</button>
+  </div>
+
+  <script>
+    // 文本插值示例
+    const textApp = Vue.createApp({
+      data() {
+        return {
+          message: 'Hello Vue 3!'
+        }
+      },
+      methods: {
+        changeMessage() {
+          this.message = '消息已更新！'
+        }
+      }
+    })
+    textApp.mount('#text-interpolation')
+
+    // 属性绑定示例
+    const attrApp = Vue.createApp({
+      data() {
+        return {
+          url: 'https://v3.cn.vuejs.org',
+          title: 'Vue 3 官方文档',
+          linkText: '访问 Vue 文档',
+          imgSrc: 'https://vuejs.org/images/logo.png',
+          imgAlt: 'Vue Logo'
+        }
+      }
+    })
+    attrApp.mount('#attribute-binding')
+
+    // 条件与循环示例
+    const conditionalApp = Vue.createApp({
+      data() {
+        return {
+          seen: true,
+          items: [
+            { id: 1, text: '学习 JavaScript' },
+            { id: 2, text: '学习 Vue' },
+            { id: 3, text: '创建项目' }
+          ],
+          nextId: 4
+        }
+      },
+      methods: {
+        toggleSeen() {
+          this.seen = !this.seen
+        },
+        addItem() {
+          this.items.push({
+            id: this.nextId++,
+            text: '新项目 ' + (this.nextId - 1)
+          })
+        }
+      }
+    })
+    conditionalApp.mount('#conditional-rendering')
+  </script>
+</body>
+</html> 

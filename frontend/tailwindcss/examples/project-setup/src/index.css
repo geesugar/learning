@@ -1,0 +1,70 @@
+/* 导入Tailwind CSS的基础样式 */
+@tailwind base;
+
+/* 导入Tailwind CSS的组件样式 */
+@tailwind components;
+
+/* 导入Tailwind CSS的功能类样式 */
+@tailwind utilities;
+
+/* 自定义基础样式 */
+@layer base {
+  html {
+    @apply text-gray-800 dark:text-gray-200;
+    font-family: 'Inter var', sans-serif;
+  }
+  
+  body {
+    @apply bg-white dark:bg-gray-900;
+  }
+  
+  h1 {
+    @apply text-3xl font-bold mb-4;
+  }
+  
+  h2 {
+    @apply text-2xl font-bold mb-3;
+  }
+  
+  h3 {
+    @apply text-xl font-bold mb-2;
+  }
+  
+  p {
+    @apply mb-4;
+  }
+  
+  a {
+    @apply text-blue-600 dark:text-blue-400 hover:underline;
+  }
+}
+
+/* 自定义组件样式 */
+@layer components {
+  .container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .section {
+    @apply py-12 md:py-16 lg:py-20;
+  }
+  
+  .card {
+    @apply bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden;
+  }
+}
+
+/* 自定义功能类样式 */
+@layer utilities {
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .text-shadow-lg {
+    text-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .rotate-hover:hover {
+    @apply transform rotate-3 transition-transform duration-300;
+  }
+} 

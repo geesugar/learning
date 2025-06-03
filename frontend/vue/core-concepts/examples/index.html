@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue.js 核心概念示例索引</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #42b883;
+      margin-bottom: 30px;
+    }
+    .example-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .example-card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      background-color: #f9f9f9;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .example-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .example-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #35495e;
+      margin-top: 0;
+    }
+    .example-desc {
+      margin-bottom: 15px;
+      color: #666;
+    }
+    .example-link {
+      display: inline-block;
+      background-color: #42b883;
+      color: white;
+      text-decoration: none;
+      padding: 8px 15px;
+      border-radius: 4px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+    .example-link:hover {
+      background-color: #3ca776;
+    }
+    .back-link {
+      display: block;
+      margin-top: 30px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>Vue.js 核心概念示例</h1>
+  
+  <div class="example-list">
+    <div class="example-card">
+      <h2 class="example-title">1. 声明式渲染</h2>
+      <p class="example-desc">展示 Vue 的声明式渲染能力，包括文本插值、属性绑定，以及条件与循环渲染等基础特性。</p>
+      <a href="01-declarative-rendering.html" class="example-link">查看示例</a>
+    </div>
+    
+    <div class="example-card">
+      <h2 class="example-title">2. 组件基础</h2>
+      <p class="example-desc">展示 Vue 组件系统的基础用法，包括组件注册、属性传递、事件处理和插槽等。</p>
+      <a href="02-component-basics.html" class="example-link">查看示例</a>
+    </div>
+    
+    <div class="example-card">
+      <h2 class="example-title">3. 响应式系统</h2>
+      <p class="example-desc">深入理解 Vue 的响应式原理，比较 Vue 2 与 Vue 3 的响应式系统，展示 ref 和 reactive 的使用。</p>
+      <a href="03-reactivity.html" class="example-link">查看示例</a>
+    </div>
+    
+    <div class="example-card">
+      <h2 class="example-title">4. 指令系统</h2>
+      <p class="example-desc">展示 Vue 内置指令的用法以及如何创建自定义指令，包括 v-bind、v-model、v-on 等。</p>
+      <a href="04-directives.html" class="example-link">查看示例</a>
+    </div>
+    
+    <div class="example-card">
+      <h2 class="example-title">5. 生命周期</h2>
+      <p class="example-desc">演示 Vue 组件生命周期钩子的触发时机和使用方式，包括选项式 API 和组合式 API 两种风格。</p>
+      <a href="05-lifecycle.html" class="example-link">查看示例</a>
+    </div>
+    
+    <div class="example-card">
+      <h2 class="example-title">6. 计算属性与侦听器</h2>
+      <p class="example-desc">展示计算属性和侦听器的用法及区别，演示缓存机制和响应式依赖追踪。</p>
+      <a href="06-computed-watch.html" class="example-link">查看示例</a>
+    </div>
+  </div>
+  
+  <div class="back-link">
+    <a href="../README.md">返回 Vue.js 核心概念文档</a>
+  </div>
+</body>
+</html> 

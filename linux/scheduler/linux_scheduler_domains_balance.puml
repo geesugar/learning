@@ -1,0 +1,158 @@
+@startuml 调度域负载均衡时序图
+!theme blueprint
+title Linux调度域负载均衡流程
+
+participant "时钟中断" as Timer
+participant "负载均衡" as LoadBalance
+participant "SMT域" as SMT
+participant "LLC域" as LLC  
+participant "Package域" as Package
+participant "NUMA域" as NUMA
+participant "CPU选择" as CPUSelect
+participant "任务迁移" as Migration
+
+== 周期性负载均衡触发 ==
+
+Timer -> LoadBalance: trigger_load_balance()
+activate LoadBalance
+note right: 基于HZ频率触发\n检查 jiffies >= rq->next_balance
+
+LoadBalance -> LoadBalance: 检查各调度域间隔
+note right: 每个域有不同的均衡间隔\nmin_interval ~ max_interval
+
+== SMT域负载均衡 ==
+
+LoadBalance -> SMT: rebalance_domains(SMT_DOMAIN)
+activate SMT
+note right: 超线程间负载均衡
+
+SMT -> SMT: find_busiest_group()
+note right: 在SMT组中查找最繁忙的组
+
+alt 发现不均衡
+    SMT -> CPUSelect: select_task_rq()
+    CPUSelect -> SMT: 返回目标CPU
+    
+    SMT -> Migration: migrate_tasks()
+    note right: 在同一物理核心的\n超线程间迁移任务
+    
+    Migration -> SMT: 迁移完成
+end
+
+SMT -> LoadBalance: SMT域均衡完成
+deactivate SMT
+
+== LLC域负载均衡 ==
+
+LoadBalance -> LLC: rebalance_domains(LLC_DOMAIN)
+activate LLC
+note right: 共享末级缓存的核心间均衡
+
+LLC -> LLC: calculate_imbalance()
+note right: 计算LLC域内的负载不均衡\n考虑缓存亲和性
+
+LLC -> LLC: find_busiest_queue()
+note right: 查找最繁忙的运行队列
+
+alt 负载不均衡超过阈值
+    LLC -> CPUSelect: select_idle_sibling()
+    note right: 在LLC域内选择空闲CPU\n优先选择共享缓存的核心
+    
+    LLC -> Migration: detach_tasks()
+    note right: 从繁忙队列分离任务
+    
+    LLC -> Migration: attach_tasks()
+    note right: 将任务附加到目标队列
+    
+    Migration -> LLC: 更新负载统计
+end
+
+LLC -> LoadBalance: LLC域均衡完成
+deactivate LLC
+
+== Package域负载均衡 ==
+
+LoadBalance -> Package: rebalance_domains(PACKAGE_DOMAIN)
+activate Package
+note right: CPU封装内的负载均衡
+
+Package -> Package: group_has_capacity()
+note right: 检查包内各组的容量和利用率
+
+Package -> Package: calculate_group_imbalance()
+note right: 计算组间不均衡程度\n考虑CPU容量和频率
+
+alt 包内负载严重不均衡
+    Package -> CPUSelect: find_idlest_cpu()
+    note right: 在包内查找最空闲的CPU\n考虑CPU容量差异
+    
+    Package -> Migration: active_load_balance()
+    note right: 主动负载均衡\n可能迁移正在运行的任务
+    
+    Migration -> Package: 均衡结果反馈
+end
+
+Package -> LoadBalance: Package域均衡完成
+deactivate Package
+
+== NUMA域负载均衡 ==
+
+LoadBalance -> NUMA: rebalance_domains(NUMA_DOMAIN)
+activate NUMA
+note right: NUMA节点间的负载均衡
+
+NUMA -> NUMA: numa_has_capacity()
+note right: 检查NUMA节点容量\n考虑内存访问代价
+
+NUMA -> NUMA: calculate_numa_imbalance()
+note right: 计算NUMA不均衡\n权衡CPU利用率和内存局部性
+
+alt NUMA节点间严重不均衡
+    NUMA -> CPUSelect: select_numa_node()
+    note right: 选择目标NUMA节点\n考虑内存分布和访问模式
+    
+    NUMA -> Migration: numa_migrate_preferred()
+    note right: NUMA感知的任务迁移\n可能需要内存页面迁移
+    
+    alt 需要内存迁移
+        Migration -> Migration: migrate_pages()
+        note right: 迁移任务的内存页面\n到目标NUMA节点
+    end
+    
+    Migration -> NUMA: NUMA迁移完成
+end
+
+NUMA -> LoadBalance: NUMA域均衡完成
+deactivate NUMA
+
+== 负载均衡完成 ==
+
+LoadBalance -> LoadBalance: 更新下次均衡时间
+note right: rq->next_balance = jiffies + interval
+
+LoadBalance -> LoadBalance: 更新系统负载统计
+note right: 更新全局负载平均值\ncalc_global_load()
+
+deactivate LoadBalance
+
+== 空闲时负载均衡 ==
+
+note over LoadBalance: CPU进入空闲时触发
+
+LoadBalance -> LoadBalance: idle_balance()
+activate LoadBalance
+note right: 空闲CPU主动拉取任务
+
+LoadBalance -> CPUSelect: find_busiest_queue()
+note right: 在各调度域中查找\n可以拉取任务的队列
+
+alt 找到可拉取的任务
+    LoadBalance -> Migration: pull_tasks()
+    note right: 从其他CPU拉取任务\n考虑CPU亲和性和缓存局部性
+    
+    Migration -> LoadBalance: 拉取任务成功
+end
+
+deactivate LoadBalance
+
+@enduml 

@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue.js 生命周期示例</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .lifecycle-box {
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 20px;
+    }
+    .log-container {
+      background-color: #f5f5f5;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+      margin-top: 20px;
+    }
+    .log-entry {
+      margin: 5px 0;
+      padding: 5px;
+      border-bottom: 1px solid #eee;
+    }
+    .log-entry.create { color: #28a745; }
+    .log-entry.mount { color: #007bff; }
+    .log-entry.update { color: #fd7e14; }
+    .log-entry.unmount { color: #dc3545; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Vue.js 生命周期示例</h1>
+    
+    <div id="lifecycle-demo">
+      <div class="lifecycle-box" v-if="showComponent">
+        <h2>组件生命周期演示</h2>
+        <p>组件数据: {{ message }}</p>
+        <button @click="updateMessage">更新数据</button>
+      </div>
+      
+      <div>
+        <button @click="toggleComponent">{{ showComponent ? '销毁组件' : '创建组件' }}</button>
+        <button @click="clearLogs">清空日志</button>
+      </div>
+      
+      <div class="log-container">
+        <h3>生命周期钩子日志:</h3>
+        <div v-for="(log, index) in logs" :key="index" class="log-entry" :class="log.type">
+          {{ log.timestamp }} - {{ log.message }}
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    const { createApp, onBeforeMount, onMounted, onBeforeUpdate, onUpdated, onBeforeUnmount, onUnmounted } = Vue;
+    
+    // 创建一个子组件，用于演示生命周期
+    const LifecycleComponent = {
+      props: ['message'],
+      template: `
+        <div>
+          <p>子组件消息: {{ message }}</p>
+        </div>
+      `,
+      // 使用选项式 API 的生命周期钩子
+      beforeCreate() {
+        this.$emit('lifecycle-hook', { type: 'create', message: 'beforeCreate 钩子被调用' });
+      },
+      created() {
+        this.$emit('lifecycle-hook', { type: 'create', message: 'created 钩子被调用' });
+      },
+      beforeMount() {
+        this.$emit('lifecycle-hook', { type: 'mount', message: 'beforeMount 钩子被调用' });
+      },
+      mounted() {
+        this.$emit('lifecycle-hook', { type: 'mount', message: 'mounted 钩子被调用 - DOM 已挂载' });
+      },
+      beforeUpdate() {
+        this.$emit('lifecycle-hook', { type: 'update', message: 'beforeUpdate 钩子被调用 - 数据更新，DOM更新前' });
+      },
+      updated() {
+        this.$emit('lifecycle-hook', { type: 'update', message: 'updated 钩子被调用 - DOM 已更新' });
+      },
+      beforeUnmount() {
+        this.$emit('lifecycle-hook', { type: 'unmount', message: 'beforeUnmount 钩子被调用 - 组件卸载前' });
+      },
+      unmounted() {
+        this.$emit('lifecycle-hook', { type: 'unmount', message: 'unmounted 钩子被调用 - 组件已卸载' });
+      },
+    };
+    
+    // 创建另一个使用组合式 API 的子组件
+    const CompositionLifecycleComponent = {
+      props: ['message'],
+      template: `
+        <div>
+          <p>组合式 API 子组件: {{ message }}</p>
+        </div>
+      `,
+      setup(props, { emit }) {
+        emit('lifecycle-hook', { type: 'create', message: 'setup 函数被调用 (相当于 beforeCreate + created)' });
+        
+        onBeforeMount(() => {
+          emit('lifecycle-hook', { type: 'mount', message: 'onBeforeMount 钩子被调用 (组合式 API)' });
+        });
+        
+        onMounted(() => {
+          emit('lifecycle-hook', { type: 'mount', message: 'onMounted 钩子被调用 - DOM 已挂载 (组合式 API)' });
+        });
+        
+        onBeforeUpdate(() => {
+          emit('lifecycle-hook', { type: 'update', message: 'onBeforeUpdate 钩子被调用 (组合式 API)' });
+        });
+        
+        onUpdated(() => {
+          emit('lifecycle-hook', { type: 'update', message: 'onUpdated 钩子被调用 (组合式 API)' });
+        });
+        
+        onBeforeUnmount(() => {
+          emit('lifecycle-hook', { type: 'unmount', message: 'onBeforeUnmount 钩子被调用 (组合式 API)' });
+        });
+        
+        onUnmounted(() => {
+          emit('lifecycle-hook', { type: 'unmount', message: 'onUnmounted 钩子被调用 (组合式 API)' });
+        });
+        
+        return {};
+      }
+    };
+    
+    const app = createApp({
+      components: {
+        'lifecycle-component': LifecycleComponent,
+        'composition-lifecycle-component': CompositionLifecycleComponent
+      },
+      data() {
+        return {
+          showComponent: false,
+          message: 'Hello World',
+          logs: []
+        };
+      },
+      methods: {
+        toggleComponent() {
+          if (!this.showComponent) {
+            this.addLog('info', '准备创建组件...');
+          } else {
+            this.addLog('info', '准备销毁组件...');
+          }
+          this.showComponent = !this.showComponent;
+        },
+        updateMessage() {
+          this.addLog('info', '准备更新数据...');
+          this.message = '数据已更新: ' + new Date().toLocaleTimeString();
+        },
+        handleLifecycleHook(event) {
+          this.addLog(event.type, event.message);
+        },
+        addLog(type, message) {
+          const timestamp = new Date().toLocaleTimeString();
+          this.logs.unshift({ type, message, timestamp });
+        },
+        clearLogs() {
+          this.logs = [];
+        }
+      },
+      template: `
+        <div>
+          <div class="lifecycle-box" v-if="showComponent">
+            <h2>生命周期钩子演示</h2>
+            <p>父组件数据: {{ message }}</p>
+            <button @click="updateMessage">更新数据</button>
+            
+            <h3>选项式 API 组件:</h3>
+            <lifecycle-component 
+              :message="message" 
+              @lifecycle-hook="handleLifecycleHook"
+            />
+            
+            <h3>组合式 API 组件:</h3>
+            <composition-lifecycle-component 
+              :message="message"
+              @lifecycle-hook="handleLifecycleHook"  
+            />
+          </div>
+          
+          <div>
+            <button @click="toggleComponent">{{ showComponent ? '销毁组件' : '创建组件' }}</button>
+            <button @click="clearLogs">清空日志</button>
+          </div>
+          
+          <div class="log-container">
+            <h3>生命周期钩子日志:</h3>
+            <div v-for="(log, index) in logs" :key="index" class="log-entry" :class="log.type">
+              {{ log.timestamp }} - {{ log.message }}
+            </div>
+          </div>
+        </div>
+      `
+    });
+    
+    app.mount('#lifecycle-demo');
+  </script>
+</body>
+</html> 

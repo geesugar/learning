@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue.js 计算属性与侦听器示例</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      padding: 20px;
+    }
+    .demo-section {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .input-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    input {
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      width: 250px;
+    }
+    .result {
+      background-color: #f5f5f5;
+      padding: 10px;
+      border-radius: 4px;
+      margin-top: 10px;
+    }
+    .highlight {
+      color: #42b883;
+      font-weight: bold;
+    }
+    .performance-metrics {
+      font-size: 14px;
+      color: #666;
+      margin-top: 10px;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border-radius: 4px;
+    }
+    button {
+      padding: 8px 15px;
+      background-color: #42b883;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background-color: #3ca776;
+    }
+    .log-container {
+      height: 150px;
+      overflow-y: auto;
+      background-color: #f5f5f5;
+      padding: 10px;
+      border-radius: 4px;
+      font-family: monospace;
+      margin-top: 10px;
+    }
+    .log-entry {
+      margin: 5px 0;
+      padding: 3px 0;
+      border-bottom: 1px solid #eee;
+    }
+  </style>
+</head>
+<body>
+  <h1>Vue.js 计算属性与侦听器示例</h1>
+  
+  <div id="computed-watch-demo">
+    <!-- 计算属性示例 -->
+    <div class="demo-section">
+      <h2>计算属性示例</h2>
+      <p>计算属性基于它们的响应式依赖进行缓存，只有在依赖变化时才会重新计算</p>
+      
+      <div class="input-group">
+        <label for="first-name">名字:</label>
+        <input type="text" id="first-name" v-model="firstName">
+      </div>
+      
+      <div class="input-group">
+        <label for="last-name">姓氏:</label>
+        <input type="text" id="last-name" v-model="lastName">
+      </div>
+      
+      <div class="result">
+        <p>完整姓名: <span class="highlight">{{ fullName }}</span></p>
+        <p>反转姓名: <span class="highlight">{{ reversedFullName }}</span></p>
+      </div>
+      
+      <div class="performance-metrics">
+        <p>计算方法调用次数:</p>
+        <ul>
+          <li>fullName 计算属性: {{ fullNameCallCount }}</li>
+          <li>reversedFullName 计算属性: {{ reversedFullNameCallCount }}</li>
+        </ul>
+        <button @click="resetCallCounts">重置计数器</button>
+      </div>
+    </div>
+    
+    <!-- 带有setter的计算属性 -->
+    <div class="demo-section">
+      <h2>带有setter的计算属性</h2>
+      <p>计算属性默认只有getter，但也可以提供setter</p>
+      
+      <div class="input-group">
+        <label for="full-name">完整姓名:</label>
+        <input type="text" id="full-name" v-model="fullNameWithSetter">
+      </div>
+      
+      <div class="result">
+        <p>名字: <span class="highlight">{{ firstName }}</span></p>
+        <p>姓氏: <span class="highlight">{{ lastName }}</span></p>
+      </div>
+      
+      <p class="note">修改完整姓名将自动更新名字和姓氏</p>
+    </div>
+    
+    <!-- 侦听器示例 -->
+    <div class="demo-section">
+      <h2>侦听器示例</h2>
+      <p>侦听器适用于在数据变化时执行异步或开销较大的操作</p>
+      
+      <div class="input-group">
+        <label for="search-query">搜索查询:</label>
+        <input type="text" id="search-query" v-model="searchQuery" placeholder="输入关键词搜索...">
+      </div>
+      
+      <div v-if="loading" class="result">
+        <p>正在搜索...</p>
+      </div>
+      <div v-else-if="searchResults.length" class="result">
+        <p>搜索结果:</p>
+        <ul>
+          <li v-for="(result, index) in searchResults" :key="index">{{ result }}</li>
+        </ul>
+      </div>
+      <div v-else-if="searchQuery" class="result">
+        <p>没有找到相关结果</p>
+      </div>
+      
+      <div class="log-container">
+        <div v-for="(log, index) in searchLogs" :key="index" class="log-entry">
+          {{ log }}
+        </div>
+      </div>
+    </div>
+    
+    <!-- 比较计算属性和侦听器 -->
+    <div class="demo-section">
+      <h2>计算属性 vs 侦听器</h2>
+      <p>相同功能的两种实现方式对比</p>
+      
+      <div class="input-group">
+        <label for="a-value">数值 A:</label>
+        <input type="number" id="a-value" v-model.number="valueA">
+      </div>
+      
+      <div class="input-group">
+        <label for="b-value">数值 B:</label>
+        <input type="number" id="b-value" v-model.number="valueB">
+      </div>
+      
+      <div class="result">
+        <p>计算属性实现: <span class="highlight">{{ sumWithComputed }}</span></p>
+        <p>侦听器实现: <span class="highlight">{{ sumWithWatch }}</span></p>
+      </div>
+      
+      <div class="performance-metrics">
+        <p>更新次数:</p>
+        <ul>
+          <li>计算属性方式: {{ sumComputedUpdateCount }}</li>
+          <li>侦听器方式: {{ sumWatchUpdateCount }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    const app = Vue.createApp({
+      data() {
+        return {
+          // 计算属性示例
+          firstName: '张',
+          lastName: '三',
+          fullNameCallCount: 0,
+          reversedFullNameCallCount: 0,
+          
+          // 侦听器示例
+          searchQuery: '',
+          searchResults: [],
+          loading: false,
+          searchLogs: [],
+          
+          // 对比示例
+          valueA: 1,
+          valueB: 2,
+          sumWithWatch: 3,
+          sumComputedUpdateCount: 0,
+          sumWatchUpdateCount: 0
+        }
+      },
+      computed: {
+        // 基本计算属性
+        fullName() {
+          this.fullNameCallCount++;
+          return this.firstName + ' ' + this.lastName;
+        },
+        
+        // 基于其他计算属性的计算属性
+        reversedFullName() {
+          this.reversedFullNameCallCount++;
+          return this.fullName.split('').reverse().join('');
+        },
+        
+        // 带有setter的计算属性
+        fullNameWithSetter: {
+          get() {
+            return this.firstName + ' ' + this.lastName;
+          },
+          set(newValue) {
+            const parts = newValue.split(' ');
+            this.firstName = parts[0] || '';
+            this.lastName = parts[1] || '';
+          }
+        },
+        
+        // 计算属性方式实现求和
+        sumWithComputed() {
+          this.sumComputedUpdateCount++;
+          return this.valueA + this.valueB;
+        }
+      },
+      watch: {
+        // 基本侦听器
+        searchQuery(newQuery, oldQuery) {
+          this.addSearchLog(`查询变更: "${oldQuery}" -> "${newQuery}"`);
+          
+          if (newQuery.trim() === '') {
+            this.searchResults = [];
+            return;
+          }
+          
+          // 模拟异步搜索请求
+          this.loading = true;
+          this.addSearchLog('开始搜索...');
+          
+          // 使用定时器延迟执行，模拟API请求
+          clearTimeout(this.searchTimeout);
+          this.searchTimeout = setTimeout(() => {
+            this.performSearch(newQuery);
+          }, 500);
+        },
+        
+        // 侦听对象的方式
+        'valueA': function(newVal, oldVal) {
+          this.updateSumWithWatch();
+        },
+        'valueB': function(newVal, oldVal) {
+          this.updateSumWithWatch();
+        },
+        
+        // 使用对象语法的侦听器，可以设置立即执行、深度监听等选项
+        firstName: {
+          handler(newValue, oldValue) {
+            this.addSearchLog(`名字变更: "${oldValue}" -> "${newValue}"`);
+          },
+          immediate: true  // 在创建组件时立即调用
+        }
+      },
+      methods: {
+        resetCallCounts() {
+          this.fullNameCallCount = 0;
+          this.reversedFullNameCallCount = 0;
+        },
+        
+        performSearch(query) {
+          // 模拟搜索结果
+          const data = [
+            '苹果', '香蕉', '菠萝', '橙子', '草莓',
+            'Vue.js', 'React', 'Angular', 'JavaScript', 'TypeScript'
+          ];
+          
+          // 过滤搜索结果
+          const results = data.filter(item => 
+            item.toLowerCase().includes(query.toLowerCase())
+          );
+          
+          // 更新状态
+          this.searchResults = results;
+          this.loading = false;
+          this.addSearchLog(`搜索完成，找到 ${results.length} 个结果`);
+        },
+        
+        addSearchLog(message) {
+          const timestamp = new Date().toLocaleTimeString();
+          this.searchLogs.unshift(`[${timestamp}] ${message}`);
+          
+          // 限制日志数量
+          if (this.searchLogs.length > 20) {
+            this.searchLogs.pop();
+          }
+        },
+        
+        updateSumWithWatch() {
+          this.sumWithWatch = this.valueA + this.valueB;
+          this.sumWatchUpdateCount++;
+        }
+      }
+    });
+    
+    app.mount('#computed-watch-demo');
+  </script>
+</body>
+</html> 

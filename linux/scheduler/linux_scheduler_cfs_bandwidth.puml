@@ -1,0 +1,207 @@
+@startuml CFS带宽控制机制详细时序图
+!theme blueprint
+title CFS带宽控制(cfs_bandwidth)详细流程
+
+participant "任务组\n(task_group)" as TG
+participant "CFS带宽\n(cfs_bandwidth)" as CFSBand
+participant "周期定时器\n(period_timer)" as PeriodTimer
+participant "Slack定时器\n(slack_timer)" as SlackTimer
+participant "CFS运行队列\n(cfs_rq)" as CfsRq
+participant "调度实体\n(sched_entity)" as SE
+participant "任务\n(task)" as Task
+participant "统计信息\n(statistics)" as Stats
+
+== 初始化阶段 ==
+
+TG -> CFSBand: 初始化带宽控制
+CFSBand -> CFSBand: period = 100ms (默认)
+CFSBand -> CFSBand: quota = 50ms (50%限制)
+CFSBand -> CFSBand: runtime = quota
+CFSBand -> CFSBand: burst = 0 (默认无突发)
+
+CFSBand -> PeriodTimer: hrtimer_init(period_timer)
+CFSBand -> SlackTimer: hrtimer_init(slack_timer)
+CFSBand -> CFSBand: INIT_LIST_HEAD(throttled_cfs_rq)
+
+== 任务执行阶段 ==
+
+Task -> SE: 任务开始执行
+SE -> CfsRq: 更新运行统计
+CfsRq -> CFSBand: account_cfs_rq_runtime()
+
+note over CFSBand: 检查和消耗运行时配额
+
+CFSBand -> CFSBand: 检查runtime_remaining
+alt runtime充足
+    CFSBand -> CFSBand: runtime_remaining -= delta_exec
+    CFSBand -> CfsRq: 继续执行
+    CfsRq -> Task: 任务正常运行
+    
+else runtime不足
+    CFSBand -> CFSBand: 尝试获取更多配额
+    CFSBand -> CFSBand: assign_cfs_rq_runtime()
+    
+    alt 全局配额充足
+        CFSBand -> CFSBand: 分配sched_cfs_bandwidth_slice()
+        note over CFSBand: 默认分配5ms切片
+        CFSBand -> CfsRq: 获得新配额，继续执行
+        
+    else 全局配额耗尽
+        CFSBand -> CfsRq: throttle_cfs_rq()
+        note over CfsRq: 触发节流机制
+        
+        == 节流处理 ==
+        CfsRq -> SE: dequeue_entity()
+        loop 队列中所有实体
+            SE -> CfsRq: 从红黑树移除
+        end
+        
+        CfsRq -> CFSBand: list_add_tail(throttled_list)
+        note over CFSBand: 加入节流队列列表
+        
+        CFSBand -> Stats: nr_throttled++
+        CFSBand -> Stats: throttled_time += now
+        
+        CfsRq -> Task: 任务被暂停执行
+    end
+end
+
+== 周期定时器处理 ==
+
+PeriodTimer -> CFSBand: sched_cfs_period_timer()
+note over PeriodTimer: 每100ms触发一次
+
+CFSBand -> CFSBand: __refill_cfs_bandwidth_runtime()
+CFSBand -> CFSBand: runtime = quota
+note over CFSBand: 刷新配额
+
+alt 有突发配置 (burst > 0)
+    CFSBand -> CFSBand: runtime = min(runtime + quota, quota + burst)
+    note over CFSBand: 允许累积到quota+burst
+end
+
+CFSBand -> Stats: nr_periods++
+
+== 解除节流处理 ==
+
+CFSBand -> CFSBand: distribute_cfs_runtime()
+note over CFSBand: 重新分发运行时间给节流队列
+
+loop throttled_cfs_rq列表中的每个队列
+    CFSBand -> CfsRq: unthrottle_cfs_rq()
+    
+    CfsRq -> CFSBand: 分配运行时配额
+    CFSBand -> CfsRq: runtime_remaining += slice
+    
+    CfsRq -> SE: enqueue_entity()
+    loop 恢复所有调度实体
+        SE -> CfsRq: 重新加入红黑树
+    end
+    
+    CfsRq -> CFSBand: list_del_rcu(throttled_list)
+    note over CfsRq: 从节流列表移除
+    
+    CfsRq -> Task: 任务恢复执行
+end
+
+PeriodTimer -> PeriodTimer: hrtimer_forward()
+note over PeriodTimer: 设置下一个周期
+
+== Slack定时器处理 ==
+
+SlackTimer -> CFSBand: do_sched_cfs_slack_timer()
+note over SlackTimer: 收集未使用的运行时间
+
+CFSBand -> CFSBand: collect_slack_runtime()
+loop 遍历所有CPU的cfs_rq
+    CfsRq -> CFSBand: 返回未使用的runtime
+    CFSBand -> CFSBand: slack += unused_runtime
+end
+
+alt slack > sched_cfs_bandwidth_slice()
+    CFSBand -> CFSBand: distribute_cfs_runtime()
+    note over CFSBand: 重新分发slack时间
+    
+    loop 节流队列
+        CFSBand -> CfsRq: 分配slack时间
+        CfsRq -> CFSBand: 可能解除部分节流
+    end
+end
+
+== 突发处理 (Linux 5.14+) ==
+
+group 突发机制
+    note over CFSBand: 配置了burst参数时
+    
+    CFSBand -> CFSBand: 检查累积的runtime
+    alt runtime > quota
+        CFSBand -> CFSBand: 允许短期超过配额
+        note over CFSBand: 使用累积的burst配额
+        
+        CFSBand -> CfsRq: 继续执行，消耗burst
+        CfsRq -> CFSBand: burst_runtime -= delta_exec
+        
+        CFSBand -> Stats: 记录burst使用情况
+    end
+end
+
+== 统计信息更新 ==
+
+group 统计信息维护
+    Stats -> Stats: nr_periods: 总周期数
+    Stats -> Stats: nr_throttled: 节流次数
+    Stats -> Stats: throttled_time: 累计节流时间
+    
+    note over Stats: 可通过cpu.stat查看
+    Stats -> Stats: throttled_ratio = nr_throttled / nr_periods
+end
+
+== cgroup接口交互 ==
+
+group cgroup配置更新
+    note over TG: 用户更新cgroup配置
+    
+    TG -> CFSBand: cpu.max = "75000 100000"
+    CFSBand -> CFSBand: quota = 75ms, period = 100ms
+    
+    TG -> CFSBand: cpu.max = "50000 100000 25000"  
+    CFSBand -> CFSBand: quota = 50ms, burst = 25ms
+    
+    CFSBand -> PeriodTimer: 重新配置定时器
+    PeriodTimer -> CFSBand: 应用新的周期设置
+end
+
+== 多CPU协调 ==
+
+group 跨CPU带宽管理
+    note over CFSBand: 每个任务组的cfs_bandwidth是全局的
+    
+    loop 每个CPU
+        CfsRq -> CFSBand: 请求运行时配额
+        CFSBand -> CFSBand: 全局锁保护
+        CFSBand -> CfsRq: 分配配额片段
+    end
+    
+    note over CFSBand: 确保总配额不超过限制
+end
+
+== 错误和异常处理 ==
+
+group 异常情况处理
+    alt 定时器失效
+        CFSBand -> CFSBand: 检测定时器状态
+        CFSBand -> PeriodTimer: 重新启动定时器
+    end
+    
+    alt 运行时溢出
+        CFSBand -> CFSBand: 限制runtime在合理范围
+        CFSBand -> Stats: 记录异常情况
+    end
+    
+    alt 节流队列异常
+        CFSBand -> CfsRq: 强制解除节流
+        CfsRq -> SE: 恢复正常调度
+    end
+end
+
+@enduml 

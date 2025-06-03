@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue.js 响应式系统示例</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+    }
+    .demo-section {
+      margin-bottom: 30px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .code {
+      background-color: #f5f5f5;
+      padding: 10px;
+      border-radius: 4px;
+      margin: 10px 0;
+      font-family: monospace;
+    }
+    button {
+      margin: 5px;
+      padding: 5px 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Vue.js 响应式系统示例</h1>
+  
+  <div class="demo-section">
+    <h2>Vue 3 响应式 API 示例</h2>
+    <div id="reactivity-demo">
+      <h3>响应式数据变化</h3>
+      <p>Count: {{ count }}</p>
+      <p>Double Count: {{ doubleCount }}</p>
+      <button @click="increment">增加</button>
+      <button @click="reset">重置</button>
+      
+      <h3>深层嵌套对象</h3>
+      <div>
+        <p>用户信息：</p>
+        <p>姓名: {{ user.name }}</p>
+        <p>年龄: {{ user.age }}</p>
+        <p>地址: {{ user.address.city }}, {{ user.address.street }}</p>
+        <button @click="updateUser">更新用户信息</button>
+      </div>
+      
+      <h3>响应式数组操作</h3>
+      <ul>
+        <li v-for="(item, index) in items" :key="index">
+          {{ item }}
+        </li>
+      </ul>
+      <button @click="addItem">添加项目</button>
+      <button @click="removeItem">移除最后一项</button>
+      <button @click="replaceItems">替换所有项目</button>
+    </div>
+  </div>
+  
+  <div class="demo-section">
+    <h2>Vue 3 原始响应式 API (Composition API)</h2>
+    <div id="composition-api-demo">
+      <h3>Ref vs Reactive</h3>
+      <p>ref 值 (原始类型): {{ refValue }}</p>
+      <p>reactive 对象值: {{ reactiveObj.count }} / {{ reactiveObj.message }}</p>
+      <button @click="updateRef">更新 ref 值</button>
+      <button @click="updateReactive">更新 reactive 值</button>
+      
+      <div class="code">
+        <p>在 JavaScript 中使用 ref:</p>
+        <code>
+          const count = ref(0)<br>
+          console.log(count.value) // 访问 .value 属性<br>
+          count.value++ // 必须使用 .value 修改
+        </code>
+      </div>
+      
+      <div class="code">
+        <p>在 JavaScript 中使用 reactive:</p>
+        <code>
+          const state = reactive({ count: 0 })<br>
+          console.log(state.count) // 直接访问属性<br>
+          state.count++ // 直接修改属性
+        </code>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Vue 3 响应式示例
+    const app = Vue.createApp({
+      data() {
+        return {
+          count: 0,
+          user: {
+            name: '张三',
+            age: 30,
+            address: {
+              city: '北京',
+              street: '朝阳区'
+            }
+          },
+          items: ['苹果', '香蕉', '橙子']
+        }
+      },
+      computed: {
+        doubleCount() {
+          return this.count * 2;
+        }
+      },
+      methods: {
+        increment() {
+          this.count++;
+        },
+        reset() {
+          this.count = 0;
+        },
+        updateUser() {
+          // 更新嵌套对象属性
+          this.user.name = '李四';
+          this.user.age = 28;
+          this.user.address.city = '上海';
+        },
+        addItem() {
+          const fruits = ['草莓', '葡萄', '西瓜', '芒果'];
+          const randomFruit = fruits[Math.floor(Math.random() * fruits.length)];
+          this.items.push(randomFruit);
+        },
+        removeItem() {
+          if (this.items.length > 0) {
+            this.items.pop();
+          }
+        },
+        replaceItems() {
+          // 替换整个数组
+          this.items = ['梨', '桃', '柿子'];
+        }
+      }
+    })
+    app.mount('#reactivity-demo')
+    
+    // Vue 3 组合式 API 示例
+    const { ref, reactive } = Vue;
+    
+    const compositionApp = Vue.createApp({
+      setup() {
+        // ref - 用于基本类型的响应式引用
+        const refValue = ref(100);
+        
+        // reactive - 用于对象的响应式代理
+        const reactiveObj = reactive({
+          count: 200,
+          message: '这是一个响应式对象'
+        });
+        
+        // 更新函数
+        function updateRef() {
+          // 使用 .value 修改 ref 值
+          refValue.value += 10;
+        }
+        
+        function updateReactive() {
+          // 直接修改 reactive 对象属性
+          reactiveObj.count += 10;
+          reactiveObj.message = `计数: ${reactiveObj.count}`;
+        }
+        
+        // 暴露给模板
+        return {
+          refValue,
+          reactiveObj,
+          updateRef,
+          updateReactive
+        };
+      }
+    })
+    compositionApp.mount('#composition-api-demo')
+  </script>
+</body>
+</html> 
