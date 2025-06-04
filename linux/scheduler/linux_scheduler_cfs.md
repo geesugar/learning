@@ -4,10 +4,14 @@
 - [概述](#概述)
 - [CFS调度原理](#cfs调度原理)
 - [任务组调度机制](#任务组调度机制)
+- [CFS与cgroup深度关系解析](#cfs与cgroup深度关系解析)
+- [权重体系与层次化控制](#权重体系与层次化控制)
+- [CPU性能控制机制](#cpu性能控制机制)
 - [调度域与多核协调](#调度域与多核协调)
 - [CFS带宽控制](#cfs带宽控制)
 - [cgroup配置管理](#cgroup配置管理)
 - [性能监控与调优](#性能监控与调优)
+- [/proc/PID/sched详解](#proc-pid-sched详解)
 - [实践案例](#实践案例)
 
 ## 概述
@@ -145,904 +149,1141 @@ for_each_sched_entity(se) {
     └── kubelet.service/           # 系统服务
 ```
 
-## 调度域与多核协调
+## CFS与cgroup深度关系解析
 
-### 调度域概念
+### 职责分工与架构设计
 
-调度域（Scheduling Domains）是Linux CFS调度器中用于组织多核CPU层次化调度结构的核心机制。调度域解决了多核系统中的关键问题：
+CFS调度器与cgroup系统形成了完整的CPU资源管理体系，两者职责明确、分工合作：
 
-- **多核负载均衡**：在不同层次的CPU之间进行智能负载均衡
-- **缓存局部性优化**：优化缓存亲和性和NUMA亲和性
-- **调度开销最小化**：减少跨域调度的性能开销
-- **拓扑感知调度**：根据硬件拓扑进行调度决策
+#### CFS调度器职责
+- **核心调度算法**：实现基于vruntime的公平调度算法
+- **任务选择机制**：从红黑树中选择合适的任务运行
+- **时间片管理**：动态计算和分配CPU时间片
+- **多核协调**：通过调度域实现跨CPU负载均衡
+- **抢占处理**：处理任务抢占和上下文切换
 
-### 调度域数据结构
+#### cgroup系统职责
+- **层次化组织**：提供进程的层次化分组管理
+- **资源限制**：定义各组的CPU使用限制和权重
+- **接口暴露**：通过文件系统接口暴露配置参数
+- **统计监控**：收集和报告各组的资源使用统计
+- **权限管理**：控制对资源配置的访问权限
 
-```c
-struct sched_domain {
-    struct sched_domain __rcu *parent;    // 父域
-    struct sched_domain __rcu *child;     // 子域
-    struct sched_group *groups;           // 调度组
-    unsigned long min_interval;          // 最小均衡间隔
-    unsigned long max_interval;          // 最大均衡间隔
-    unsigned int imbalance_pct;          // 不平衡阈值百分比
-    int flags;                           // 域标志
-    int level;                           // 域层级
-    unsigned long span[];                // CPU掩码
-};
-```
-
-### 调度域层次结构
-
-以典型的64核NUMA系统为例：
-
-```
-Level 4: NUMA域
-    └── span: [0-63] (所有CPU)
-    └── flags: SD_NUMA, SD_SERIALIZE
-    └── 特性: 跨NUMA节点负载均衡
-    
-Level 3: Package域 (物理CPU包)
-    └── span: [0-31] [32-63] (每个物理CPU包)
-    └── flags: SD_BALANCE_NEWIDLE, SD_BALANCE_EXEC
-    └── 特性: 包间负载均衡
-    
-Level 2: LLC域 (Last Level Cache)
-    └── span: [0-15] [16-31] [32-47] [48-63] (共享缓存的核心)
-    └── flags: SD_SHARE_PKG_RESOURCES
-    └── 特性: 共享L3缓存的核心组
-    
-Level 1: SMT域 (超线程)
-    └── span: [0,1] [2,3] ... [62,63] (同一物理核心的超线程)
-    └── flags: SD_SHARE_CPUCAPACITY
-    └── 特性: 共享执行单元
-```
-
-### 调度域标志详解
-
-#### 负载均衡标志
+### 数据结构映射关系
 
 ```c
-// 主要调度域标志
-#define SD_BALANCE_NEWIDLE    0x01    // CPU即将空闲时进行负载均衡
-#define SD_BALANCE_EXEC       0x02    // exec系统调用时进行负载均衡
-#define SD_BALANCE_FORK       0x04    // fork进程时进行负载均衡
-#define SD_BALANCE_WAKE       0x08    // 任务唤醒时进行负载均衡
-```
-
-#### 拓扑特性标志
-
-```c
-// 拓扑和资源共享标志
-#define SD_WAKE_AFFINE           0x10    // 唤醒亲和性
-#define SD_SHARE_CPUCAPACITY     0x400   // 共享CPU能力（SMT域）
-#define SD_SHARE_PKG_RESOURCES   0x800   // 共享包资源（缓存域）
-#define SD_ASYM_CPUCAPACITY      0x20    // 不对称CPU能力
-#define SD_NUMA                  0x2000  // NUMA域标志
-#define SD_SERIALIZE             0x1000  // 串行化负载均衡
-```
-
-### 多核协调工作机制
-
-#### 每CPU数据结构
-
-```c
-// 每个CPU都有独立的运行队列和调度域
-DECLARE_PER_CPU_SHARED_ALIGNED(struct rq, runqueues);
-
-// 特殊调度域指针（每CPU）
-DECLARE_PER_CPU(struct sched_domain __rcu *, sd_llc);          // 最后级缓存域
-DECLARE_PER_CPU(struct sched_domain __rcu *, sd_numa);        // NUMA域
-DECLARE_PER_CPU(struct sched_domain __rcu *, sd_asym_packing); // 不对称打包域
-DECLARE_PER_CPU(struct sched_domain __rcu *, sd_asym_cpucapacity); // 不对称能力域
-```
-
-#### 任务组在多CPU上的组织
-
-```c
+// cgroup与调度器的核心映射
 struct task_group {
-    struct sched_entity **se;        // 每CPU的调度实体数组
-    struct cfs_rq **cfs_rq;          // 每CPU的CFS运行队列数组
-    // 每个CPU上都有对应的se和cfs_rq
+    // 与cgroup的关联
+    struct cgroup_subsys_state css;     // cgroup子系统状态
+    
+    // CFS相关数据结构
+    struct sched_entity **se;           // 每CPU的组调度实体
+    struct cfs_rq **cfs_rq;            // 每CPU的CFS运行队列
+    
+    // 权重和带宽控制
+    unsigned long shares;               // 对应cpu.weight
+    struct cfs_bandwidth cfs_bandwidth; // 对应cpu.max
+    
+    // 层次关系
+    struct task_group *parent;          // 父任务组
+    struct list_head list;              // 同级任务组链表
+    struct list_head children;          // 子任务组链表
 };
 
-// 任务组SE在调度域中的分布示例
-CPU0: tg->se[0] -> 在CPU0的CFS队列中作为组调度实体
-CPU1: tg->se[1] -> 在CPU1的CFS队列中作为组调度实体
-...
-CPU63: tg->se[63] -> 在CPU63的CFS队列中作为组调度实体
-```
-
-### 负载均衡机制
-
-#### 负载均衡触发条件
-
-```c
-// 负载均衡触发时机
-enum cpu_idle_type {
-    CPU_IDLE,         // CPU空闲时
-    CPU_NOT_IDLE,     // CPU繁忙时的周期性均衡
-    CPU_NEWLY_IDLE,   // CPU即将空闲时
-    CPU_MAX_IDLE_TYPES
-};
-```
-
-#### 负载均衡算法
-
-```c
-// 简化的负载均衡逻辑
-static int load_balance(int this_cpu, struct rq *this_rq,
-                       struct sched_domain *sd, enum cpu_idle_type idle)
-{
-    struct sched_group *group;
-    struct rq *busiest;
-    unsigned long moved = 0;
+// cgroup目录对应的任务组
+struct cgroup {
+    struct task_group *tg;              // 关联的任务组
+    struct cgroup *parent;              // 父cgroup
+    struct list_head children;          // 子cgroup列表
     
-    // 1. 找到最繁忙的调度组
-    group = find_busiest_group(sd, this_cpu, &imbalance, idle);
-    if (!group)
-        goto out_balanced;
-    
-    // 2. 找到组内最繁忙的CPU
-    busiest = find_busiest_queue(sd, group, idle, this_cpu);
-    if (!busiest)
-        goto out_balanced;
-    
-    // 3. 执行任务迁移
-    if (busiest != this_rq) {
-        moved = move_tasks(this_rq, this_cpu, busiest, 
-                          imbalance, sd, idle);
-    }
-    
-    return moved;
-}
-```
-
-#### 任务迁移策略
-
-```c
-// 任务迁移决策
-static int can_migrate_task(struct task_struct *p, int dst_cpu)
-{
-    // 检查CPU亲和性
-    if (!cpumask_test_cpu(dst_cpu, &p->cpus_allowed))
-        return 0;
-    
-    // 检查是否正在运行
-    if (task_running(task_rq(p), p))
-        return 0;
-    
-    // 检查缓存热度
-    if (task_hot(p, rq_clock_task(task_rq(p))))
-        return 0;
-    
-    return 1;
-}
-```
-
-### 调度域构建过程
-
-#### 拓扑层级定义
-
-```c
-// 默认调度域拓扑层级
-static struct sched_domain_topology_level default_topology[] = {
-#ifdef CONFIG_SCHED_SMT
-    { cpu_smt_mask, cpu_smt_flags, SD_INIT_NAME(SMT) },
-#endif
-#ifdef CONFIG_SCHED_MC
-    { cpu_coregroup_mask, cpu_core_flags, SD_INIT_NAME(MC) },
-#endif
-#ifdef CONFIG_NUMA
-    { cpu_numa_mask, SD_INIT_NAME(NUMA) },
-#endif
-    { NULL, },
+    // CPU控制器相关文件
+    struct cftype cpu_weight_cftype;    // cpu.weight文件类型
+    struct cftype cpu_max_cftype;       // cpu.max文件类型
+    struct cftype cpu_stat_cftype;      // cpu.stat文件类型
 };
 ```
 
-#### 动态构建流程
+### 层次化调度的实现机制
+
+#### 1. 三级调度体系
+
+```
+系统级调度
+└── cgroup.slice (系统服务)
+    └── kubelet.service
+        └── task1, task2, task3...
+
+用户级调度  
+└── user.slice
+    └── user-1000.slice (用户进程)
+        └── task1, task2, task3...
+
+容器级调度
+└── machine.slice  
+    └── docker-xxx.scope (容器)
+        └── task1, task2, task3...
+```
+
+#### 2. 调度决策流程
 
 ```c
-// 调度域构建的关键步骤
-static int build_sched_domains(const struct cpumask *cpu_map, 
-                              struct sched_domain_attr *attr)
+// 简化的层次化调度选择
+struct sched_entity *pick_next_entity_fair(struct cfs_rq *cfs_rq)
 {
-    // 1. 为每个CPU构建层次化调度域
-    for_each_cpu(i, cpu_map) {
-        struct sched_domain_topology_level *tl;
-        sd = NULL;
-        
-        // 2. 按拓扑层级构建
-        for_each_sd_topology(tl) {
-            sd = build_sched_domain(tl, cpu_map, attr, sd, i);
-            
-            // 3. 设置域标志
-            if (tl->flags & SDTL_OVERLAP)
-                sd->flags |= SD_OVERLAP;
-        }
+    struct sched_entity *se = __pick_first_entity(cfs_rq);
+    
+    // 如果是组调度实体，需要进入下一层
+    if (entity_is_task(se)) {
+        return se;  // 找到具体任务
     }
     
-    // 4. 构建调度组
-    for_each_cpu(i, cpu_map) {
-        for (sd = *per_cpu_ptr(d.sd, i); sd; sd = sd->parent) {
-            build_sched_groups(sd, i);
-        }
+    // 组调度实体，进入组内调度
+    struct cfs_rq *group_cfs_rq = group_cfs_rq_of_se(se);
+    return pick_next_entity_fair(group_cfs_rq);
+}
+```
+
+#### 3. vruntime的层次化管理
+
+```c
+// 不同层次的vruntime计算
+void update_curr_fair(struct cfs_rq *cfs_rq)
+{
+    struct sched_entity *curr = cfs_rq->curr;
+    u64 delta_exec = now - curr->exec_start;
+    
+    // 更新当前层次的vruntime
+    curr->vruntime += calc_delta_fair(delta_exec, curr);
+    
+    // 如果是组调度实体，还需要更新父层次
+    if (entity_is_task(curr)) {
+        // 叶子任务，更新完成
+        return;
     }
     
-    // 5. 将域附加到CPU运行队列
-    for_each_cpu(i, cpu_map) {
-        cpu_attach_domain(sd, d.rd, i);
+    // 组调度实体，向上传播vruntime更新
+    struct task_group *tg = se_to_tg(curr);
+    struct sched_entity *parent_se = tg->parent->se[cpu];
+    if (parent_se) {
+        update_curr_fair(cfs_rq_of(parent_se));
     }
 }
 ```
 
-### 调度域与任务组的协调
+### cgroup配置到调度器的传播
 
-#### 层次化调度协调
+#### 1. cpu.weight配置传播
 
 ```c
-// CFS任务选择中的多层协调
-static struct task_struct *
-pick_next_task_fair(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+// cpu.weight写入处理
+static int cpu_weight_write_u64(struct cgroup_subsys_state *css, 
+                                struct cftype *cftype, u64 weight)
 {
-    struct cfs_rq *cfs_rq = &rq->cfs;
-    struct sched_entity *se;
+    struct task_group *tg = css_tg(css);
     
-    // 层次化遍历：从顶层到具体任务
-    for_each_sched_entity(se) {
-        cfs_rq = cfs_rq_of(se);
+    // 更新任务组权重
+    tg->shares = scale_load(weight);
+    
+    // 更新每个CPU上的调度实体权重
+    for_each_possible_cpu(i) {
+        struct sched_entity *se = tg->se[i];
+        update_load_set(&se->load, tg->shares);
         
-        // 在当前层次选择最优调度实体
-        se = pick_next_entity(cfs_rq, curr);
-        
-        if (entity_is_task(se)) {
-            // 找到具体任务
-            return task_of(se);
-        }
-        
-        // 如果是组调度实体，进入下一层
-        cfs_rq = group_cfs_rq(se);
+        // 重新计算CFS队列权重
+        struct cfs_rq *cfs_rq = tg->cfs_rq[i];
+        update_cfs_rq_load_avg(cfs_rq);
     }
+    
+    return 0;
 }
 ```
 
-#### 跨CPU的任务组协调
+#### 2. cpu.max配置传播
 
 ```c
-// 任务组在多CPU间的负载均衡
-static int balance_fair(struct rq *rq, struct task_struct *prev, 
-                       struct rq_flags *rf)
+// cpu.max写入处理  
+static int cpu_max_write(struct cgroup_subsys_state *css,
+                        struct cftype *cftype, char *buf)
 {
-    if (rq->nr_running)
-        return 1;
+    struct task_group *tg = css_tg(css);
+    u64 quota, period, burst = 0;
     
-    // 尝试从其他CPU拉取任务
-    for_each_domain(rq->cpu, sd) {
-        if (sd->flags & SD_BALANCE_NEWIDLE) {
-            // 在该调度域内进行负载均衡
-            pulled_task = load_balance(rq->cpu, rq, sd, CPU_NEWLY_IDLE);
-            if (pulled_task)
-                break;
-        }
-    }
+    // 解析配置 "quota period [burst]"
+    parse_cpu_max(buf, &quota, &period, &burst);
     
-    return pulled_task;
+    // 更新带宽控制参数
+    tg->cfs_bandwidth.quota = quota;
+    tg->cfs_bandwidth.period = period;
+    tg->cfs_bandwidth.burst = burst;
+    
+    // 启动带宽控制
+    start_cfs_bandwidth(&tg->cfs_bandwidth);
+    
+    return 0;
 }
 ```
 
-### 查看调度域信息的方法
+### 实际运行时的协调机制
 
-#### 系统文件方法（需要CONFIG_SCHED_DEBUG=y）
+#### 1. 调度时的层次化决策
 
 ```bash
-# 查看调度域结构（如果支持）
-ls /proc/sys/kernel/sched_domain/cpu0/
-# 输出：domain0  domain1  domain2  domain3
-
-# 查看域的详细信息
-for domain in /proc/sys/kernel/sched_domain/cpu0/domain*; do
-    echo "=== $(basename $domain) ==="
-    echo "名称: $(cat $domain/name)"
-    echo "标志: $(cat $domain/flags)"
-    echo "最小间隔: $(cat $domain/min_interval)ms"
-    echo "最大间隔: $(cat $domain/max_interval)ms"
-done
+# 示例：三层cgroup结构的调度
+/sys/fs/cgroup/
+├── production.slice/          # L1: 生产环境 (weight=800)
+│   ├── web.service/          # L2: Web服务 (weight=600)  
+│   │   ├── nginx-1           # L3: 具体进程 (nice=0)
+│   │   └── nginx-2           # L3: 具体进程 (nice=0)
+│   └── db.service/           # L2: 数据库服务 (weight=400)
+│       ├── mysql-1           # L3: 具体进程 (nice=-5)
+│       └── mysql-2           # L3: 具体进程 (nice=0)
+└── development.slice/         # L1: 开发环境 (weight=200)
+    └── test.service/          # L2: 测试服务 (weight=100)
+        └── test-app           # L3: 具体进程 (nice=5)
 ```
 
-#### 替代方法（无调试支持时）
+**最终CPU分配计算**：
+```
+nginx-1进程的CPU分配 = (800/1000) × (600/1000) × (1024/1024) = 48%
+mysql-1进程的CPU分配 = (800/1000) × (400/1000) × (1448/1472) ≈ 31.4%
+test-app进程的CPU分配 = (200/1000) × (100/100) × (335/335) = 20%
+```
+
+#### 2. 监控和调试接口
 
 ```bash
-# 通过CPU拓扑推断调度域
-echo "=== CPU拓扑分析 ==="
-lscpu | grep -E "(CPU\(s\)|Thread|Core|Socket|NUMA)"
-
-# 查看超线程拓扑（SMT域）
-cat /sys/devices/system/cpu/cpu0/topology/thread_siblings_list
-
-# 查看缓存共享拓扑（LLC域）
-cat /sys/devices/system/cpu/cpu0/cache/index3/shared_cpu_list
-
-# 查看NUMA拓扑（NUMA域）
-for node in /sys/devices/system/node/node*; do
-    if [ -d "$node" ]; then
-        node_id=$(basename $node | sed 's/node//')
-        cpus=$(cat $node/cpulist)
-        echo "NUMA节点 $node_id: CPU $cpus"
+# 查看层次化调度状态
+#!/bin/bash
+show_cgroup_hierarchy() {
+    local cgroup_path=$1
+    local level=${2:-0}
+    local indent=$(printf "%*s" $((level * 2)) "")
+    
+    echo "${indent}$(basename $cgroup_path)"
+    
+    # 显示权重和使用量
+    if [ -f "$cgroup_path/cpu.weight" ]; then
+        local weight=$(cat $cgroup_path/cpu.weight)
+        echo "${indent}  weight: $weight"
     fi
-done
+    
+    if [ -f "$cgroup_path/cpu.stat" ]; then
+        local usage=$(grep usage_usec $cgroup_path/cpu.stat | cut -d' ' -f2)
+        echo "${indent}  usage: ${usage}μs"
+    fi
+    
+    # 递归显示子cgroup
+    for child in $cgroup_path/*/; do
+        [ -d "$child" ] && show_cgroup_hierarchy "$child" $((level + 1))
+    done
+}
+
+# 使用示例
+show_cgroup_hierarchy /sys/fs/cgroup
 ```
 
-### 调度域性能调优
+这种深度集成确保了cgroup的配置能够精确地转换为调度器的行为，实现了从用户配置到内核调度的完整链路控制。
 
-#### 负载均衡参数调整
+## 权重体系与层次化控制
+
+### 双重权重机制
+
+Linux CFS调度器实现了两级权重控制体系，实现了粗粒度和细粒度的精确资源控制：
+
+#### 第一级：cgroup cpu.weight (粗粒度控制)
+
+**作用范围**：任务组（cgroup）级别的资源分配
+**控制对象**：任务组的group scheduling entity权重
+**影响机制**：决定任务组在系统中的CPU分配比例
+
+```c
+// cgroup权重到调度器权重的转换
+static unsigned long cpu_shares_to_weight(unsigned long shares)
+{
+    // cgroup v2: cpu.weight范围 [1, 10000]，默认100
+    // 转换为内核权重：weight = shares * 1024 / 100
+    return scale_load(DIV_ROUND_UP(shares * 1024, 100));
+}
+
+// 任务组权重应用
+struct task_group {
+    unsigned long shares;           // 对应cpu.weight值
+    struct sched_entity **se;       // 每CPU的组调度实体
+};
+
+// 更新组调度实体权重
+void update_group_weight(struct task_group *tg)
+{
+    for_each_possible_cpu(cpu) {
+        struct sched_entity *se = tg->se[cpu];
+        se->load.weight = cpu_shares_to_weight(tg->shares);
+    }
+}
+```
+
+#### 第二级：进程 se.load.weight (细粒度控制)
+
+**作用范围**：单个进程级别的资源分配
+**控制对象**：进程调度实体的权重
+**影响机制**：决定进程在任务组内的CPU分配比例
+
+```c
+// nice值到权重的映射表
+static const int prio_to_weight[40] = {
+    /* -20 */     88761,     71755,     56483,     46273,     36291,
+    /* -15 */     29154,     23254,     18705,     14949,     11916,
+    /* -10 */      9548,      7620,      6100,      4904,      3906,
+    /*  -5 */      3121,      2501,      1991,      1586,      1277,
+    /*   0 */      1024,       820,       655,       526,       423,
+    /*   5 */       335,       272,       215,       172,       137,
+    /*  10 */       110,        87,        70,        56,        45,
+    /*  15 */        36,        29,        23,        18,        15,
+};
+
+// 进程权重计算
+static void set_load_weight(struct task_struct *p, bool update_load)
+{
+    int prio = p->static_prio - MAX_RT_PRIO;
+    struct load_weight *load = &p->se.load;
+    
+    // 根据nice值设置权重
+    load->weight = scale_load(prio_to_weight[prio]);
+    load->inv_weight = prio_to_wmult[prio];
+}
+```
+
+### 层次化CPU分配计算
+
+#### 数学模型
+
+对于进程P在cgroup C中的最终CPU分配：
+
+```
+CPU_allocation(P) = System_CPU × 
+    (Weight_cgroup(C) / Sum_weights_all_cgroups) × 
+    (Weight_process(P) / Sum_weights_in_cgroup(C))
+```
+
+#### 实际计算示例
+
+假设8核系统中的配置：
 
 ```bash
-# 调整负载均衡间隔（如果支持）
-echo 5 > /proc/sys/kernel/sched_domain/cpu0/domain0/min_interval
-echo 10 > /proc/sys/kernel/sched_domain/cpu0/domain0/max_interval
-
-# 调整不平衡阈值
-echo 125 > /proc/sys/kernel/sched_domain/cpu0/domain0/imbalance_pct
+# 系统配置
+/sys/fs/cgroup/
+├── high-priority/     # cpu.weight = 400
+│   ├── proc-A        # nice = -10 (weight = 9548)
+│   └── proc-B        # nice = 0   (weight = 1024)
+├── normal-priority/   # cpu.weight = 100  
+│   ├── proc-C        # nice = 0   (weight = 1024)
+│   └── proc-D        # nice = 5   (weight = 335)
+└── low-priority/      # cpu.weight = 50
+    └── proc-E        # nice = 10  (weight = 110)
 ```
 
-#### 全局调度参数
+**第一级分配（cgroup间）**：
+```
+total_cgroup_weight = 400 + 100 + 50 = 550
 
-```bash
-# CFS调度参数调优
-echo 4000000 > /proc/sys/kernel/sched_latency_ns           # 调度延迟
-echo 500000 > /proc/sys/kernel/sched_min_granularity_ns    # 最小调度粒度
-echo 1000000 > /proc/sys/kernel/sched_wakeup_granularity_ns # 唤醒抢占粒度
-
-# NUMA均衡参数
-echo 1 > /proc/sys/kernel/numa_balancing                   # 启用NUMA均衡
+high-priority分配 = 8核 × (400/550) ≈ 5.82核
+normal-priority分配 = 8核 × (100/550) ≈ 1.45核  
+low-priority分配 = 8核 × (50/550) ≈ 0.73核
 ```
 
-#### 任务亲和性设置
+**第二级分配（cgroup内）**：
+```
+# high-priority组内分配
+high_group_weight = 9548 + 1024 = 10572
+proc-A分配 = 5.82核 × (9548/10572) ≈ 5.26核
+proc-B分配 = 5.82核 × (1024/10572) ≈ 0.56核
 
-```bash
-# 设置进程CPU亲和性（绑定到特定调度域）
-taskset -c 0-15 ./cpu_intensive_app     # 绑定到LLC域
-taskset -c 0-31 ./memory_app            # 绑定到Package域
-numactl --cpunodebind=0 ./numa_app      # 绑定到NUMA节点
+# normal-priority组内分配  
+normal_group_weight = 1024 + 335 = 1359
+proc-C分配 = 1.45核 × (1024/1359) ≈ 1.09核
+proc-D分配 = 1.45核 × (335/1359) ≈ 0.36核
+
+# low-priority组内分配
+proc-E分配 = 0.73核 × (110/110) = 0.73核
 ```
 
-### 调度域监控脚本
+### 权重动态调整机制
 
-#### 完整的调度域分析脚本
+#### 运行时权重更新
+
+```c
+// 动态调整cgroup权重
+static void update_cgroup_weight_runtime(struct task_group *tg, 
+                                       unsigned long new_weight)
+{
+    unsigned long old_weight = tg->shares;
+    tg->shares = new_weight;
+    
+    // 更新每个CPU上的组调度实体
+    for_each_possible_cpu(cpu) {
+        struct sched_entity *se = tg->se[cpu];
+        struct cfs_rq *cfs_rq = cfs_rq_of(se);
+        
+        raw_spin_lock(&cfs_rq->rq->lock);
+        
+        // 更新权重
+        update_load_set(&se->load, scale_load(new_weight));
+        
+        // 重新计算队列总权重
+        update_cfs_rq_load_avg(cfs_rq);
+        
+        // 触发重新调度
+        resched_curr(cpu_of(cfs_rq->rq));
+        
+        raw_spin_unlock(&cfs_rq->rq->lock);
+    }
+}
+
+// 动态调整进程nice值
+void set_user_nice(struct task_struct *p, long nice)
+{
+    struct rq *rq = task_rq_lock(p);
+    
+    // 更新进程优先级和权重
+    p->static_prio = NICE_TO_PRIO(nice);
+    set_load_weight(p, true);
+    
+    // 如果进程正在运行，重新计算vruntime
+    if (task_current(rq, p)) {
+        struct cfs_rq *cfs_rq = cfs_rq_of(&p->se);
+        update_curr(cfs_rq);
+        
+        // 重新normalize vruntime
+        place_entity(cfs_rq, &p->se, 0);
+    }
+    
+    task_rq_unlock(rq);
+}
+```
+
+#### 权重变化的影响传播
+
+```c
+// 权重变化对vruntime的影响
+static void reweight_entity(struct cfs_rq *cfs_rq, struct sched_entity *se,
+                           unsigned long weight)
+{
+    unsigned long old_weight = se->load.weight;
+    
+    if (se->on_rq) {
+        // 从红黑树中移除
+        dequeue_entity(cfs_rq, se, DEQUEUE_SAVE | DEQUEUE_MOVE);
+    }
+    
+    // 更新权重
+    update_load_set(&se->load, weight);
+    
+    // 调整vruntime以保持公平性
+    if (se->on_rq) {
+        // vruntime需要按权重比例调整
+        se->vruntime = div_u64(se->vruntime * old_weight, weight);
+        
+        // 重新加入红黑树
+        enqueue_entity(cfs_rq, se, ENQUEUE_RESTORE | ENQUEUE_MOVE);
+    }
+}
+```
+
+### 权重监控和调试
+
+#### 权重状态查看脚本
 
 ```bash
 #!/bin/bash
-# sched_domain_monitor.sh - 调度域监控脚本
+# cfs_weight_monitor.sh - CFS权重监控脚本
 
-echo "==============================================="
-echo "           调度域与多核协调分析"
-echo "==============================================="
+show_weight_hierarchy() {
+    echo "=== CFS权重层次结构 ==="
+    
+    # 显示cgroup权重
+    find /sys/fs/cgroup -name "cpu.weight" -type f | while read -r weight_file; do
+        local cgroup_path=$(dirname "$weight_file")
+        local cgroup_name=$(basename "$cgroup_path")
+        local weight=$(cat "$weight_file")
+        local procs_count=$(cat "$cgroup_path/cgroup.procs" | wc -l)
+        
+        echo "cgroup: $cgroup_name"
+        echo "  权重: $weight"
+        echo "  进程数: $procs_count"
+        
+        # 显示该cgroup中进程的nice值分布
+        if [ $procs_count -gt 0 ]; then
+            echo "  进程nice值分布:"
+            cat "$cgroup_path/cgroup.procs" | while read -r pid; do
+                if [ -n "$pid" ] && [ -d "/proc/$pid" ]; then
+                    local nice=$(ps -o nice= -p "$pid" 2>/dev/null | tr -d ' ')
+                    local comm=$(ps -o comm= -p "$pid" 2>/dev/null)
+                    echo "    PID $pid ($comm): nice=$nice"
+                fi
+            done
+        fi
+        echo
+    done
+}
 
-# 1. 基本系统信息
-echo -e "\n1. 系统基本信息:"
-echo "内核版本: $(uname -r)"
-echo "CPU型号: $(grep "model name" /proc/cpuinfo | head -1 | cut -d: -f2 | xargs)"
-lscpu | grep -E "(CPU\(s\)|Core\(s\)|Socket\(s\)|NUMA)"
-
-# 2. 推断调度域结构
-echo -e "\n2. 推断的调度域结构:"
-total_cpus=$(nproc)
-physical_cpus=$(grep "physical id" /proc/cpuinfo | sort -u | wc -l 2>/dev/null || echo 1)
-
-# SMT域分析
-if [ -f "/sys/devices/system/cpu/cpu0/topology/thread_siblings_list" ]; then
-    siblings=$(cat /sys/devices/system/cpu/cpu0/topology/thread_siblings_list)
-    echo "  Level 1 - SMT域: CPU $siblings"
-    echo "    特性: 共享执行单元(超线程)"
-    echo "    标志: SD_SHARE_CPUCAPACITY"
-fi
-
-# LLC域分析
-if [ -f "/sys/devices/system/cpu/cpu0/cache/index3/shared_cpu_list" ]; then
-    l3_shared=$(cat /sys/devices/system/cpu/cpu0/cache/index3/shared_cpu_list)
-    echo "  Level 2 - LLC域: CPU $l3_shared"
-    echo "    特性: 共享L3缓存"
-    echo "    标志: SD_SHARE_PKG_RESOURCES"
-fi
-
-# Package域分析
-if [ -f "/sys/devices/system/cpu/cpu0/topology/package_cpus_list" ]; then
-    package_cpus=$(cat /sys/devices/system/cpu/cpu0/topology/package_cpus_list)
-    echo "  Level 3 - Package域: CPU $package_cpus"
-    echo "    特性: 物理CPU包"
-    echo "    标志: SD_BALANCE_NEWIDLE, SD_BALANCE_EXEC"
-fi
-
-# NUMA域分析
-echo "  Level 4 - NUMA域:"
-for node in /sys/devices/system/node/node*; do
-    if [ -d "$node" ]; then
-        node_id=$(basename $node | sed 's/node//')
-        cpus=$(cat $node/cpulist 2>/dev/null || echo "unknown")
-        echo "    NUMA节点 $node_id: CPU $cpus"
-    fi
-done
-echo "    特性: 跨NUMA节点"
-echo "    标志: SD_NUMA, SD_SERIALIZE"
-
-# 3. 负载均衡监控
-echo -e "\n3. 负载均衡状态:"
-echo "当前负载: $(uptime | awk -F'load average:' '{print $2}')"
-
-# CPU使用率分析
-echo -e "\n4. CPU使用率分布:"
-mpstat -P ALL 1 1 | grep -E "(Average|CPU)" | tail -n +2
-
-# 5. 任务组在多CPU上的分布
-echo -e "\n5. 任务组CPU分布:"
-if [ -f "/sys/fs/cgroup/kubepods/cpu.stat" ]; then
-    echo "kubepods CPU统计:"
-    cat /sys/fs/cgroup/kubepods/cpu.stat | grep -E "(usage_usec|user_usec|system_usec)"
-fi
-
-# 6. 调度域参数（如果可用）
-echo -e "\n6. 调度域参数:"
-if [ -d "/proc/sys/kernel/sched_domain" ]; then
-    echo "✓ 调度域调试支持已启用"
-    for domain in /proc/sys/kernel/sched_domain/cpu0/domain*; do
-        if [ -d "$domain" ]; then
-            name=$(cat $domain/name 2>/dev/null)
-            flags=$(cat $domain/flags 2>/dev/null)
-            echo "  $name域: 标志=$flags"
+# 权重变化监控
+monitor_weight_changes() {
+    echo "=== 监控权重变化 ==="
+    
+    local temp_file="/tmp/weight_snapshot_$$"
+    
+    # 创建初始快照
+    find /sys/fs/cgroup -name "cpu.weight" -exec cat {} + > "$temp_file.old"
+    
+    while true; do
+        sleep 5
+        find /sys/fs/cgroup -name "cpu.weight" -exec cat {} + > "$temp_file.new"
+        
+        if ! diff -q "$temp_file.old" "$temp_file.new" >/dev/null 2>&1; then
+            echo "[$(date)] 检测到权重变化:"
+            diff "$temp_file.old" "$temp_file.new" || true
+            cp "$temp_file.new" "$temp_file.old"
         fi
     done
-else
-    echo "✗ 调度域调试支持未启用"
-fi
+    
+    rm -f "$temp_file.old" "$temp_file.new"
+}
 
-echo -e "\n==============================================="
+# CPU分配效果验证
+verify_cpu_allocation() {
+    echo "=== 验证CPU分配效果 ==="
+    
+    # 运行CPU密集型测试
+    for cgroup_dir in /sys/fs/cgroup/*/; do
+        [ -d "$cgroup_dir" ] || continue
+        
+        local cgroup_name=$(basename "$cgroup_dir")
+        local weight=$(cat "$cgroup_dir/cpu.weight" 2>/dev/null || echo "N/A")
+        
+        echo "测试cgroup: $cgroup_name (权重: $weight)"
+        
+        # 启动测试进程
+        stress-ng --cpu 1 --timeout 10s &
+        local stress_pid=$!
+        
+        # 将进程加入cgroup
+        echo $stress_pid > "$cgroup_dir/cgroup.procs" 2>/dev/null || continue
+        
+        # 监控CPU使用率
+        local start_time=$(date +%s)
+        local cpu_usage=0
+        
+        while kill -0 $stress_pid 2>/dev/null; do
+            local cpu_percent=$(ps -o %cpu= -p $stress_pid 2>/dev/null | tr -d ' ')
+            if [ -n "$cpu_percent" ]; then
+                cpu_usage=$cpu_percent
+            fi
+            sleep 1
+        done
+        
+        echo "  实际CPU使用率: ${cpu_usage}%"
+        echo
+    done
+}
+
+# 主函数
+case "${1:-show}" in
+    "show")
+        show_weight_hierarchy
+        ;;
+    "monitor")
+        monitor_weight_changes
+        ;;
+    "verify")
+        verify_cpu_allocation
+        ;;
+    *)
+        echo "用法: $0 [show|monitor|verify]"
+        echo "  show    - 显示权重层次结构"
+        echo "  monitor - 监控权重变化"
+        echo "  verify  - 验证CPU分配效果"
+        ;;
+esac
 ```
 
-## CFS带宽控制
+这个双重权重机制确保了Linux系统能够在不同层次上精确控制CPU资源分配，既满足了系统级的资源隔离需求，又保持了进程级的公平调度特性。
 
-### 核心数据结构
+## CPU性能控制机制
+
+### cpu.uclamp性能控制原理
+
+在cgroup CPU控制中，`cpu.uclamp.*`接口控制的"性能"指的是**CPU频率/电压状态（P-states）**，而不是传统意义上的时间片分配。这是一种基于动态电压频率调节（DVFS）的性能管理机制。
+
+#### 性能概念辨析
+
+**传统认知误区**：
+- ❌ 性能 = 时间片长度
+- ❌ 性能 = CPU使用率百分比
+- ❌ 性能 = 调度优先级
+
+**实际含义**：
+- ✅ 性能 = CPU运行频率档位
+- ✅ 性能 = 处理器电压/频率状态
+- ✅ 性能 = 单位时间内的计算能力
+
+#### CPU频率调节机制（DVFS）
 
 ```c
-struct cfs_bandwidth {
-    raw_spinlock_t    lock;              // 带宽控制锁
-    ktime_t           period;            // 周期时间(默认100ms)
-    u64               quota;             // 每周期配额
-    u64               runtime;           // 当前剩余运行时间
-    u64               burst;             // 突发配额
-    
-    struct hrtimer    period_timer;      // 周期定时器
-    struct hrtimer    slack_timer;       // slack定时器
-    struct list_head  throttled_cfs_rq;  // 被节流的队列
-    
-    // 统计信息
-    int               nr_periods;        // 周期计数
-    int               nr_throttled;      // 节流次数
-    u64               throttled_time;    // 累计节流时间
+// CPU性能状态定义
+struct cpufreq_policy {
+    unsigned int min;           // 最小频率 (MHz)
+    unsigned int max;           // 最大频率 (MHz)  
+    unsigned int cur;           // 当前频率 (MHz)
+    struct cpufreq_governor *governor;  // 调频器
+};
+
+// P-states频率档位示例
+static struct cpu_freq_table freq_table[] = {
+    {0, 800000},   // P4: 0.8GHz (节能模式)
+    {1, 1200000},  // P3: 1.2GHz
+    {2, 1800000},  // P2: 1.8GHz  
+    {3, 2400000},  // P1: 2.4GHz
+    {4, 3200000},  // P0: 3.2GHz (性能模式)
+    {5, CPUFREQ_TABLE_END}
 };
 ```
 
-### 带宽控制机制
-
-#### 1. 配额分配
+#### uclamp与频率控制的映射
 
 ```c
-// 运行时配额分配
-static int assign_cfs_rq_runtime(struct cfs_rq *cfs_rq)
+// utilization clamp到频率的转换
+static unsigned long uclamp_util_to_freq(struct rq *rq, 
+                                        unsigned long util,
+                                        enum uclamp_id clamp_id)
 {
-    struct cfs_bandwidth *cfs_b = tg_cfs_bandwidth(cfs_rq->tg);
+    struct cpufreq_policy *policy = cpufreq_cpu_get(cpu_of(rq));
+    unsigned long freq;
     
-    raw_spin_lock(&cfs_b->lock);
-    
-    // 检查是否有可用配额
-    if (cfs_b->runtime > 0) {
-        u64 amount = min(cfs_b->runtime, sched_cfs_bandwidth_slice());
-        cfs_b->runtime -= amount;
-        cfs_rq->runtime_remaining += amount;
-        ret = 1;
+    // util范围 [0, 1024] 映射到频率范围
+    if (clamp_id == UCLAMP_MIN) {
+        // cpu.uclamp.min: 保证最低频率
+        freq = policy->min + (util * (policy->max - policy->min)) / 1024;
+    } else {
+        // cpu.uclamp.max: 限制最高频率  
+        freq = policy->min + (util * (policy->max - policy->min)) / 1024;
+        freq = min(freq, policy->max);
     }
     
-    raw_spin_unlock(&cfs_b->lock);
-    return ret;
+    return freq;
+}
+
+// 调频器接收uclamp信号
+void schedutil_update_freq(struct update_util_data *hook, u64 time, 
+                          unsigned int flags)
+{
+    struct sugov_cpu *sg_cpu = container_of(hook, struct sugov_cpu, update_util);
+    struct rq *rq = cpu_rq(sg_cpu->cpu);
+    
+    // 获取当前CPU利用率
+    unsigned long util = cpu_util_cfs(rq);
+    
+    // 应用uclamp约束
+    util = uclamp_rq_util_with(rq, util, NULL);
+    
+    // 转换为目标频率
+    unsigned long freq = map_util_freq(util, sg_cpu->max, sg_cpu->cpu);
+    
+    // 请求调频
+    sugov_update_freq(sg_cpu, time, freq);
 }
 ```
 
-#### 2. 节流机制
+### 频率固定性与等效控制
+
+#### CPU频率的短期固定性
+
+现代CPU在极短时间内（微秒级别）确实保持固定频率，但这并不影响uclamp的有效性：
 
 ```c
-// 节流处理
-static bool throttle_cfs_rq(struct cfs_rq *cfs_rq)
+// CPU频率切换的时间特性
+struct freq_switch_timing {
+    u64 switch_latency;     // 频率切换延迟: 10-100μs
+    u64 stable_duration;    // 稳定运行时间: 1-10ms
+    u64 decision_interval;  // 调频决策间隔: 4-20ms
+};
+
+// 在稳定周期内，频率确实固定
+static bool is_freq_stable(u64 time_since_switch) 
 {
-    struct cfs_bandwidth *cfs_b = tg_cfs_bandwidth(cfs_rq->tg);
-    
-    // 尝试获取更多运行时间
-    if (__assign_cfs_rq_runtime(cfs_b, cfs_rq, 1)) {
-        return false;  // 获取成功，无需节流
-    }
-    
-    // 加入节流列表
-    list_add_tail_rcu(&cfs_rq->throttled_list, &cfs_b->throttled_cfs_rq);
-    
-    // 移除所有调度实体
-    dequeue_throttled_entities(cfs_rq);
-    
-    return true;
+    return time_since_switch < switch_timing.stable_duration;
 }
 ```
 
-#### 3. 定时器机制
+#### uclamp的等效控制机制
 
-**周期定时器**：
-```c
-static enum hrtimer_restart sched_cfs_period_timer(struct hrtimer *timer)
-{
-    struct cfs_bandwidth *cfs_b = container_of(timer, struct cfs_bandwidth, period_timer);
-    
-    // 刷新配额
-    __refill_cfs_bandwidth_runtime(cfs_b);
-    
-    // 解除节流
-    distribute_cfs_runtime(cfs_b);
-    
-    return HRTIMER_RESTART;
-}
-```
-
-**Slack定时器**：
-```c
-static void do_sched_cfs_slack_timer(struct cfs_bandwidth *cfs_b)
-{
-    u64 runtime = 0, slice = sched_cfs_bandwidth_slice();
-    
-    // 收集未使用的运行时间
-    collect_slack_runtime(cfs_b, &runtime);
-    
-    // 重新分发给节流的队列
-    if (runtime > slice)
-        distribute_cfs_runtime(cfs_b);
-}
-```
-
-### 突发特性（Burst）
-
-Linux 5.14+引入的burst特性允许短期超过配额：
+当无法精确匹配目标频率时，系统采用**频率+时间片组合控制**：
 
 ```c
-// 带突发的配额刷新
-void __refill_cfs_bandwidth_runtime(struct cfs_bandwidth *cfs_b)
+// 等效性能控制算法
+static void apply_uclamp_control(struct task_struct *p, struct rq *rq)
 {
-    if (cfs_b->quota == RUNTIME_INF)
-        return;
+    unsigned long target_util = uclamp_eff_value(p, UCLAMP_MAX);
+    unsigned long current_freq = cpufreq_quick_get(cpu_of(rq));
+    unsigned long target_freq = util_to_freq(target_util);
+    
+    if (target_freq <= current_freq) {
+        // 目标频率 <= 当前频率，通过时间片限制实现
+        u64 max_runtime = calc_runtime_limit(target_freq, current_freq);
+        p->se.uclamp_runtime_limit = max_runtime;
         
-    cfs_b->runtime += cfs_b->quota;
-    // 允许累积到 quota + burst
-    cfs_b->runtime = min(cfs_b->runtime, cfs_b->quota + cfs_b->burst);
+        // 示例：目标2GHz，当前3GHz
+        // 时间片限制 = (2GHz/3GHz) × 正常时间片 ≈ 67%时间片
+    } else {
+        // 目标频率 > 当前频率，请求提频
+        cpufreq_update_util(rq, SCHED_CPUFREQ_UTIL_UPDATE);
+        p->se.uclamp_runtime_limit = UCLAMP_NO_LIMIT;
+    }
 }
 ```
 
-## cgroup配置管理
+#### 实际效果验证
 
-### cgroup v1 vs cgroup v2
-
-#### cgroup v1配置
-
-```bash
-# 权重配置（shares）
-echo 512 > /sys/fs/cgroup/cpu/mygroup/cpu.shares
-
-# 带宽配置
-echo 100000 > /sys/fs/cgroup/cpu/mygroup/cpu.cfs_period_us    # 100ms周期
-echo 50000  > /sys/fs/cgroup/cpu/mygroup/cpu.cfs_quota_us     # 50ms配额(50%)
-
-# 查看统计
-cat /sys/fs/cgroup/cpu/mygroup/cpu.stat
-```
-
-#### cgroup v2配置
-
-```bash
-# 权重配置（范围1-10000，默认100）
-echo 200 > /sys/fs/cgroup/mygroup/cpu.weight
-
-# 带宽配置（period quota格式）
-echo "100000 50000" > /sys/fs/cgroup/mygroup/cpu.max
-
-# 突发配置（需要内核5.14+）
-echo "100000 50000 25000" > /sys/fs/cgroup/mygroup/cpu.max
-
-# 查看统计
-cat /sys/fs/cgroup/mygroup/cpu.stat
-```
-
-### 配置参数详解
-
-#### cpu.weight参数
-
-```bash
-# 权重值含义
-权重范围: 1-10000
-默认值: 100
-权重比例 = 当前组权重 / 总权重
-
-# 示例：64核系统
-kubepods.weight = 2188
-system.slice.weight = 100
-user.slice.weight = 100
-总权重 = 2388
-
-# kubepods CPU分配比例
-kubepods比例 = 2188/2388 ≈ 91.6%
-理论CPU核心 = 64 × 91.6% ≈ 58.6核
-```
-
-#### cpu.max参数
-
-```bash
-# 格式: "$MAX $PERIOD" 或 "$MAX $PERIOD $BURST"
-"max 100000"          # 无限制，周期100ms
-"50000 100000"        # 50ms配额，100ms周期(50%限制)
-"50000 100000 25000"  # 50ms配额，25ms突发，100ms周期
-
-# 计算CPU使用率
-CPU使用率 = (quota/period) × 100%
-```
-
-### 实时监控
-
-```bash
-# 查看cgroup资源使用
-systemd-cgtop
-
-# 查看CPU统计信息
-cat /sys/fs/cgroup/kubepods/cpu.stat
-# 输出示例：
-# usage_usec 123456789        # 总CPU使用时间(微秒)
-# user_usec 87654321          # 用户态时间
-# system_usec 35802468        # 内核态时间
-# nr_periods 12345            # 经历的周期数
-# nr_throttled 56             # 被节流次数
-# throttled_usec 789012       # 累计节流时间
-
-# 查看节流状态
-find /sys/fs/cgroup -name "cpu.max" -exec echo "=== {} ===" \; -exec cat {} \;
-```
-
-## 性能监控与调优
-
-### 关键性能指标
-
-#### 1. 调度延迟监控
-
-```bash
-# 查看调度统计
-cat /proc/sched_debug | grep "sched_latency\|sched_min_granularity"
-
-# 查看运行队列信息
-cat /proc/sched_debug | grep -A 20 "cfs_rq\["
-
-# 监控上下文切换
-vmstat 1
-# 字段含义：
-# cs: 每秒上下文切换次数
-# r:  运行队列长度
-```
-
-#### 2. CPU利用率分析
-
-```bash
-# 整体CPU使用情况
-top -p 1
-htop
-
-# 按cgroup查看CPU使用
-systemd-cgtop
-
-# 详细的CPU时间分解
-cat /proc/stat | head -1
-# cpu  user nice system idle iowait irq softirq steal guest guest_nice
-```
-
-#### 3. 带宽控制效果
-
-```bash
-# 监控节流情况
-watch "grep throttled /sys/fs/cgroup/*/cpu.stat"
-
-# 计算节流比例
-awk '/nr_periods/ {periods=$2} /nr_throttled/ {throttled=$2} 
-     END {if(periods>0) print "Throttle ratio:", throttled/periods*100"%"}' \
-     /sys/fs/cgroup/kubepods/cpu.stat
-```
-
-### 性能调优建议
-
-#### 1. 权重配置优化
-
-```bash
-# 生产环境推荐权重分配
-kubepods:      800-1500  # 根据工作负载调整
-system.slice:  100-200   # 确保系统服务稳定
-user.slice:    100       # 用户进程标准权重
-
-# 高性能计算场景
-compute.slice: 5000      # 计算密集型任务高权重
-storage.slice: 200       # 存储服务适中权重
-network.slice: 300       # 网络服务较高权重
-```
-
-#### 2. 带宽限制调优
-
-```bash
-# Web服务器场景（限制CPU防止过载）
-echo "150000 100000" > /sys/fs/cgroup/webserver/cpu.max  # 150% CPU
-
-# 批处理任务（后台处理，限制资源使用）
-echo "50000 100000" > /sys/fs/cgroup/batch/cpu.max       # 50% CPU
-
-# 实时任务（需要稳定的CPU资源）
-echo "max 100000" > /sys/fs/cgroup/realtime/cpu.max      # 无限制
-```
-
-#### 3. 内核参数调优
-
-```bash
-# CFS调度参数（/proc/sys/kernel/）
-sched_latency_ns=6000000           # 调度延迟(6ms)
-sched_min_granularity_ns=750000    # 最小调度粒度(0.75ms)
-sched_wakeup_granularity_ns=1000000 # 唤醒抢占粒度(1ms)
-
-# 设置示例
-echo 4000000 > /proc/sys/kernel/sched_latency_ns
-```
-
-## 实践案例
-
-### 案例1：Kubernetes集群CPU管理
-
-#### 问题场景
-- 64核服务器运行Kubernetes集群
-- kubepods cpu.weight=2188，获得91.6%的CPU资源
-- cpu.max="max 100000"，无带宽限制
-
-#### 配置分析
-```bash
-# 当前配置
-cat /sys/fs/cgroup/kubepods/cpu.weight  # 2188
-cat /sys/fs/cgroup/kubepods/cpu.max     # max 100000
-
-# 计算实际分配
-总权重 = kubepods(2188) + system(100) + user(100) = 2388
-kubepods比例 = 2188/2388 = 91.6%
-可用CPU = 64 × 91.6% = 58.6核
-```
-
-#### 监控脚本
 ```bash
 #!/bin/bash
-# monitor_cfs.sh - CFS性能监控脚本
+# uclamp_freq_test.sh - uclamp频率控制测试
 
-echo "=== CFS调度器监控 ==="
-echo "时间: $(date)"
-echo
+test_uclamp_frequency() {
+    local test_cgroup="/sys/fs/cgroup/uclamp-test"
+    
+    # 创建测试cgroup
+    mkdir -p "$test_cgroup"
+    
+    echo "=== uclamp频率控制测试 ==="
+    
+    # 测试场景1：限制最大性能到50%
+    echo "50" > "$test_cgroup/cpu.uclamp.max"
+    echo "0" > "$test_cgroup/cpu.uclamp.min"
+    
+    echo "场景1：限制最大性能到50%"
+    
+    # 启动CPU密集型任务
+    stress-ng --cpu 1 --timeout 10s &
+    local stress_pid=$!
+    echo $stress_pid > "$test_cgroup/cgroup.procs"
+    
+    # 监控频率变化
+    echo "监控CPU频率变化："
+    for i in {1..10}; do
+        local freq=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq)
+        local util=$(cat "$test_cgroup/cpu.stat" | grep usage_usec | awk '{print $2}')
+        echo "  时间${i}s: 频率=${freq}MHz, 累计使用=${util}μs"
+        sleep 1
+    done
+    
+    wait $stress_pid
+    
+    # 测试场景2：提升最小性能到80%
+    echo "80" > "$test_cgroup/cpu.uclamp.min"
+    echo "100" > "$test_cgroup/cpu.uclamp.max"
+    
+    echo "场景2：提升最小性能到80%"
+    
+    # 启动低CPU使用率任务
+    sleep 10 &
+    local sleep_pid=$!
+    echo $sleep_pid > "$test_cgroup/cgroup.procs"
+    
+    # 监控频率提升效果
+    echo "监控低负载下的频率提升："
+    for i in {1..5}; do
+        local freq=$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq)
+        echo "  时间${i}s: 频率=${freq}MHz"
+        sleep 1
+    done
+    
+    kill $sleep_pid 2>/dev/null
+    
+    # 清理
+    rmdir "$test_cgroup"
+}
 
-# CPU使用统计
-echo "--- CPU使用统计 ---"
-cat /sys/fs/cgroup/kubepods/cpu.stat | while read key value; do
-    case $key in
-        usage_usec) echo "总CPU时间: $(($value/1000000))秒" ;;
-        nr_periods) echo "周期数: $value" ;;
-        nr_throttled) echo "节流次数: $value" ;;
-        throttled_usec) echo "节流时间: $(($value/1000))ms" ;;
+# 频率档位查看
+show_freq_levels() {
+    echo "=== CPU频率档位信息 ==="
+    
+    local cpu=0
+    echo "CPU$cpu 可用频率档位："
+    cat /sys/devices/system/cpu/cpu$cpu/cpufreq/scaling_available_frequencies
+    
+    echo "当前调频器："
+    cat /sys/devices/system/cpu/cpu$cpu/cpufreq/scaling_governor
+    
+    echo "频率范围："
+    echo "  最小: $(cat /sys/devices/system/cpu/cpu$cpu/cpufreq/cpuinfo_min_freq)MHz"
+    echo "  最大: $(cat /sys/devices/system/cpu/cpu$cpu/cpufreq/cpuinfo_max_freq)MHz"
+    echo "  当前: $(cat /sys/devices/system/cpu/cpu$cpu/cpufreq/scaling_cur_freq)MHz"
+}
+
+# 执行测试
+show_freq_levels
+test_uclamp_frequency
+```
+
+### uclamp配置实例
+
+#### 典型应用场景配置
+
+```bash
+# 1. 省电模式：限制最大性能
+mkdir -p /sys/fs/cgroup/power-save
+echo "30" > /sys/fs/cgroup/power-save/cpu.uclamp.max  # 限制30%性能
+echo "0" > /sys/fs/cgroup/power-save/cpu.uclamp.min   # 允许最低频率
+
+# 2. 性能模式：保证最小性能  
+mkdir -p /sys/fs/cgroup/high-perf
+echo "80" > /sys/fs/cgroup/high-perf/cpu.uclamp.min   # 保证80%性能
+echo "100" > /sys/fs/cgroup/high-perf/cpu.uclamp.max  # 允许最高频率
+
+# 3. 稳定模式：固定性能区间
+mkdir -p /sys/fs/cgroup/stable
+echo "50" > /sys/fs/cgroup/stable/cpu.uclamp.min      # 最低50%性能
+echo "70" > /sys/fs/cgroup/stable/cpu.uclamp.max      # 最高70%性能
+
+# 4. 移动应用优化
+mkdir -p /sys/fs/cgroup/mobile-app
+echo "40" > /sys/fs/cgroup/mobile-app/cpu.uclamp.min  # 保证响应性
+echo "60" > /sys/fs/cgroup/mobile-app/cpu.uclamp.max  # 控制功耗
+```
+
+这种基于频率的性能控制机制，与传统的时间片控制形成了互补，为不同应用场景提供了更精细化的资源管理能力。
+
+### se.load.weight与cgroup cpu.weight的关系分析
+
+#### 双重权重控制体系
+
+Linux CFS调度器实现了精妙的两级权重控制机制：
+
+```
+第一级: cgroup cpu.weight
+    ↓ (影响任务组调度实体权重)
+第二级: se.load.weight  
+    ↓ (基于nice值的进程权重)
+最终CPU分配
+```
+
+**权重映射关系**：
+```bash
+# 第一级：cgroup权重转换
+group_se_weight = cpu.weight × 1024 ÷ 100
+
+# 第二级：nice值权重映射  
+se.load.weight = prio_to_weight[nice + 20]
+
+# 最终分配计算
+CPU_allocation = (group_weight / total_group_weights) × (se_weight / group_se_weights)
+```
+
+#### 权重层次分析脚本
+
+```bash
+#!/bin/bash
+# weight_hierarchy_analyzer.sh - 权重层次关系完整分析
+
+analyze_weight_hierarchy_complete() {
+    local pid=$1
+    
+    echo "=========================================="
+    echo "CFS权重层次关系完整分析"
+    echo "=========================================="
+    
+    # 获取进程基本信息
+    local comm=$(ps -p $pid -o comm= 2>/dev/null)
+    local nice=$(ps -p $pid -o nice= 2>/dev/null | tr -d ' ')
+    local se_weight=$(awk '/^se\.load\.weight/ {print $3}' /proc/$pid/sched 2>/dev/null)
+    local prio=$(awk '/^prio/ {print $3}' /proc/$pid/sched 2>/dev/null)
+    
+    echo "进程信息:"
+    echo "  PID: $pid"
+    echo "  命令: $comm"
+    echo "  Nice值: $nice"
+    echo "  内核优先级: $prio"
+    echo "  se.load.weight: $se_weight"
+    echo
+    
+    # 分析第二级权重控制（进程级）
+    echo "=== 第二级：进程权重控制 (se.load.weight) ==="
+    echo "控制机制: Nice值 → 权重映射表 → se.load.weight"
+    
+    # 验证nice值到权重的映射
+    local expected_weight
+    case $nice in
+        -20) expected_weight=88761 ;;
+        -15) expected_weight=29154 ;;
+        -10) expected_weight=9548 ;;
+        -5)  expected_weight=3121 ;;
+        0)   expected_weight=1024 ;;
+        5)   expected_weight=335 ;;
+        10)  expected_weight=110 ;;
+        15)  expected_weight=36 ;;
+        19)  expected_weight=15 ;;
+        *)   
+            # 近似计算
+            local index=$((nice + 20))
+            expected_weight="约$(echo "1024 / (1.25^$nice)" | bc -l | cut -d. -f1)"
+            ;;
     esac
-done
-
-# 权重配置
-echo -e "\n--- 权重配置 ---"
-echo "kubepods权重: $(cat /sys/fs/cgroup/kubepods/cpu.weight)"
-echo "系统权重: $(cat /sys/fs/cgroup/system.slice/cpu.weight 2>/dev/null || echo 'N/A')"
-
-# 带宽限制
-echo -e "\n--- 带宽限制 ---"
-echo "kubepods限制: $(cat /sys/fs/cgroup/kubepods/cpu.max)"
-
-# 负载信息
-echo -e "\n--- 系统负载 ---"
-uptime
-```
-
-### 案例2：容器CPU资源隔离
-
-#### 配置示例
-```bash
-# 创建应用专用cgroup
-mkdir -p /sys/fs/cgroup/production-app
-
-# 设置CPU权重（高优先级）
-echo 500 > /sys/fs/cgroup/production-app/cpu.weight
-
-# 设置CPU带宽限制（最多使用4个CPU核心）
-echo "400000 100000" > /sys/fs/cgroup/production-app/cpu.max
-
-# 设置突发配额（允许短期使用额外1个核心）
-echo "400000 100000 100000" > /sys/fs/cgroup/production-app/cpu.max
-
-# 将进程加入cgroup
-echo $PID > /sys/fs/cgroup/production-app/cgroup.procs
-```
-
-#### 验证效果
-```bash
-# 监控CPU使用
-watch -n 1 'cat /sys/fs/cgroup/production-app/cpu.stat'
-
-# 压测验证限制效果
-stress-ng --cpu 8 --timeout 60s &
-STRESS_PID=$!
-echo $STRESS_PID > /sys/fs/cgroup/production-app/cgroup.procs
-
-# 观察是否被限制在4核
-top -p $STRESS_PID
-```
-
-### 案例3：多租户环境资源分配
-
-#### 租户资源分配
-```bash
-# 租户A：关键业务（60%资源）
-mkdir -p /sys/fs/cgroup/tenant-a
-echo 600 > /sys/fs/cgroup/tenant-a/cpu.weight
-echo "600000 100000" > /sys/fs/cgroup/tenant-a/cpu.max
-
-# 租户B：开发测试（30%资源）
-mkdir -p /sys/fs/cgroup/tenant-b  
-echo 300 > /sys/fs/cgroup/tenant-b/cpu.weight
-echo "300000 100000" > /sys/fs/cgroup/tenant-b/cpu.max
-
-# 租户C：批处理（10%资源）
-mkdir -p /sys/fs/cgroup/tenant-c
-echo 100 > /sys/fs/cgroup/tenant-c/cpu.weight
-echo "100000 100000" > /sys/fs/cgroup/tenant-c/cpu.max
-```
-
-#### 动态调整脚本
-```bash
-#!/bin/bash
-# tenant_manager.sh - 租户资源动态调整
-
-adjust_tenant_resources() {
-    local tenant=$1
-    local cpu_percent=$2
-    local burst_percent=${3:-0}
     
-    local weight=$((cpu_percent * 10))
-    local quota=$((cpu_percent * 1000))
-    local burst=$((burst_percent * 1000))
+    echo "Nice值映射验证:"
+    echo "  输入Nice值: $nice"
+    echo "  实际se.load.weight: $se_weight" 
+    echo "  期望权重: $expected_weight"
     
-    echo $weight > /sys/fs/cgroup/$tenant/cpu.weight
-    
-    if [ $burst -gt 0 ]; then
-        echo "$quota 100000 $burst" > /sys/fs/cgroup/$tenant/cpu.max
+    if [ "$se_weight" = "$expected_weight" ]; then
+        echo "  ✓ 权重映射正确"
     else
-        echo "$quota 100000" > /sys/fs/cgroup/$tenant/cpu.max
+        echo "  ! 权重映射异常 (可能由于实时策略或权重继承)"
     fi
     
-    echo "租户 $tenant 资源已调整: ${cpu_percent}% CPU"
+    # 权重相对比例分析
+    local weight_ratio=$(echo "scale=2; $se_weight / 1024" | bc)
+    echo "  相对标准权重比例: $weight_ratio (标准nice=0为1.0)"
+    echo
+    
+    # 分析第一级权重控制（cgroup级）
+    echo "=== 第一级：cgroup权重控制 (cpu.weight) ==="
+    echo "控制机制: cpu.weight → 任务组调度实体权重"
+    
+    # 查找进程所属cgroup
+    local cgroup_info=$(cat /proc/$pid/cgroup 2>/dev/null | grep "::")
+    local cgroup_path=$(echo "$cgroup_info" | cut -d: -f3)
+    
+    if [ -z "$cgroup_path" ]; then
+        cgroup_path="/"
+    fi
+    
+    echo "cgroup层次信息:"
+    echo "  完整cgroup路径: $cgroup_path"
+    
+    # 遍历cgroup层次，显示权重继承
+    local current_path="$cgroup_path"
+    local level=0
+    
+    while [ "$current_path" != "/" ] && [ $level -lt 5 ]; do
+        local weight_file="/sys/fs/cgroup$current_path/cpu.weight"
+        local weight="N/A"
+        
+        if [ -f "$weight_file" ]; then
+            weight=$(cat "$weight_file" 2>/dev/null)
+        fi
+        
+        echo "  级别 $level: $(basename "$current_path") → cpu.weight=$weight"
+        
+        # 上移一级
+        current_path=$(dirname "$current_path")
+        level=$((level + 1))
+    done
+    
+    # 获取直接所属cgroup的权重
+    local direct_weight_file="/sys/fs/cgroup$cgroup_path/cpu.weight"
+    local cgroup_weight=100  # 默认值
+    
+    if [ -f "$direct_weight_file" ]; then
+        cgroup_weight=$(cat "$direct_weight_file")
+        echo "  直接所属cgroup权重: $cgroup_weight"
+    else
+        echo "  无法读取cgroup权重文件 (权限或路径问题)"
+    fi
+    
+    # 计算组调度实体权重
+    local group_se_weight=$((cgroup_weight * 1024 / 100))
+    echo "  转换后的组SE权重: $group_se_weight"
+    echo "  转换公式: group_weight = cpu.weight × 1024 ÷ 100"
+    echo
+    
+    # 最终CPU分配计算示例
+    echo "=== 最终CPU分配计算 ==="
+    echo "双重权重影响机制:"
+    echo "  1. cgroup级别: 决定任务组在系统中的CPU分配比例"
+    echo "  2. 进程级别: 决定进程在任务组内的CPU分配比例"
+    echo
+    echo "数学模型:"
+    echo "  CPU_allocation(进程) = System_CPU × (cgroup_weight/Σcgroup_weights) × (se_weight/Σse_weights_in_group)"
+    echo
+    echo "当前进程的权重贡献:"
+    echo "  cgroup级权重: $cgroup_weight (影响组间分配)"
+    echo "  进程级权重: $se_weight (影响组内分配)"
+    echo "  nice值影响: nice=$nice → 相对权重倍数=$weight_ratio"
+    echo
+    
+    # 权重调整建议
+    echo "=== 权重调整建议 ==="
+    echo "提高此进程CPU分配的方法:"
+    echo "  1. 调整进程nice值:"
+    echo "     renice -5 $pid    # 降低nice值，提高进程权重"
+    echo "  2. 调整cgroup权重:"
+    echo "     echo 200 > /sys/fs/cgroup$cgroup_path/cpu.weight"
+    echo "  3. 组合调整示例:"
+    echo "     # 先调整cgroup权重(影响整组)"
+    echo "     echo 150 > /sys/fs/cgroup$cgroup_path/cpu.weight"
+    echo "     # 再调整进程优先级(影响组内地位)"  
+    echo "     renice -2 $pid"
+    echo
+    
+    echo "权重影响分析:"
+    if [ $nice -lt 0 ]; then
+        echo "  当前状态: 高优先级进程 (nice=$nice < 0)"
+        echo "  vruntime增长: 慢于标准速度 (权重=$se_weight > 1024)"
+        echo "  调度优势: 在组内更容易获得CPU时间"
+    elif [ $nice -gt 0 ]; then
+        echo "  当前状态: 低优先级进程 (nice=$nice > 0)"  
+        echo "  vruntime增长: 快于标准速度 (权重=$se_weight < 1024)"
+        echo "  调度劣势: 在组内较难获得CPU时间"
+    else
+        echo "  当前状态: 标准优先级进程 (nice=0)"
+        echo "  vruntime增长: 标准速度 (权重=1024)"
+        echo "  调度地位: 在组内处于平均水平"
+    fi
 }
 
-# 示例：调整租户A到80%，允许20%突发
-adjust_tenant_resources "tenant-a" 80 20
+# 权重变化实时监控
+monitor_weight_effects() {
+    local pid=$1
+    local duration=${2:-30}
+    
+    echo "=========================================="
+    echo "权重效果实时监控"
+    echo "=========================================="
+    echo "监控进程: $pid"
+    echo "监控时长: ${duration}秒"
+    echo "监控间隔: 1秒"
+    echo
+    
+    # 记录初始状态
+    local initial_vruntime=$(awk '/^se\.vruntime/ {print $3}' /proc/$pid/sched)
+    local initial_runtime=$(awk '/^se\.sum_exec_runtime/ {print $3}' /proc/$pid/sched)
+    local weight=$(awk '/^se\.load\.weight/ {print $3}' /proc/$pid/sched)
+    
+    echo "初始状态:"
+    echo "  vruntime: $initial_vruntime"
+    echo "  sum_exec_runtime: $initial_runtime"  
+    echo "  权重: $weight"
+    echo "  理论vruntime增长率: $(echo "scale=6; 1024 / $weight" | bc)"
+    echo
+    
+    printf "%-8s %-12s %-12s %-8s %-10s %-8s\n" "时间" "vruntime" "runtime" "权重" "增长率" "准确度"
+    printf "%-8s %-12s %-12s %-8s %-10s %-8s\n" "----" "--------" "-------" "----" "------" "------"
+    
+    local prev_vruntime=$initial_vruntime
+    local prev_runtime=$initial_runtime
+    local count=0
+    
+    while [ $count -lt $duration ]; do
+        sleep 1
+        count=$((count + 1))
+        
+        if [ -f "/proc/$pid/sched" ]; then
+            local current_vruntime=$(awk '/^se\.vruntime/ {print $3}' /proc/$pid/sched)
+            local current_runtime=$(awk '/^se\.sum_exec_runtime/ {print $3}' /proc/$pid/sched)
+            local current_weight=$(awk '/^se\.load\.weight/ {print $3}' /proc/$pid/sched)
+            
+            # 计算增量
+            local vruntime_delta=$((current_vruntime - prev_vruntime))
+            local runtime_delta=$((current_runtime - prev_runtime))
+            
+            # 计算增长率和准确度
+            local growth_rate="N/A"
+            local accuracy="N/A"
+            
+            if [ "$runtime_delta" -gt 0 ]; then
+                growth_rate=$(echo "scale=4; $vruntime_delta / $runtime_delta" | bc)
+                local theoretical_rate=$(echo "scale=4; 1024 / $current_weight" | bc)
+                accuracy=$(echo "scale=1; 100 - (($growth_rate - $theoretical_rate) * 100 / $theoretical_rate)" | bc 2>/dev/null)
+                [ -z "$accuracy" ] && accuracy="N/A"
+            fi
+            
+            printf "%-8s %-12s %-12s %-8s %-10s %-8s\n" \
+                "${count}s" \
+                "$(echo "scale=2; $current_vruntime/1000000" | bc)ms" \
+                "$(echo "scale=3; $current_runtime/1000000000" | bc)s" \
+                "$current_weight" \
+                "$growth_rate" \
+                "${accuracy}%"
+            
+            prev_vruntime=$current_vruntime
+            prev_runtime=$current_runtime
+        else
+            echo "进程 $pid 已退出"
+            break
+        fi
+    done
+    
+    echo
+    echo "监控完成。分析总结:"
+    
+    # 计算总体统计
+    if [ -f "/proc/$pid/sched" ]; then
+        local final_vruntime=$(awk '/^se\.vruntime/ {print $3}' /proc/$pid/sched)
+        local final_runtime=$(awk '/^se\.sum_exec_runtime/ {print $3}' /proc/$pid/sched)
+        
+        local total_vruntime_delta=$((final_vruntime - initial_vruntime))
+        local total_runtime_delta=$((final_runtime - initial_runtime))
+        
+        echo "  总vruntime增量: $total_vruntime_delta ns"
+        echo "  总runtime增量: $total_runtime_delta ns"
+        
+        if [ "$total_runtime_delta" -gt 0 ]; then
+            local avg_growth_rate=$(echo "scale=6; $total_vruntime_delta / $total_runtime_delta" | bc)
+            local theoretical_rate=$(echo "scale=6; 1024 / $weight" | bc)
+            local overall_accuracy=$(echo "scale=1; 100 - (($avg_growth_rate - $theoretical_rate) * 100 / $theoretical_rate)" | bc 2>/dev/null)
+            
+            echo "  平均增长率: $avg_growth_rate"
+            echo "  理论增长率: $theoretical_rate"  
+            echo "  整体准确度: ${overall_accuracy}%"
+            
+            if [ "$(echo "${overall_accuracy#-} > 95" | bc 2>/dev/null)" -eq 1 ]; then
+                echo "  ✓ 权重控制机制工作正常"
+            else
+                echo "  ⚠️  权重控制存在偏差，可能受其他因素影响"
+            fi
+        else
+            echo "  进程在监控期间未活跃运行"
+        fi
+    fi
+}
+
+# 主函数
+main() {
+    case "${1:-help}" in
+        "analyze")
+            [ -z "$2" ] && { echo "用法: $0 analyze <PID>"; exit 1; }
+            analyze_weight_hierarchy_complete "$2"
+            ;;
+        "monitor")  
+            [ -z "$2" ] && { echo "用法: $0 monitor <PID> [时长秒数]"; exit 1; }
+            monitor_weight_effects "$2" "${3:-30}"
+            ;;
+        "help")
+            echo "权重层次关系分析工具"
+            echo "====================="
+            echo "用法: $0 <command> [参数]"
+            echo
+            echo "命令:"
+            echo "  analyze <PID>           - 完整的权重层次关系分析"
+            echo "  monitor <PID> [时长]    - 实时监控权重效果"  
+            echo "  help                    - 显示此帮助"
+            echo
+            echo "示例:"
+            echo "  $0 analyze 1234         - 分析PID 1234的权重关系"
+            echo "  $0 monitor 1234 60      - 监控PID 1234权重效果60秒"
+            ;;
+        *)
+            echo "未知命令: $1"
+            echo "使用 '$0 help' 查看帮助"
+            exit 1
+            ;;
+    esac
+}
+
+# 如果直接执行脚本
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    main "$@"
+fi
 ```
-
-## 总结
-
-CFS调度器作为Linux的核心调度器，通过以下机制实现高效的CPU资源管理：
-
-1. **公平调度**：基于vruntime的公平算法确保所有任务获得合理的CPU时间
-2. **层次化管理**：支持任务组间和组内的多级调度，适应复杂的系统架构
-3. **精确控制**：通过cfs_bandwidth提供微秒级精度的CPU带宽限制
-4. **灵活配置**：支持cgroup v1/v2的多种配置方式，适应不同的部署场景
-5. **高性能**：O(log N)算法复杂度，支持大规模多核系统
-
-在现代容器化和云计算环境中，深入理解CFS调度器的工作原理和配置方法，对于系统性能优化和资源管理具有重要意义。通过合理的权重分配、带宽控制和监控调优，可以在保证系统稳定性的同时，最大化资源利用效率。
 
 ## 时序图参考
 
