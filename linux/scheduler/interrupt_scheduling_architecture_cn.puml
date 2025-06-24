@@ -1,0 +1,132 @@
+@startuml
+!theme plain
+skinparam backgroundColor white
+skinparam defaultFontSize 10
+skinparam componentStyle rectangle
+
+title 中断与调度机制架构图
+
+' 硬件层
+package "硬件层" {
+    [时钟硬件] as ClockHW #FFE6E6
+    [其他中断源] as OtherHW #FFE6E6
+}
+
+' 中断处理层
+package "中断处理层" {
+    [中断控制器] as IntController #FFE6E6
+    [中断向量表] as IntVector #FFE6E6
+    
+    package "时钟中断处理" {
+        [tick_handle_periodic] as TickHandle #FFE6E6
+        [tick_periodic] as TickPeriodic #FFE6E6
+        [update_process_times] as UpdateProcess #FFE6E6
+        [scheduler_tick] as SchedulerTick #FFE6E6
+    }
+}
+
+' 调度标志层
+package "调度标志机制" {
+    [TIF_NEED_RESCHED] as NeedReschedFlag #FFF0E6
+    [resched_curr] as ReschedCurr #FFF0E6
+    [set_tsk_need_resched] as SetNeedResched #FFF0E6
+}
+
+' 调度检查点层
+package "调度检查点" {
+    [中断返回检查] as IntReturnCheck #E6F3FF
+    [系统调用返回检查] as SyscallReturnCheck #E6F3FF
+    [cond_resched检查] as CondReschedCheck #E6F3FF
+    [空闲循环检查] as IdleLoopCheck #E6F3FF
+}
+
+' 调度执行层
+package "调度执行层" {
+    [preempt_schedule_irq] as PreemptScheduleIrq #E6F3FF
+    [schedule] as Schedule #E6F3FF
+    [__schedule] as UnderSchedule #E6F3FF
+    [pick_next_task] as PickNext #E6F3FF
+    [context_switch] as ContextSwitch #E6F3FF
+}
+
+' 进程上下文
+package "进程上下文" {
+    [用户进程A] as ProcessA #E6FFE6
+    [用户进程B] as ProcessB #E6FFE6
+    [内核线程] as KernelThread #E6FFE6
+    [空闲任务] as IdleTask #E6FFE6
+}
+
+' 连接关系
+ClockHW --> IntController : 定时器中断
+OtherHW --> IntController : 其他中断
+IntController --> IntVector : 中断分发
+IntVector --> TickHandle : 时钟中断处理
+
+TickHandle --> TickPeriodic : 周期性处理
+TickPeriodic --> UpdateProcess : 更新进程时间
+UpdateProcess --> SchedulerTick : 调度器tick
+
+SchedulerTick --> ReschedCurr : 检查抢占条件
+ReschedCurr --> SetNeedResched : 设置调度标志
+SetNeedResched --> NeedReschedFlag : 标志设置
+
+NeedReschedFlag --> IntReturnCheck : 中断返回时检查
+NeedReschedFlag --> SyscallReturnCheck : 系统调用返回时检查
+NeedReschedFlag --> CondReschedCheck : 条件重调度检查
+NeedReschedFlag --> IdleLoopCheck : 空闲循环检查
+
+IntReturnCheck --> PreemptScheduleIrq : 中断抢占调度
+SyscallReturnCheck --> Schedule : 常规调度
+CondReschedCheck --> Schedule : 条件调度
+IdleLoopCheck --> Schedule : 空闲调度
+
+PreemptScheduleIrq --> UnderSchedule : 核心调度
+Schedule --> UnderSchedule : 核心调度
+UnderSchedule --> PickNext : 选择下个任务
+PickNext --> ContextSwitch : 上下文切换
+
+ContextSwitch --> ProcessA : 切换到进程A
+ContextSwitch --> ProcessB : 切换到进程B
+ContextSwitch --> KernelThread : 切换到内核线程
+ContextSwitch --> IdleTask : 切换到空闲任务
+
+' 注释
+note right of ClockHW
+硬件定时器
+频率: HZ (通常1000Hz)
+周期: 1ms
+end note
+
+note right of SchedulerTick
+中断上下文执行
+- 更新运行时间
+- 检查时间片
+- 设置调度标志
+- 不直接调用schedule()
+end note
+
+note right of NeedReschedFlag
+异步调度机制
+- 线程标志位
+- 原子操作
+- 延迟执行
+end note
+
+note right of Schedule
+进程上下文执行
+- 任务选择
+- 上下文切换
+- 内存空间切换
+- 统计更新
+end note
+
+note bottom of ContextSwitch
+上下文切换包括:
+- 寄存器保存/恢复
+- 栈切换
+- 内存映射切换
+- FPU状态切换
+end note
+
+@enduml 

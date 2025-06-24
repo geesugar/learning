@@ -1,0 +1,155 @@
+@startuml 中断到调度时序图
+
+!theme aws-orange
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontSize 10
+skinparam defaultFontName "SimSun"
+
+title Linux内核中断到调度的时序流程
+
+participant "硬件时钟" as Clock
+participant "中断控制器" as IntCtrl
+participant "中断处理程序" as IntHandler
+participant "scheduler_tick()" as SchedTick
+participant "TIF_NEED_RESCHED" as Flag
+participant "中断返回路径" as IntReturn
+participant "schedule()" as Schedule
+participant "任务A" as TaskA
+participant "任务B" as TaskB
+
+== 时钟中断阶段 ==
+
+Clock -> IntCtrl : 定时器中断信号
+activate IntCtrl
+
+IntCtrl -> IntHandler : 中断向量分发
+activate IntHandler
+
+IntHandler -> IntHandler : tick_handle_periodic()
+IntHandler -> IntHandler : tick_periodic()
+IntHandler -> IntHandler : update_process_times()
+
+IntHandler -> SchedTick : 调用scheduler_tick()
+activate SchedTick
+
+note over SchedTick : 中断上下文\n原子执行\n不能睡眠
+
+SchedTick -> SchedTick : update_rq_clock()
+SchedTick -> SchedTick : task_tick_fair()
+SchedTick -> SchedTick : check_preempt_tick()
+
+alt 时间片耗尽或需要抢占
+    SchedTick -> SchedTick : resched_curr()
+    SchedTick -> Flag : set_tsk_need_resched()
+    activate Flag
+    
+    note over Flag : 设置TIF_NEED_RESCHED标志\n原子操作\n异步机制
+else 无需调度
+    note over SchedTick : 继续当前任务执行
+end
+
+SchedTick -> IntHandler : 返回
+deactivate SchedTick
+
+IntHandler -> IntCtrl : 中断处理完成
+deactivate IntHandler
+
+== 中断返回阶段 ==
+
+IntCtrl -> IntReturn : 中断返回处理
+activate IntReturn
+
+IntReturn -> Flag : need_resched()检查
+Flag -> IntReturn : 返回标志状态
+
+alt TIF_NEED_RESCHED已设置
+    IntReturn -> IntReturn : irqentry_exit_cond_resched()
+    
+    alt 返回用户态
+        IntReturn -> Schedule : exit_to_user_mode_prepare()
+        note over Schedule : 进程上下文\n可以睡眠\n可以进行复杂操作
+    else 返回内核态且启用抢占
+        IntReturn -> Schedule : preempt_schedule_irq()
+        note over Schedule : 内核抢占调度\n特殊处理
+    end
+    
+    activate Schedule
+    
+    == 调度执行阶段 ==
+    
+    Schedule -> Schedule : __schedule()
+    Schedule -> Schedule : clear_tsk_need_resched()
+    Schedule -> Flag : 清除标志
+    deactivate Flag
+    
+    Schedule -> Schedule : pick_next_task()
+    
+    alt 选中不同任务
+        Schedule -> Schedule : context_switch()
+        
+        note over Schedule : 上下文切换:\n- 保存当前任务状态\n- 切换内存空间\n- 恢复新任务状态
+        
+        Schedule -> TaskA : 切换到任务A
+        deactivate Schedule
+        activate TaskA
+        
+        note over TaskA : 任务A开始执行
+        
+    else 继续当前任务
+        Schedule -> TaskB : 继续任务B
+        deactivate Schedule
+        activate TaskB
+        
+        note over TaskB : 任务B继续执行
+    end
+    
+else TIF_NEED_RESCHED未设置
+    IntReturn -> TaskB : 直接返回当前任务
+    note over TaskB : 当前任务继续执行\n无需调度
+end
+
+deactivate IntReturn
+deactivate IntCtrl
+
+== 后续执行阶段 ==
+
+alt 任务A执行
+    TaskA -> TaskA : 用户态/内核态执行
+    
+    alt 主动让出CPU
+        TaskA -> Schedule : yield() / wait() / sleep()
+        activate Schedule
+        Schedule -> Schedule : __schedule()
+        Schedule -> TaskB : 切换到任务B
+        deactivate TaskA
+        deactivate Schedule
+        activate TaskB
+    else 等待下次时钟中断
+        note over TaskA : 继续执行直到\n下次时钟中断
+    end
+    
+else 任务B执行
+    TaskB -> TaskB : 用户态/内核态执行
+    
+    alt 系统调用
+        TaskB -> TaskB : 系统调用处理
+        TaskB -> Flag : 系统调用返回时检查need_resched()
+        
+        alt 需要调度
+            TaskB -> Schedule : schedule()
+            activate Schedule
+            Schedule -> TaskA : 切换到任务A
+            deactivate TaskB
+            deactivate Schedule
+            activate TaskA
+        else 无需调度
+            note over TaskB : 返回用户态继续执行
+        end
+    end
+end
+
+== 循环 ==
+
+note over Clock : 下一个时钟中断\n周期性重复上述过程
+
+@enduml 
