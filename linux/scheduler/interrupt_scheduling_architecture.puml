@@ -1,0 +1,132 @@
+@startuml interrupt_scheduling_architecture
+
+!theme aws-orange
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontSize 10
+
+title "Linux Kernel Interrupt and Scheduling Architecture"
+
+' 硬件层
+rectangle "Hardware Layer" as Hardware {
+    component "Clock Hardware" as ClockHW #FFE6E6
+    component "Other Interrupt Sources" as OtherHW #FFE6E6
+}
+
+' 中断处理层
+rectangle "Interrupt Processing Layer" as InterruptLayer {
+    component "Interrupt Controller" as IntController #FFE6E6
+    component "Interrupt Vector Table" as IntVector #FFE6E6
+    
+    rectangle "Clock Interrupt Processing" as ClockInt #FFE6E6 {
+        component "tick_handle_periodic()" as TickHandle
+        component "tick_periodic()" as TickPeriodic
+        component "update_process_times()" as UpdateProcess
+        component "scheduler_tick()" as SchedulerTick
+    }
+}
+
+' 调度标志层
+rectangle "Scheduling Flag Mechanism" as FlagLayer {
+    component "TIF_NEED_RESCHED" as NeedReschedFlag #FFF0E6
+    component "resched_curr()" as ReschedCurr #FFF0E6
+    component "set_tsk_need_resched()" as SetNeedResched #FFF0E6
+}
+
+' 调度检查点层
+rectangle "Scheduling Checkpoints" as CheckpointLayer {
+    component "Interrupt Return Check" as IntReturnCheck #E6F3FF
+    component "Syscall Return Check" as SyscallReturnCheck #E6F3FF
+    component "cond_resched() Check" as CondReschedCheck #E6F3FF
+    component "Idle Loop Check" as IdleLoopCheck #E6F3FF
+}
+
+' 调度执行层
+rectangle "Scheduling Execution Layer" as ScheduleLayer {
+    component "preempt_schedule_irq()" as PreemptScheduleIrq #E6F3FF
+    component "schedule()" as Schedule #E6F3FF
+    component "__schedule()" as UnderSchedule #E6F3FF
+    component "pick_next_task()" as PickNext #E6F3FF
+    component "context_switch()" as ContextSwitch #E6F3FF
+}
+
+' 进程上下文
+rectangle "Process Context" as ProcessContext {
+    component "User Process A" as ProcessA #E6FFE6
+    component "User Process B" as ProcessB #E6FFE6
+    component "Kernel Thread" as KernelThread #E6FFE6
+    component "Idle Task" as IdleTask #E6FFE6
+}
+
+' 连接关系
+ClockHW --> IntController : "Timer Interrupt"
+OtherHW --> IntController : "Other Interrupts"
+IntController --> IntVector : "Interrupt Dispatch"
+IntVector --> TickHandle : "Clock Interrupt Handling"
+
+TickHandle --> TickPeriodic : "Periodic Processing"
+TickPeriodic --> UpdateProcess : "Update Process Times"
+UpdateProcess --> SchedulerTick : "Scheduler Tick"
+
+SchedulerTick --> ReschedCurr : "Check Preemption"
+ReschedCurr --> SetNeedResched : "Set Scheduling Flag"
+SetNeedResched --> NeedReschedFlag : "Flag Setting"
+
+NeedReschedFlag --> IntReturnCheck : "Check on Interrupt Return"
+NeedReschedFlag --> SyscallReturnCheck : "Check on Syscall Return"
+NeedReschedFlag --> CondReschedCheck : "Conditional Resched Check"
+NeedReschedFlag --> IdleLoopCheck : "Idle Loop Check"
+
+IntReturnCheck --> PreemptScheduleIrq : "Interrupt Preemption"
+SyscallReturnCheck --> Schedule : "Normal Scheduling"
+CondReschedCheck --> Schedule : "Conditional Scheduling"
+IdleLoopCheck --> Schedule : "Idle Scheduling"
+
+PreemptScheduleIrq --> UnderSchedule : "Core Scheduling"
+Schedule --> UnderSchedule : "Core Scheduling"
+UnderSchedule --> PickNext : "Select Next Task"
+PickNext --> ContextSwitch : "Context Switch"
+
+ContextSwitch --> ProcessA : "Switch to Process A"
+ContextSwitch --> ProcessB : "Switch to Process B"
+ContextSwitch --> KernelThread : "Switch to Kernel Thread"
+ContextSwitch --> IdleTask : "Switch to Idle Task"
+
+' 注释
+note right of ClockHW
+Hardware Timer
+Frequency: HZ (usually 1000Hz)
+Period: 1ms
+end note
+
+note right of SchedulerTick
+Interrupt Context Execution
+- Update runtime
+- Check time slice
+- Set scheduling flag
+- No direct schedule() call
+end note
+
+note right of NeedReschedFlag
+Asynchronous Scheduling Mechanism
+- Thread flag bit
+- Atomic operation
+- Delayed execution
+end note
+
+note right of Schedule
+Process Context Execution
+- Task selection
+- Context switching
+- Memory space switching
+- Statistics update
+end note
+
+note bottom of ContextSwitch
+Context Switch includes:
+- Register save/restore
+- Stack switching
+- Memory mapping switch
+- FPU state switch
+end note
+
+@enduml 

@@ -1,0 +1,235 @@
+@startuml CFS调度器主要流程图
+
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontSize 12
+skinparam activity {
+    BackgroundColor #E3F2FD
+    BorderColor #1976D2
+    FontColor #000000
+}
+
+title CFS调度器主要流程图
+
+start
+
+partition "进程入队阶段" #E1F5FE {
+    :进程就绪;
+    note right
+        • fork()创建新进程
+        • 进程从睡眠状态唤醒
+        • 进程从其他CPU迁移
+    end note
+    
+    :enqueue_entity();
+    note right
+        • 调用place_entity()设置初始vruntime
+        • 新进程: 防止立即获得大量CPU时间 vruntime = max(curr_vruntime, min_vruntime)
+        • 唤醒进程: 补偿睡眠时间 vruntime += sched_latency/2
+    end note
+    
+    :计算vruntime;
+    note right
+        • vruntime += calc_delta_fair(delta_exec, se)
+        • 考虑进程权重: delta_fair = delta * NICE_0_LOAD / weight
+        • 高优先级进程vruntime增长较慢
+    end note
+    
+    :插入红黑树;
+    note right
+        • __enqueue_entity()将进程插入tasks_timeline
+        • 按vruntime排序，O(log n)复杂度
+        • 更新rb_leftmost缓存最左节点
+    end note
+    
+    :更新min_vruntime;
+    note right
+        • 候选值 = min(curr->vruntime, leftmost->vruntime)
+        • min_vruntime = max(old_min_vruntime, 候选值)
+        • 确保单调递增，防止时间倒退
+        • 新进程vruntime计算基准
+    end note
+}
+
+partition "调度选择阶段" #E8F5E8 {
+    :调度器被调用;
+    note right
+        • schedule()系统调用
+        • 时钟中断设置TIF_NEED_RESCHED
+        • 进程主动让出CPU
+        • 中断返回时检查调度标志
+    end note
+    
+    :pick_next_task_fair();
+    note right
+        • 遍历cfs_rq层次结构
+        • 检查throttled状态
+        • 选择最合适的调度实体
+    end note
+    
+    :从红黑树选择leftmost节点;
+    note right
+        • __pick_first_entity()获取rb_leftmost
+        • 这是vruntime最小的进程
+        • O(1)时间复杂度，高效选择
+    end note
+    
+    :检查是否需要抢占当前进程;
+    note right
+        • wakeup_preempt_entity()比较vruntime
+        • 计算wakeup_gran = sysctl_sched_wakeup_granularity
+        • 考虑buddy机制(last/next/skip)
+    end note
+    
+    if (抢占条件满足?) then (是)
+        :set_next_entity();
+        note right
+            • 设置se->exec_start = rq_clock_task()
+            • 更新统计信息
+            • 清除相关buddy标志
+        end note
+        
+        :更新统计信息;
+        note right
+            • update_stats_curr_start()
+            • 记录进程开始运行时间
+            • 更新调度延迟统计
+        end note
+        
+        :进程开始运行;
+        note right
+            • 上下文切换到新进程
+            • 恢复寄存器状态
+            • 切换内存空间
+        end note
+    else (否)
+        :继续当前进程;
+        note right
+            • 当前进程vruntime仍然最小
+            • 或抢占粒度未达到阈值
+            • 避免过度上下文切换
+        end note
+    endif
+}
+
+partition "运行时管理阶段" #FFF3E0 {
+    :scheduler_tick()周期性调用;
+    note right
+        • 由时钟中断触发，频率为HZ
+        • 每个CPU独立调用
+        • 更新运行时统计和检查抢占
+    end note
+    
+    :update_curr();
+    note right
+        • 计算delta_exec = now - curr->exec_start
+        • 累加sum_exec_runtime
+        • 调用cgroup_account_cputime()
+    end note
+    
+    :更新vruntime;
+    note right
+        • curr->vruntime += calc_delta_fair(delta_exec)
+        • 考虑进程nice值权重
+        • 调用update_min_vruntime()
+    end note
+    
+    :account_cfs_rq_runtime();
+    note right
+        • 检查CFS带宽控制
+        • cfs_rq->runtime_remaining -= delta_exec
+        • 如果配额不足尝试申请新配额
+    end note
+    
+    :检查带宽限制;
+    note right
+        • assign_cfs_rq_runtime()申请配额
+        • 每次申请sched_cfs_bandwidth_slice_us
+        • 从cfs_bandwidth全局池获取
+    end note
+    
+    if (配额是否耗尽?) then (是)
+        :resched_curr()设置重调度标志;
+        note right
+            • 设置TIF_NEED_RESCHED标志
+            • 不立即停止当前进程
+            • 等待下次调度点throttle
+        end note
+    else (否)
+        :check_preempt_tick();
+        note right
+            • 计算ideal_runtime = sched_slice()
+            • 基于调度周期和进程权重
+            • 检查是否超出时间片
+        end note
+        
+        if (时间片是否用完?) then (是)
+            :resched_curr()设置重调度标志;
+        else (否)
+            :继续运行;
+            note right
+                • 进程继续执行用户代码
+                • 等待下次scheduler_tick
+                • 或其他调度事件
+            end note
+        endif
+    endif
+}
+
+partition "重新调度阶段" #FFEBEE {
+    :等待下次调度事件;
+    note right
+        • 系统调用返回
+        • 中断处理完成
+        • 其他调度触发点
+    end note
+    
+    :put_prev_entity();
+    note right
+        • 保存当前进程状态
+        • 更新运行时统计
+        • 检查是否需要throttle
+    end note
+    
+    :将当前进程重新入队;
+    note right
+        • 如果未被throttle则重新插入红黑树
+        • 如果被throttle则移出运行队列
+        • 更新cfs_rq统计信息
+    end note
+}
+
+partition "进程出队阶段" #FCE4EC {
+    :进程阻塞/退出;
+    note right
+        • 等待I/O操作完成
+        • 等待锁或信号量
+        • 进程正常退出
+        • 进程被信号终止
+    end note
+    
+    :dequeue_entity();
+    note right
+        • 调用__dequeue_entity()从红黑树移除
+        • 更新rb_leftmost缓存
+        • 处理buddy关系
+    end note
+    
+    :从红黑树移除;
+    note right
+        • rb_erase()删除节点
+        • 重新平衡红黑树
+        • 更新cfs_rq->nr_running计数
+    end note
+    
+    :更新统计信息;
+    note right
+        • update_stats_dequeue()
+        • 记录等待时间统计
+        • 更新负载平均值
+    end note
+}
+
+stop
+
+@enduml 

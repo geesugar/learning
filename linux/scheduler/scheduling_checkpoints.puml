@@ -1,0 +1,176 @@
+@startuml 调度检查点详细图
+
+!theme aws-orange
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontSize 10
+skinparam defaultFontName "SimSun"
+
+title Linux内核调度检查点分布图
+
+' 定义颜色
+!define INTERRUPT_COLOR #FFE6E6
+!define SYSCALL_COLOR #E6F3FF
+!define KERNEL_COLOR #E6FFE6
+!define USER_COLOR #FFF0E6
+!define IDLE_COLOR #F0E6FF
+
+' 中断相关检查点
+package "中断相关检查点" as InterruptCheckpoints {
+    rectangle "时钟中断处理" as ClockInt #INTERRUPT_COLOR {
+        component "scheduler_tick()" as SchedTick
+        component "check_preempt_tick()" as CheckPreempt
+        component "resched_curr()" as ReschedCurr
+        note bottom : "每个时钟周期(1ms)\n检查时间片耗尽\n设置TIF_NEED_RESCHED"
+    }
+    
+    rectangle "中断返回路径" as IntReturn #INTERRUPT_COLOR {
+        component "irqentry_exit()" as IrqExit
+        component "irqentry_exit_cond_resched()" as IrqCondResched
+        component "preempt_schedule_irq()" as PreemptSchedIrq
+        note bottom : "所有中断返回时\n检查need_resched()\n内核抢占调度"
+    }
+}
+
+' 系统调用相关检查点
+package "系统调用相关检查点" as SyscallCheckpoints {
+    rectangle "系统调用入口" as SyscallEntry #SYSCALL_COLOR {
+        component "syscall_enter_from_user_mode()" as SyscallEnter
+        note bottom : "系统调用进入时\n可选的调度检查"
+    }
+    
+    rectangle "系统调用返回" as SyscallReturn #SYSCALL_COLOR {
+        component "syscall_exit_to_user_mode()" as SyscallExit
+        component "exit_to_user_mode_prepare()" as ExitToUser
+        component "exit_to_user_mode_loop()" as ExitLoop
+        note bottom : "所有系统调用返回\n必须检查need_resched()\n确保及时调度"
+    }
+}
+
+' 内核抢占检查点
+package "内核抢占检查点" as KernelPreemptCheckpoints {
+    rectangle "条件重调度" as CondResched #KERNEL_COLOR {
+        component "__cond_resched()" as CondReschedFunc
+        component "cond_resched_lock()" as CondReschedLock
+        component "cond_resched_rcu()" as CondReschedRcu
+        note bottom : "长时间内核操作中\n主动检查调度需求\n避免调度延迟"
+    }
+    
+    rectangle "内核抢占点" as KernelPreempt #KERNEL_COLOR {
+        component "preempt_enable()" as PreemptEnable
+        component "preempt_schedule()" as PreemptSchedule
+        component "preempt_schedule_common()" as PreemptCommon
+        note bottom : "抢占计数归零时\n检查TIF_NEED_RESCHED\n内核抢占调度"
+    }
+}
+
+' 用户态相关检查点
+package "用户态相关检查点" as UserCheckpoints {
+    rectangle "信号处理" as SignalHandling #USER_COLOR {
+        component "get_signal()" as GetSignal
+        component "do_signal()" as DoSignal
+        note bottom : "信号处理前后\n检查调度需求"
+    }
+    
+    rectangle "页面错误处理" as PageFault #USER_COLOR {
+        component "do_page_fault()" as DoPageFault
+        component "handle_mm_fault()" as HandleMmFault
+        note bottom : "页面错误处理中\n可能触发调度"
+    }
+}
+
+' 空闲和特殊检查点
+package "空闲和特殊检查点" as IdleSpecialCheckpoints {
+    rectangle "空闲循环" as IdleLoop #IDLE_COLOR {
+        component "do_idle()" as DoIdle
+        component "cpu_idle_poll()" as CpuIdlePoll
+        component "cpuidle_idle_call()" as CpuidleCall
+        note bottom : "CPU空闲时持续检查\nwhile(!need_resched())\n确保及时响应"
+    }
+    
+    rectangle "工作队列" as Workqueue #IDLE_COLOR {
+        component "worker_thread()" as WorkerThread
+        component "process_one_work()" as ProcessWork
+        note bottom : "工作队列处理\n定期检查调度"
+    }
+    
+    rectangle "软中断处理" as Softirq #IDLE_COLOR {
+        component "do_softirq()" as DoSoftirq
+        component "__do_softirq()" as UnderDoSoftirq
+        note bottom : "软中断处理后\n检查调度需求"
+    }
+}
+
+' 子系统中的检查点
+package "子系统调度检查点" as SubsystemCheckpoints {
+    rectangle "文件系统" as Filesystem {
+        component "generic_file_read_iter()" as FileRead
+        component "generic_file_write_iter()" as FileWrite
+        component "do_writepages()" as DoWritepages
+        note bottom : "长时间文件I/O\n定期调度检查"
+    }
+    
+    rectangle "内存管理" as MemoryMgmt {
+        component "shrink_page_list()" as ShrinkPage
+        component "try_to_free_pages()" as TryToFree
+        component "compact_zone()" as CompactZone
+        note bottom : "内存回收/整理\n避免长时间占用CPU"
+    }
+    
+    rectangle "网络子系统" as Network {
+        component "net_rx_action()" as NetRxAction
+        component "dev_queue_xmit()" as DevQueueXmit
+        note bottom : "网络包处理\n批量处理后检查"
+    }
+    
+    rectangle "块设备I/O" as BlockIO {
+        component "blk_mq_run_hw_queue()" as BlkMqRun
+        component "submit_bio()" as SubmitBio
+        note bottom : "块设备I/O处理\n避免I/O饥饿"
+    }
+}
+
+' 连接关系
+SchedTick --> ReschedCurr : "时间片检查"
+ReschedCurr --> IrqExit : "设置标志"
+IrqExit --> IrqCondResched : "条件检查"
+IrqCondResched --> PreemptSchedIrq : "抢占调度"
+
+SyscallEnter --> SyscallExit : "系统调用流程"
+SyscallExit --> ExitToUser : "返回用户态"
+ExitToUser --> ExitLoop : "循环检查"
+
+CondReschedFunc --> PreemptEnable : "条件触发"
+PreemptEnable --> PreemptSchedule : "抢占启用"
+PreemptSchedule --> PreemptCommon : "通用抢占"
+
+DoIdle --> CpuIdlePoll : "空闲轮询"
+CpuIdlePoll --> CpuidleCall : "深度空闲"
+
+' 统一汇聚到调度执行
+PreemptSchedIrq --> "schedule()" : "中断抢占"
+ExitLoop --> "schedule()" : "用户态返回"
+PreemptCommon --> "schedule()" : "内核抢占"
+DoIdle --> "schedule()" : "空闲调度"
+
+note as ScheduleNote
+**schedule()函数统一处理所有调度请求**
+- 清除TIF_NEED_RESCHED标志
+- 选择下一个任务(pick_next_task)
+- 执行上下文切换(context_switch)
+- 更新统计信息
+end note
+
+"schedule()" .. ScheduleNote
+
+' 频率说明
+note as FrequencyNote
+**检查点频率说明**
+- 时钟中断: 1000Hz (每1ms)
+- 中断返回: 每次中断
+- 系统调用返回: 每次系统调用
+- cond_resched: 手动插入
+- 空闲循环: 持续检查
+- 内核抢占: 抢占计数变化时
+end note
+
+@enduml 
