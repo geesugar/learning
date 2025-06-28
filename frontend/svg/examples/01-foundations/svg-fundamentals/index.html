@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG基础概念 - SVG学习示例</title>
+    <link rel="stylesheet" href="../../common/styles.css">
+    <link rel="stylesheet" href="../../common/demo.css">
+</head>
+<body class="demo-page">
+    <!-- 页面头部 -->
+    <div class="demo-header">
+        <div class="container">
+            <nav class="breadcrumb">
+                <ol class="breadcrumb-list">
+                    <li class="breadcrumb-item"><a href="../../index.html">示例首页</a></li>
+                    <li class="breadcrumb-item"><a href="../index.html">基础入门</a></li>
+                    <li class="breadcrumb-item active">SVG基础概念</li>
+                </ol>
+            </nav>
+            <h1 class="demo-title">SVG基础概念</h1>
+            <p class="demo-subtitle">了解什么是SVG，掌握其特点和基本用法</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="demo-main">
+            <!-- 主要内容区域 -->
+            <div class="demo-content">
+                <!-- 什么是SVG -->
+                <div class="card">
+                    <h2>什么是SVG？</h2>
+                    <p>SVG（Scalable Vector Graphics）是一种基于XML的矢量图形格式，由W3C制定。与位图不同，SVG使用数学描述来定义图形，因此可以无损缩放到任意大小。</p>
+                    
+                    <div class="svg-example">
+                        <svg width="300" height="150" viewBox="0 0 300 150">
+                            <defs>
+                                <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#4CAF50"/>
+                                    <stop offset="100%" style="stop-color:#2196F3"/>
+                                </linearGradient>
+                            </defs>
+                            
+                            <!-- SVG Logo示例 -->
+                            <circle cx="75" cy="75" r="50" fill="url(#logoGrad)" opacity="0.2"/>
+                            <text x="75" y="60" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="url(#logoGrad)">SVG</text>
+                            <text x="75" y="80" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#666">Scalable Vector Graphics</text>
+                            
+                            <!-- 箭头指向特性说明 -->
+                            <g transform="translate(150, 75)">
+                                <line x1="0" y1="0" x2="40" y2="-30" stroke="#999" stroke-width="1" marker-end="url(#arrowhead)"/>
+                                <text x="45" y="-35" font-size="10" fill="#666">无限缩放</text>
+                                
+                                <line x1="0" y1="0" x2="40" y2="0" stroke="#999" stroke-width="1" marker-end="url(#arrowhead)"/>
+                                <text x="45" y="-3" font-size="10" fill="#666">文件小</text>
+                                
+                                <line x1="0" y1="0" x2="40" y2="30" stroke="#999" stroke-width="1" marker-end="url(#arrowhead)"/>
+                                <text x="45" y="35" font-size="10" fill="#666">可交互</text>
+                            </g>
+                            
+                            <!-- 定义箭头标记 -->
+                            <defs>
+                                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                    <polygon points="0 0, 10 3.5, 0 7" fill="#999"/>
+                                </marker>
+                            </defs>
+                        </svg>
+                        <div class="svg-description">SVG的主要特点：矢量图形、可缩放、文件小、支持交互</div>
+                    </div>
+                </div>
+
+                <!-- SVG的优势 -->
+                <div class="card">
+                    <h2>SVG的优势</h2>
+                    <div class="grid grid-2">
+                        <div>
+                            <h3>🔍 无损缩放</h3>
+                            <p>无论放大到任何尺寸都保持清晰，适合响应式设计和高分辨率显示器。</p>
+                            
+                            <h3>📦 文件体积小</h3>
+                            <p>简单图形的SVG文件通常比相同效果的位图文件小得多。</p>
+                            
+                            <h3>🎨 可编辑</h3>
+                            <p>基于XML格式，可以用代码编辑器直接修改，也支持程序化生成。</p>
+                        </div>
+                        <div>
+                            <h3>⚡ 性能优异</h3>
+                            <p>浏览器原生支持，渲染效率高，支持硬件加速。</p>
+                            
+                            <h3>🔧 可交互</h3>
+                            <p>支持CSS样式和JavaScript控制，可以创建动态和交互式图形。</p>
+                            
+                            <h3>♿ 可访问性</h3>
+                            <p>支持语义化标记，屏幕阅读器友好，SEO友好。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 格式对比 -->
+                <div class="card">
+                    <h2>格式对比</h2>
+                    <div class="grid grid-3">
+                        <div class="svg-container">
+                            <h3>SVG (矢量)</h3>
+                            <svg width="100" height="100" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="40" fill="#4CAF50"/>
+                                <text x="50" y="55" text-anchor="middle" font-size="12" fill="white">SVG</text>
+                            </svg>
+                            <ul style="text-align: left; font-size: 0.9rem;">
+                                <li>✅ 无损缩放</li>
+                                <li>✅ 文件小</li>
+                                <li>✅ 可编辑</li>
+                                <li>❌ 复杂图像不适用</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="svg-container">
+                            <h3>PNG (位图)</h3>
+                            <div style="width: 100px; height: 100px; background: #2196F3; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; margin: 0 auto;">
+                                PNG
+                            </div>
+                            <ul style="text-align: left; font-size: 0.9rem;">
+                                <li>✅ 支持复杂图像</li>
+                                <li>✅ 透明度</li>
+                                <li>❌ 文件大</li>
+                                <li>❌ 缩放失真</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="svg-container">
+                            <h3>Canvas (位图)</h3>
+                            <canvas width="100" height="100" style="border-radius: 50%; background: #FF9800;"></canvas>
+                            <ul style="text-align: left; font-size: 0.9rem;">
+                                <li>✅ 像素级控制</li>
+                                <li>✅ 适合复杂动画</li>
+                                <li>❌ 不可缩放</li>
+                                <li>❌ 无DOM结构</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 基本结构 -->
+                <div class="card">
+                    <h2>SVG基本结构</h2>
+                    <p>SVG是基于XML的标记语言，具有严格的语法结构：</p>
+                    
+                    <div class="code-editor">
+                        <div class="code-header">
+                            <div class="code-title">基本SVG结构</div>
+                            <div class="code-actions">
+                                <button class="code-btn" onclick="copyCode(this)">复制</button>
+                            </div>
+                        </div>
+                        <div class="code-content">&lt;svg width="200" height="150" viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;!-- 图形元素 --&gt;
+  &lt;circle cx="100" cy="75" r="50" fill="blue" /&gt;
+  &lt;text x="100" y="80" text-anchor="middle" fill="white"&gt;Hello SVG&lt;/text&gt;
+&lt;/svg&gt;</div>
+                    </div>
+                    
+                    <div class="svg-example">
+                        <svg width="200" height="150" viewBox="0 0 200 150">
+                            <circle cx="100" cy="75" r="50" fill="blue"/>
+                            <text x="100" y="80" text-anchor="middle" fill="white">Hello SVG</text>
+                        </svg>
+                        <div class="svg-description">上述代码的渲染结果</div>
+                    </div>
+                </div>
+
+                <!-- 嵌入方式 -->
+                <div class="card">
+                    <h2>SVG的嵌入方式</h2>
+                    <div class="tabs">
+                        <div class="tab-list">
+                            <button class="tab-item active" data-tab="inline">内联SVG</button>
+                            <button class="tab-item" data-tab="image">图片引用</button>
+                            <button class="tab-item" data-tab="css">CSS背景</button>
+                            <button class="tab-item" data-tab="object">Object元素</button>
+                        </div>
+                        
+                        <div class="tab-content active" id="tab-inline">
+                            <p><strong>优点：</strong>可以用CSS和JavaScript控制，支持交互</p>
+                            <p><strong>缺点：</strong>增加HTML文件大小，不能缓存</p>
+                            <div class="code-block">&lt;svg width="100" height="100"&gt;
+  &lt;circle cx="50" cy="50" r="40" fill="red" /&gt;
+&lt;/svg&gt;</div>
+                        </div>
+                        
+                        <div class="tab-content" id="tab-image">
+                            <p><strong>优点：</strong>可以缓存，语义清晰</p>
+                            <p><strong>缺点：</strong>不支持交互，不能用CSS控制</p>
+                            <div class="code-block">&lt;img src="image.svg" alt="SVG图片" /&gt;</div>
+                        </div>
+                        
+                        <div class="tab-content" id="tab-css">
+                            <p><strong>优点：</strong>装饰性图案，可以缓存</p>
+                            <p><strong>缺点：</strong>不支持交互，需要编码</p>
+                            <div class="code-block">background-image: url("data:image/svg+xml,...");</div>
+                        </div>
+                        
+                        <div class="tab-content" id="tab-object">
+                            <p><strong>优点：</strong>支持交互，可以缓存</p>
+                            <p><strong>缺点：</strong>加载稍慢，兼容性考虑</p>
+                            <div class="code-block">&lt;object data="image.svg" type="image/svg+xml"&gt;&lt;/object&gt;</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 侧边栏控制器 -->
+            <div class="demo-sidebar">
+                <h3>🎮 交互演示</h3>
+                <div class="interactive-controls">
+                    <div class="control-section">
+                        <h4>圆形属性</h4>
+                        <div class="control-row">
+                            <label class="control-label">半径</label>
+                            <input type="range" class="control-input range-input" id="radius" min="10" max="80" value="50">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">填充色</label>
+                            <input type="color" class="control-input color-input" id="fillColor" value="#2196F3">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">描边宽度</label>
+                            <input type="range" class="control-input range-input" id="strokeWidth" min="0" max="10" value="0">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">描边色</label>
+                            <input type="color" class="control-input color-input" id="strokeColor" value="#000000">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="svg-display has-content">
+                    <svg id="interactiveSVG" width="200" height="150" viewBox="0 0 200 150">
+                        <circle id="interactiveCircle" cx="100" cy="75" r="50" fill="#2196F3" stroke="none" stroke-width="0"/>
+                        <text x="100" y="80" text-anchor="middle" fill="white" font-size="12">交互式SVG</text>
+                    </svg>
+                </div>
+
+                <div class="code-editor">
+                    <div class="code-header">
+                        <div class="code-title">当前代码</div>
+                        <div class="code-actions">
+                            <button class="code-btn" onclick="copyCurrentCode()">复制</button>
+                        </div>
+                    </div>
+                    <div class="code-content" id="currentCode">&lt;circle cx="100" cy="75" r="50" fill="#2196F3" /&gt;</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 练习任务 -->
+        <div class="card">
+            <h2>🎯 练习任务</h2>
+            <div class="grid grid-3">
+                <div class="example-card">
+                    <div class="example-title">任务1：创建第一个SVG</div>
+                    <div class="example-description">
+                        创建一个包含圆形和文本的简单SVG，尝试修改颜色和大小。
+                    </div>
+                    <button class="btn btn-primary" onclick="startTask1()">开始任务</button>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-title">任务2：格式对比</div>
+                    <div class="example-description">
+                        比较SVG和PNG在不同尺寸下的表现，观察缩放效果。
+                    </div>
+                    <button class="btn btn-primary" onclick="startTask2()">开始任务</button>
+                </div>
+                
+                <div class="example-card">
+                    <div class="example-title">任务3：嵌入方式</div>
+                    <div class="example-description">
+                        尝试使用不同方式在网页中嵌入SVG，体验各种方法的区别。
+                    </div>
+                    <button class="btn btn-primary" onclick="startTask3()">开始任务</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 导航 -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <a href="../index.html" class="btn">← 返回基础入门</a>
+                <a href="../basic-shapes/" class="btn btn-primary">下一章：基本图形绘制 →</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../common/utils.js"></script>
+    <script>
+        // 交互式演示
+        const circle = document.getElementById('interactiveCircle');
+        const radiusSlider = document.getElementById('radius');
+        const fillColorPicker = document.getElementById('fillColor');
+        const strokeWidthSlider = document.getElementById('strokeWidth');
+        const strokeColorPicker = document.getElementById('strokeColor');
+        const codeDisplay = document.getElementById('currentCode');
+
+        function updateCircle() {
+            const radius = radiusSlider.value;
+            const fillColor = fillColorPicker.value;
+            const strokeWidth = strokeWidthSlider.value;
+            const strokeColor = strokeColorPicker.value;
+
+            circle.setAttribute('r', radius);
+            circle.setAttribute('fill', fillColor);
+            circle.setAttribute('stroke-width', strokeWidth);
+            circle.setAttribute('stroke', strokeWidth > 0 ? strokeColor : 'none');
+
+            updateCode();
+        }
+
+        function updateCode() {
+            const radius = radiusSlider.value;
+            const fillColor = fillColorPicker.value;
+            const strokeWidth = strokeWidthSlider.value;
+            const strokeColor = strokeColorPicker.value;
+
+            let code = `&lt;circle cx="100" cy="75" r="${radius}" fill="${fillColor}"`;
+            if (strokeWidth > 0) {
+                code += ` stroke="${strokeColor}" stroke-width="${strokeWidth}"`;
+            }
+            code += ' /&gt;';
+
+            codeDisplay.innerHTML = code;
+        }
+
+        // 绑定事件
+        radiusSlider.addEventListener('input', updateCircle);
+        fillColorPicker.addEventListener('change', updateCircle);
+        strokeWidthSlider.addEventListener('input', updateCircle);
+        strokeColorPicker.addEventListener('change', updateCircle);
+
+        // 选项卡功能
+        document.querySelectorAll('.tab-item').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // 移除所有活动状态
+                document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // 添加当前活动状态
+                this.classList.add('active');
+                document.getElementById(`tab-${this.dataset.tab}`).classList.add('active');
+            });
+        });
+
+        // 复制代码功能
+        function copyCode(button) {
+            const codeContent = button.closest('.code-editor').querySelector('.code-content').textContent;
+            navigator.clipboard.writeText(codeContent).then(() => {
+                button.textContent = '已复制!';
+                setTimeout(() => button.textContent = '复制', 2000);
+            });
+        }
+
+        function copyCurrentCode() {
+            const code = codeDisplay.textContent.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+            navigator.clipboard.writeText(code).then(() => {
+                document.querySelector('#currentCode').parentElement.previousElementSibling.querySelector('.code-btn').textContent = '已复制!';
+                setTimeout(() => {
+                    document.querySelector('#currentCode').parentElement.previousElementSibling.querySelector('.code-btn').textContent = '复制';
+                }, 2000);
+            });
+        }
+
+        // 任务函数
+        function startTask1() {
+            alert('任务1：在HTML文件中创建一个SVG元素，包含一个彩色圆形和一行文本。');
+        }
+
+        function startTask2() {
+            alert('任务2：创建同样内容的SVG和PNG图片，在不同尺寸下比较它们的显示效果。');
+        }
+
+        function startTask3() {
+            alert('任务3：尝试用内联、img标签、CSS背景等方式嵌入同一个SVG，观察交互性差异。');
+        }
+
+        // 初始化
+        updateCode();
+    </script>
+</body>
+</html> 

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第二阶段：样式与效果</title>
+    <link rel="stylesheet" href="../common/styles.css">
+    <link rel="stylesheet" href="../common/demo.css">
+</head>
+<body class="demo-page">
+    <div class="demo-header">
+        <div class="container">
+            <nav class="breadcrumb">
+                <ol class="breadcrumb-list">
+                    <li class="breadcrumb-item"><a href="../index.html">示例首页</a></li>
+                    <li class="breadcrumb-item active">第二阶段：样式与效果</li>
+                </ol>
+            </nav>
+            <h1 class="demo-title">第二阶段：样式与效果</h1>
+            <p class="demo-subtitle">掌握SVG的样式控制和视觉效果技术</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- 学习目标 -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">🎯 学习目标</h2>
+            </div>
+            <div class="grid grid-2">
+                <div>
+                    <h3>样式技能</h3>
+                    <ul>
+                        <li>掌握CSS在SVG中的应用</li>
+                        <li>学会使用渐变和图案填充</li>
+                        <li>了解描边和填充的高级技巧</li>
+                        <li>理解SVG样式的层叠规则</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>效果技能</h3>
+                    <ul>
+                        <li>创建滤镜和阴影效果</li>
+                        <li>应用剪裁和遮罩技术</li>
+                        <li>设计复杂的视觉效果</li>
+                        <li>优化样式性能</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 示例章节 -->
+        <div class="examples-grid">
+            <!-- 第7章：CSS样式控制 -->
+            <div class="example-card" onclick="location.href='css-styling/'">
+                <div class="example-preview">
+                    <svg width="150" height="100" viewBox="0 0 150 100">
+                        <style>
+                            .styled-circle { fill: #FF6B9D; stroke: #C2185B; stroke-width: 3; }
+                            .styled-rect { fill: #42A5F5; stroke: #1976D2; stroke-width: 2; }
+                            .styled-text { fill: #4CAF50; font-family: Arial; font-size: 12px; }
+                        </style>
+                        <circle cx="40" cy="35" r="15" class="styled-circle"/>
+                        <rect x="70" y="20" width="30" height="20" class="styled-rect"/>
+                        <text x="75" y="60" class="styled-text">CSS样式</text>
+                    </svg>
+                </div>
+                <div class="example-title">CSS样式控制</div>
+                <div class="example-description">
+                    学习在SVG中使用CSS进行样式控制和响应式设计
+                </div>
+                <div class="example-tags">
+                    <span class="tag tag-primary">CSS</span>
+                    <span class="tag">样式表</span>
+                    <span class="tag">选择器</span>
+                </div>
+            </div>
+
+            <!-- 第8章：填充和描边 -->
+            <div class="example-card" onclick="location.href='fill-stroke/'">
+                <div class="example-preview">
+                    <svg width="150" height="100" viewBox="0 0 150 100">
+                        <circle cx="40" cy="35" r="15" fill="#FFB74D" stroke="#F57C00" stroke-width="3"/>
+                        <rect x="70" y="20" width="30" height="20" fill="none" stroke="#9C27B0" stroke-width="4" stroke-dasharray="5,3"/>
+                        <polygon points="95,60 110,75 80,75" fill="#4CAF50" stroke="#2E7D32" stroke-width="2" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="example-title">填充和描边</div>
+                <div class="example-description">
+                    深入学习fill和stroke属性，掌握描边样式和填充技巧
+                </div>
+                <div class="example-tags">
+                    <span class="tag tag-success">填充</span>
+                    <span class="tag">描边</span>
+                    <span class="tag">虚线</span>
+                </div>
+            </div>
+
+            <!-- 第9章：渐变效果 -->
+            <div class="example-card" onclick="location.href='gradients/'">
+                <div class="example-preview">
+                    <svg width="150" height="100" viewBox="0 0 150 100">
+                        <defs>
+                            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#FF6B9D"/>
+                                <stop offset="100%" style="stop-color:#42A5F5"/>
+                            </linearGradient>
+                            <radialGradient id="grad2" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" style="stop-color:#FFF176"/>
+                                <stop offset="100%" style="stop-color:#FF9800"/>
+                            </radialGradient>
+                        </defs>
+                        <rect x="20" y="20" width="50" height="30" fill="url(#grad1)"/>
+                        <circle cx="100" cy="50" r="20" fill="url(#grad2)"/>
+                    </svg>
+                </div>
+                <div class="example-title">渐变效果</div>
+                <div class="example-description">
+                    创建线性渐变和径向渐变，掌握渐变的高级应用
+                </div>
+                <div class="example-tags">
+                    <span class="tag tag-warning">渐变</span>
+                    <span class="tag">线性</span>
+                    <span class="tag">径向</span>
+                </div>
+            </div>
+
+            <!-- 第10章：图案和纹理 -->
+            <div class="example-card" onclick="location.href='patterns/'">
+                <div class="example-preview">
+                    <svg width="150" height="100" viewBox="0 0 150 100">
+                        <defs>
+                            <pattern id="stripes" patternUnits="userSpaceOnUse" width="8" height="8">
+                                <rect width="8" height="4" fill="#E3F2FD"/>
+                                <rect y="4" width="8" height="4" fill="#2196F3"/>
+                            </pattern>
+                            <pattern id="dots" patternUnits="userSpaceOnUse" width="12" height="12">
+                                <circle cx="6" cy="6" r="2" fill="#4CAF50"/>
+                            </pattern>
+                        </defs>
+                        <rect x="20" y="20" width="40" height="30" fill="url(#stripes)"/>
+                        <circle cx="100" cy="50" r="20" fill="url(#dots)"/>
+                    </svg>
+                </div>
+                <div class="example-title">图案和纹理</div>
+                <div class="example-description">
+                    使用pattern元素创建重复图案和纹理效果
+                </div>
+                <div class="example-tags">
+                    <span class="tag tag-info">图案</span>
+                    <span class="tag">纹理</span>
+                    <span class="tag">重复</span>
+                </div>
+            </div>
+
+            <!-- 第11章：滤镜效果 -->
+            <div class="example-card" onclick="location.href='filters/'">
+                <div class="example-preview">
+                    <svg width="150" height="100" viewBox="0 0 150 100">
+                        <defs>
+                            <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                                <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.3)"/>
+                            </filter>
+                            <filter id="blur">
+                                <feGaussianBlur stdDeviation="2"/>
+                            </filter>
+                        </defs>
+                        <circle cx="40" cy="40" r="15" fill="#FF9800" filter="url(#shadow)"/>
+                        <rect x="80" y="25" width="30" height="20" fill="#9C27B0" filter="url(#blur)"/>
+                    </svg>
+                </div>
+                <div class="example-title">滤镜效果</div>
+                <div class="example-description">
+                    应用各种滤镜创建阴影、模糊、发光等视觉效果
+                </div>
+                <div class="example-tags">
+                    <span class="tag tag-danger">滤镜</span>
+                    <span class="tag">阴影</span>
+                    <span class="tag">模糊</span>
+                </div>
+            </div>
+
+            <!-- 第12章：剪裁和遮罩 -->
+            <div class="example-card" onclick="location.href='clipping-masking/'">
+                <div class="example-preview">
+                    <svg width="150" height="100" viewBox="0 0 150 100">
+                        <defs>
+                            <clipPath id="circleClip">
+                                <circle cx="75" cy="50" r="30"/>
+                            </clipPath>
+                            <mask id="fadeMask">
+                                <linearGradient id="fade" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" style="stop-color:white"/>
+                                    <stop offset="100%" style="stop-color:black"/>
+                                </linearGradient>
+                                <rect width="100%" height="100%" fill="url(#fade)"/>
+                            </mask>
+                        </defs>
+                        <rect x="30" y="20" width="90" height="60" fill="#4CAF50" clip-path="url(#circleClip)"/>
+                        <rect x="10" y="10" width="40" height="30" fill="#2196F3" mask="url(#fadeMask)"/>
+                    </svg>
+                </div>
+                <div class="example-title">剪裁和遮罩</div>
+                <div class="example-description">
+                    使用clipPath和mask创建复杂的剪裁和遮罩效果
+                </div>
+                <div class="example-tags">
+                    <span class="tag">剪裁</span>
+                    <span class="tag">遮罩</span>
+                    <span class="tag">透明度</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 实践项目 -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">🛠️ 实践项目</h2>
+            </div>
+            <div class="grid grid-3">
+                <div class="example-card" onclick="location.href='projects/card-design/'">
+                    <div class="example-preview">
+                        <svg width="120" height="80" viewBox="0 0 120 80">
+                            <defs>
+                                <linearGradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#667eea"/>
+                                    <stop offset="100%" style="stop-color:#764ba2"/>
+                                </linearGradient>
+                                <filter id="cardShadow">
+                                    <feDropShadow dx="2" dy="4" stdDeviation="4" flood-color="rgba(0,0,0,0.2)"/>
+                                </filter>
+                            </defs>
+                            <rect x="10" y="15" width="100" height="60" rx="8" fill="url(#cardGrad)" filter="url(#cardShadow)"/>
+                            <circle cx="25" cy="30" r="6" fill="white" opacity="0.9"/>
+                            <rect x="35" y="27" width="30" height="3" fill="white" opacity="0.8"/>
+                            <rect x="35" y="32" width="20" height="2" fill="white" opacity="0.6"/>
+                        </svg>
+                    </div>
+                    <div class="example-title">卡片设计</div>
+                    <div class="example-description">设计现代化的卡片组件</div>
+                </div>
+
+                <div class="example-card" onclick="location.href='projects/icon-library/'">
+                    <div class="example-preview">
+                        <svg width="120" height="80" viewBox="0 0 120 80">
+                            <defs>
+                                <linearGradient id="iconGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#FF6B9D"/>
+                                    <stop offset="100%" style="stop-color:#C2185B"/>
+                                </linearGradient>
+                                <linearGradient id="iconGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#42A5F5"/>
+                                    <stop offset="100%" style="stop-color:#1976D2"/>
+                                </linearGradient>
+                            </defs>
+                            <circle cx="30" cy="30" r="12" fill="url(#iconGrad1)"/>
+                            <rect x="55" y="18" width="24" height="24" rx="4" fill="url(#iconGrad2)"/>
+                            <polygon points="100,18 110,28 100,38 90,28" fill="url(#iconGrad1)"/>
+                        </svg>
+                    </div>
+                    <div class="example-title">图标库</div>
+                    <div class="example-description">创建统一风格的图标集</div>
+                </div>
+
+                <div class="example-card" onclick="location.href='projects/data-visualization/'">
+                    <div class="example-preview">
+                        <svg width="120" height="80" viewBox="0 0 120 80">
+                            <defs>
+                                <linearGradient id="barGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+                                    <stop offset="0%" style="stop-color:#4CAF50"/>
+                                    <stop offset="100%" style="stop-color:#8BC34A"/>
+                                </linearGradient>
+                            </defs>
+                            <rect x="20" y="40" width="15" height="30" fill="url(#barGrad)"/>
+                            <rect x="40" y="25" width="15" height="45" fill="url(#barGrad)"/>
+                            <rect x="60" y="35" width="15" height="35" fill="url(#barGrad)"/>
+                            <rect x="80" y="20" width="15" height="50" fill="url(#barGrad)"/>
+                        </svg>
+                    </div>
+                    <div class="example-title">数据可视化</div>
+                    <div class="example-description">创建基础的图表组件</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 技能检查清单 -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">✅ 技能检查清单</h2>
+            </div>
+            <div class="grid grid-2">
+                <div>
+                    <h3>样式控制</h3>
+                    <ul>
+                        <li><input type="checkbox" id="css1"> 理解CSS在SVG中的应用</li>
+                        <li><input type="checkbox" id="css2"> 掌握fill和stroke属性</li>
+                        <li><input type="checkbox" id="css3"> 会使用CSS选择器</li>
+                        <li><input type="checkbox" id="css4"> 了解样式优先级</li>
+                        <li><input type="checkbox" id="css5"> 能创建响应式SVG</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>视觉效果</h3>
+                    <ul>
+                        <li><input type="checkbox" id="effect1"> 能创建渐变效果</li>
+                        <li><input type="checkbox" id="effect2"> 会使用图案填充</li>
+                        <li><input type="checkbox" id="effect3"> 掌握滤镜应用</li>
+                        <li><input type="checkbox" id="effect4"> 理解剪裁和遮罩</li>
+                        <li><input type="checkbox" id="effect5"> 能组合多种效果</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 学习资源 -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">📚 推荐资源</h2>
+            </div>
+            <div class="grid grid-2">
+                <div>
+                    <h3>官方文档</h3>
+                    <ul>
+                        <li><a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Gradients" target="_blank">MDN SVG 渐变教程</a></li>
+                        <li><a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Filter_effects" target="_blank">MDN SVG 滤镜教程</a></li>
+                        <li><a href="https://www.w3.org/TR/SVG2/styling.html" target="_blank">W3C SVG 样式规范</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3>实用工具</h3>
+                    <ul>
+                        <li><a href="https://www.svgator.com/" target="_blank">SVGator - SVG动画工具</a></li>
+                        <li><a href="https://bennettfeely.com/clippy/" target="_blank">Clippy - CSS剪裁路径工具</a></li>
+                        <li><a href="https://www.grabient.com/" target="_blank">Grabient - 渐变生成器</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 导航 -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem;">
+            <a href="../01-foundations/" class="btn">← 第一阶段：基础入门</a>
+            <a href="../03-animation/" class="btn btn-primary">第三阶段：动画与交互 →</a>
+        </div>
+    </div>
+
+    <script src="../common/utils.js"></script>
+    <script>
+        // 进度跟踪
+        const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+        
+        // 从本地存储加载进度
+        checkboxes.forEach((checkbox, index) => {
+            const saved = localStorage.getItem(`svg-styling-${index}`);
+            if (saved === 'true') {
+                checkbox.checked = true;
+            }
+        });
+        
+        // 保存进度
+        checkboxes.forEach((checkbox, index) => {
+            checkbox.addEventListener('change', () => {
+                localStorage.setItem(`svg-styling-${index}`, checkbox.checked);
+            });
+        });
+        
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.example-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基本图形绘制 - SVG学习示例</title>
+    <link rel="stylesheet" href="../../common/styles.css">
+    <link rel="stylesheet" href="../../common/demo.css">
+</head>
+<body class="demo-page">
+    <!-- 页面头部 -->
+    <div class="demo-header">
+        <div class="container">
+            <nav class="breadcrumb">
+                <ol class="breadcrumb-list">
+                    <li class="breadcrumb-item"><a href="../../index.html">示例首页</a></li>
+                    <li class="breadcrumb-item"><a href="../index.html">基础入门</a></li>
+                    <li class="breadcrumb-item active">基本图形绘制</li>
+                </ol>
+            </nav>
+            <h1 class="demo-title">基本图形绘制</h1>
+            <p class="demo-subtitle">学习SVG的基本图形元素：矩形、圆形、椭圆、直线和多边形</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="demo-main">
+            <!-- 主要内容区域 -->
+            <div class="demo-content">
+                <!-- 矩形 -->
+                <div class="card">
+                    <h2>🔲 矩形 (rect)</h2>
+                    <p>矩形是最常用的基本图形之一，通过 x、y、width、height 属性定义位置和大小。</p>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">基本矩形</div>
+                                </div>
+                                <div class="code-content">&lt;rect x="10" y="10" width="100" height="60" fill="blue" /&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="120" height="80" viewBox="0 0 120 80">
+                                    <rect x="10" y="10" width="100" height="60" fill="blue"/>
+                                </svg>
+                                <div class="svg-description">基本矩形</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">圆角矩形</div>
+                                </div>
+                                <div class="code-content">&lt;rect x="10" y="10" width="100" height="60" rx="10" ry="10" fill="green" /&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="120" height="80" viewBox="0 0 120 80">
+                                    <rect x="10" y="10" width="100" height="60" rx="10" ry="10" fill="green"/>
+                                </svg>
+                                <div class="svg-description">圆角矩形 (rx, ry)</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <strong>属性说明：</strong><br>
+                        • x, y: 矩形左上角坐标<br>
+                        • width, height: 宽度和高度<br>
+                        • rx, ry: 圆角半径（可选）
+                    </div>
+                </div>
+
+                <!-- 圆形 -->
+                <div class="card">
+                    <h2>⭕ 圆形 (circle)</h2>
+                    <p>圆形通过中心点坐标 (cx, cy) 和半径 r 来定义。</p>
+                    
+                    <div class="grid grid-3">
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">填充圆形</div>
+                                </div>
+                                <div class="code-content">&lt;circle cx="50" cy="50" r="30" fill="red" /&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="100" height="100" viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="30" fill="red"/>
+                                </svg>
+                                <div class="svg-description">填充圆形</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">描边圆形</div>
+                                </div>
+                                <div class="code-content">&lt;circle cx="50" cy="50" r="30" fill="none" stroke="blue" stroke-width="3" /&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="100" height="100" viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="30" fill="none" stroke="blue" stroke-width="3"/>
+                                </svg>
+                                <div class="svg-description">描边圆形</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">填充+描边</div>
+                                </div>
+                                <div class="code-content">&lt;circle cx="50" cy="50" r="30" fill="yellow" stroke="orange" stroke-width="4" /&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="100" height="100" viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="30" fill="yellow" stroke="orange" stroke-width="4"/>
+                                </svg>
+                                <div class="svg-description">填充+描边</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 椭圆 -->
+                <div class="card">
+                    <h2>🥚 椭圆 (ellipse)</h2>
+                    <p>椭圆类似圆形，但有两个半径：rx（水平半径）和 ry（垂直半径）。</p>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">水平椭圆</div>
+                                </div>
+                                <div class="code-content">&lt;ellipse cx="60" cy="40" rx="50" ry="25" fill="purple" /&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="120" height="80" viewBox="0 0 120 80">
+                                    <ellipse cx="60" cy="40" rx="50" ry="25" fill="purple"/>
+                                </svg>
+                                <div class="svg-description">水平椭圆 (rx > ry)</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">垂直椭圆</div>
+                                </div>
+                                <div class="code-content">&lt;ellipse cx="60" cy="40" rx="25" ry="35" fill="teal" /&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="120" height="80" viewBox="0 0 120 80">
+                                    <ellipse cx="60" cy="40" rx="25" ry="35" fill="teal"/>
+                                </svg>
+                                <div class="svg-description">垂直椭圆 (rx < ry)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 直线 -->
+                <div class="card">
+                    <h2>📏 直线 (line)</h2>
+                    <p>直线通过起点 (x1, y1) 和终点 (x2, y2) 定义。直线没有填充，只能设置描边。</p>
+                    
+                    <div class="grid grid-3">
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">基本直线</div>
+                                </div>
+                                <div class="code-content">&lt;line x1="10" y1="10" x2="90" y2="70" stroke="black" stroke-width="2" /&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="100" height="80" viewBox="0 0 100 80">
+                                    <line x1="10" y1="10" x2="90" y2="70" stroke="black" stroke-width="2"/>
+                                </svg>
+                                <div class="svg-description">基本直线</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">虚线</div>
+                                </div>
+                                <div class="code-content">&lt;line x1="10" y1="40" x2="90" y2="40" stroke="red" stroke-width="3" stroke-dasharray="5,5" /&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="100" height="80" viewBox="0 0 100 80">
+                                    <line x1="10" y1="40" x2="90" y2="40" stroke="red" stroke-width="3" stroke-dasharray="5,5"/>
+                                </svg>
+                                <div class="svg-description">虚线样式</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">圆形端点</div>
+                                </div>
+                                <div class="code-content">&lt;line x1="10" y1="40" x2="90" y2="40" stroke="blue" stroke-width="6" stroke-linecap="round" /&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="100" height="80" viewBox="0 0 100 80">
+                                    <line x1="10" y1="40" x2="90" y2="40" stroke="blue" stroke-width="6" stroke-linecap="round"/>
+                                </svg>
+                                <div class="svg-description">圆形端点</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 折线 -->
+                <div class="card">
+                    <h2>📈 折线 (polyline)</h2>
+                    <p>折线通过一系列连接的点创建，使用 points 属性定义所有顶点坐标。</p>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">开放折线</div>
+                                </div>
+                                <div class="code-content">&lt;polyline points="10,10 50,80 90,20 130,60" fill="none" stroke="green" stroke-width="2" /&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="140" height="90" viewBox="0 0 140 90">
+                                    <polyline points="10,10 50,80 90,20 130,60" fill="none" stroke="green" stroke-width="2"/>
+                                    <!-- 显示顶点 -->
+                                    <circle cx="10" cy="10" r="2" fill="red"/>
+                                    <circle cx="50" cy="80" r="2" fill="red"/>
+                                    <circle cx="90" cy="20" r="2" fill="red"/>
+                                    <circle cx="130" cy="60" r="2" fill="red"/>
+                                </svg>
+                                <div class="svg-description">开放的折线（红点为顶点）</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">填充折线</div>
+                                </div>
+                                <div class="code-content">&lt;polyline points="10,10 50,80 90,20 130,60" fill="lightblue" stroke="blue" stroke-width="2" /&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="140" height="90" viewBox="0 0 140 90">
+                                    <polyline points="10,10 50,80 90,20 130,60" fill="lightblue" stroke="blue" stroke-width="2"/>
+                                </svg>
+                                <div class="svg-description">带填充的折线</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 多边形 -->
+                <div class="card">
+                    <h2>🔶 多边形 (polygon)</h2>
+                    <p>多边形与折线类似，但会自动闭合（连接最后一点和第一点）。</p>
+                    
+                    <div class="grid grid-3">
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">三角形</div>
+                                </div>
+                                <div class="code-content">&lt;polygon points="50,10 20,80 80,80" fill="orange" /&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="100" height="90" viewBox="0 0 100 90">
+                                    <polygon points="50,10 20,80 80,80" fill="orange"/>
+                                </svg>
+                                <div class="svg-description">三角形</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">五角星</div>
+                                </div>
+                                <div class="code-content">&lt;polygon points="50,5 61,35 95,35 68,57 79,87 50,65 21,87 32,57 5,35 39,35" fill="gold" /&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="100" height="90" viewBox="0 0 100 90">
+                                    <polygon points="50,5 61,35 95,35 68,57 79,87 50,65 21,87 32,57 5,35 39,35" fill="gold"/>
+                                </svg>
+                                <div class="svg-description">五角星</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">六边形</div>
+                                </div>
+                                <div class="code-content">&lt;polygon points="50,10 80,30 80,70 50,90 20,70 20,30" fill="none" stroke="purple" stroke-width="3" /&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="100" height="100" viewBox="0 0 100 100">
+                                    <polygon points="50,10 80,30 80,70 50,90 20,70 20,30" fill="none" stroke="purple" stroke-width="3"/>
+                                </svg>
+                                <div class="svg-description">六边形（只有描边）</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 侧边栏控制器 -->
+            <div class="demo-sidebar">
+                <h3>🎮 交互式图形生成器</h3>
+                <div class="interactive-controls">
+                    <div class="control-section">
+                        <h4>图形类型</h4>
+                        <div class="control-row">
+                            <label class="control-label">类型</label>
+                            <select id="shapeType" class="control-input">
+                                <option value="rect">矩形</option>
+                                <option value="circle">圆形</option>
+                                <option value="ellipse">椭圆</option>
+                                <option value="line">直线</option>
+                                <option value="polygon">多边形</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="control-section">
+                        <h4>尺寸属性</h4>
+                        <div class="control-row">
+                            <label class="control-label">宽度/半径</label>
+                            <input type="range" id="width" class="control-input range-input" min="10" max="150" value="80">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">高度/半径Y</label>
+                            <input type="range" id="height" class="control-input range-input" min="10" max="100" value="50">
+                        </div>
+                    </div>
+                    
+                    <div class="control-section">
+                        <h4>样式属性</h4>
+                        <div class="control-row">
+                            <label class="control-label">填充色</label>
+                            <input type="color" id="fillColor" class="control-input color-input" value="#4CAF50">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">描边色</label>
+                            <input type="color" id="strokeColor" class="control-input color-input" value="#2196F3">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">描边宽度</label>
+                            <input type="range" id="strokeWidth" class="control-input range-input" min="0" max="10" value="2">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="svg-display has-content">
+                    <svg id="generatedSVG" width="200" height="150" viewBox="0 0 200 150">
+                        <rect id="generatedShape" x="60" y="50" width="80" height="50" fill="#4CAF50" stroke="#2196F3" stroke-width="2"/>
+                    </svg>
+                </div>
+
+                <div class="code-editor">
+                    <div class="code-header">
+                        <div class="code-title">生成的代码</div>
+                        <div class="code-actions">
+                            <button class="code-btn" onclick="copyGeneratedCode()">复制</button>
+                        </div>
+                    </div>
+                    <div class="code-content" id="generatedCode">&lt;rect x="60" y="50" width="80" height="50" fill="#4CAF50" stroke="#2196F3" stroke-width="2" /&gt;</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 综合练习 -->
+        <div class="card">
+            <h2>🎨 综合练习</h2>
+            <p>结合所学的基本图形，创建更复杂的图案：</p>
+            
+            <div class="grid grid-2">
+                <div class="svg-example">
+                    <h3>房子图案</h3>
+                    <svg width="200" height="150" viewBox="0 0 200 150">
+                        <!-- 房子主体 -->
+                        <rect x="50" y="80" width="100" height="60" fill="#8D6E63"/>
+                        <!-- 屋顶 -->
+                        <polygon points="100,40 40,80 160,80" fill="#D32F2F"/>
+                        <!-- 门 -->
+                        <rect x="80" y="110" width="20" height="30" fill="#5D4037"/>
+                        <!-- 窗户 -->
+                        <rect x="60" y="95" width="15" height="15" fill="#FFE082"/>
+                        <rect x="125" y="95" width="15" height="15" fill="#FFE082"/>
+                        <!-- 烟囱 -->
+                        <rect x="130" y="50" width="8" height="25" fill="#424242"/>
+                        <!-- 太阳 -->
+                        <circle cx="170" cy="30" r="12" fill="#FFC107"/>
+                    </svg>
+                    <div class="svg-description">使用基本图形组合而成的房子</div>
+                </div>
+                
+                <div class="svg-example">
+                    <h3>机器人图案</h3>
+                    <svg width="200" height="150" viewBox="0 0 200 150">
+                        <!-- 头部 -->
+                        <rect x="75" y="20" width="50" height="40" rx="10" fill="#90A4AE"/>
+                        <!-- 眼睛 -->
+                        <circle cx="85" cy="35" r="4" fill="#F44336"/>
+                        <circle cx="115" cy="35" r="4" fill="#F44336"/>
+                        <!-- 嘴巴 -->
+                        <rect x="90" y="45" width="20" height="3" fill="#333"/>
+                        <!-- 身体 -->
+                        <rect x="70" y="65" width="60" height="50" fill="#607D8B"/>
+                        <!-- 按钮 -->
+                        <circle cx="85" cy="80" r="3" fill="#4CAF50"/>
+                        <circle cx="100" cy="80" r="3" fill="#FF9800"/>
+                        <circle cx="115" cy="80" r="3" fill="#F44336"/>
+                        <!-- 手臂 -->
+                        <rect x="45" y="70" width="20" height="8" fill="#90A4AE"/>
+                        <rect x="135" y="70" width="20" height="8" fill="#90A4AE"/>
+                        <!-- 腿 -->
+                        <rect x="80" y="120" width="12" height="25" fill="#90A4AE"/>
+                        <rect x="108" y="120" width="12" height="25" fill="#90A4AE"/>
+                    </svg>
+                    <div class="svg-description">机器人角色设计</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 导航 -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <a href="../svg-fundamentals/" class="btn">← 上一章：SVG基础概念</a>
+                <a href="../paths/" class="btn btn-primary">下一章：路径系统 →</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../common/utils.js"></script>
+    <script>
+        // 图形生成器
+        const shapeType = document.getElementById('shapeType');
+        const widthSlider = document.getElementById('width');
+        const heightSlider = document.getElementById('height');
+        const fillColor = document.getElementById('fillColor');
+        const strokeColor = document.getElementById('strokeColor');
+        const strokeWidth = document.getElementById('strokeWidth');
+        const generatedShape = document.getElementById('generatedShape');
+        const generatedCode = document.getElementById('generatedCode');
+
+        function updateShape() {
+            const type = shapeType.value;
+            const w = widthSlider.value;
+            const h = heightSlider.value;
+            const fill = fillColor.value;
+            const stroke = strokeColor.value;
+            const sWidth = strokeWidth.value;
+
+            // 清除现有图形
+            generatedShape.remove();
+
+            let newShape;
+            let code = '';
+
+            switch(type) {
+                case 'rect':
+                    newShape = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                    newShape.setAttribute('x', (200 - w) / 2);
+                    newShape.setAttribute('y', (150 - h) / 2);
+                    newShape.setAttribute('width', w);
+                    newShape.setAttribute('height', h);
+                    code = `&lt;rect x="${(200 - w) / 2}" y="${(150 - h) / 2}" width="${w}" height="${h}" fill="${fill}" stroke="${stroke}" stroke-width="${sWidth}" /&gt;`;
+                    break;
+                    
+                case 'circle':
+                    newShape = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    newShape.setAttribute('cx', 100);
+                    newShape.setAttribute('cy', 75);
+                    newShape.setAttribute('r', w / 2);
+                    code = `&lt;circle cx="100" cy="75" r="${w / 2}" fill="${fill}" stroke="${stroke}" stroke-width="${sWidth}" /&gt;`;
+                    break;
+                    
+                case 'ellipse':
+                    newShape = document.createElementNS('http://www.w3.org/2000/svg', 'ellipse');
+                    newShape.setAttribute('cx', 100);
+                    newShape.setAttribute('cy', 75);
+                    newShape.setAttribute('rx', w / 2);
+                    newShape.setAttribute('ry', h / 2);
+                    code = `&lt;ellipse cx="100" cy="75" rx="${w / 2}" ry="${h / 2}" fill="${fill}" stroke="${stroke}" stroke-width="${sWidth}" /&gt;`;
+                    break;
+                    
+                case 'line':
+                    newShape = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    newShape.setAttribute('x1', (200 - w) / 2);
+                    newShape.setAttribute('y1', 75);
+                    newShape.setAttribute('x2', (200 + w) / 2);
+                    newShape.setAttribute('y2', 75);
+                    newShape.setAttribute('fill', 'none');
+                    code = `&lt;line x1="${(200 - w) / 2}" y1="75" x2="${(200 + w) / 2}" y2="75" stroke="${stroke}" stroke-width="${sWidth}" /&gt;`;
+                    break;
+                    
+                case 'polygon':
+                    newShape = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                    // 创建一个简单的三角形
+                    const points = `100,${75 - h/2} ${100 - w/2},${75 + h/2} ${100 + w/2},${75 + h/2}`;
+                    newShape.setAttribute('points', points);
+                    code = `&lt;polygon points="${points}" fill="${fill}" stroke="${stroke}" stroke-width="${sWidth}" /&gt;`;
+                    break;
+            }
+
+            newShape.setAttribute('fill', type === 'line' ? 'none' : fill);
+            newShape.setAttribute('stroke', stroke);
+            newShape.setAttribute('stroke-width', sWidth);
+            newShape.id = 'generatedShape';
+
+            document.getElementById('generatedSVG').appendChild(newShape);
+            generatedCode.innerHTML = code;
+        }
+
+        // 绑定事件
+        shapeType.addEventListener('change', updateShape);
+        widthSlider.addEventListener('input', updateShape);
+        heightSlider.addEventListener('input', updateShape);
+        fillColor.addEventListener('change', updateShape);
+        strokeColor.addEventListener('change', updateShape);
+        strokeWidth.addEventListener('input', updateShape);
+
+        function copyGeneratedCode() {
+            const code = generatedCode.textContent.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+            navigator.clipboard.writeText(code).then(() => {
+                document.querySelector('.code-actions .code-btn').textContent = '已复制!';
+                setTimeout(() => {
+                    document.querySelector('.code-actions .code-btn').textContent = '复制';
+                }, 2000);
+            });
+        }
+
+        // 初始化
+        updateShape();
+    </script>
+</body>
+</html> 

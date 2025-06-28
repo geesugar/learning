@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>路径系统 - SVG学习示例</title>
+    <link rel="stylesheet" href="../../common/styles.css">
+    <link rel="stylesheet" href="../../common/demo.css">
+</head>
+<body class="demo-page">
+    <!-- 页面头部 -->
+    <div class="demo-header">
+        <div class="container">
+            <nav class="breadcrumb">
+                <ol class="breadcrumb-list">
+                    <li class="breadcrumb-item"><a href="../../index.html">示例首页</a></li>
+                    <li class="breadcrumb-item"><a href="../index.html">基础入门</a></li>
+                    <li class="breadcrumb-item active">路径系统</li>
+                </ol>
+            </nav>
+            <h1 class="demo-title">路径系统</h1>
+            <p class="demo-subtitle">掌握SVG最强大的绘图工具 - path元素和路径命令</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="demo-main">
+            <!-- 主要内容区域 -->
+            <div class="demo-content">
+                <!-- 路径概述 -->
+                <div class="card">
+                    <h2>🛤️ 什么是路径？</h2>
+                    <p>SVG路径（path）是最强大和灵活的绘图工具，可以创建任意复杂的形状。路径通过一系列命令来定义，这些命令告诉"画笔"如何移动和绘制。</p>
+                    
+                    <div class="alert alert-info">
+                        <strong>路径的优势：</strong><br>
+                        • 可以创建任意复杂的形状<br>
+                        • 文件体积小，描述效率高<br>
+                        • 支持曲线、直线的任意组合<br>
+                        • 是SVG动画和图标设计的基础
+                    </div>
+                </div>
+
+                <!-- 基本路径命令 -->
+                <div class="card">
+                    <h2>📝 基本路径命令</h2>
+                    <p>路径命令分为绝对坐标（大写字母）和相对坐标（小写字母）两种形式。</p>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <h3>移动和直线命令</h3>
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <tr style="border-bottom: 1px solid #ddd;">
+                                    <th style="padding: 8px; text-align: left;">命令</th>
+                                    <th style="padding: 8px; text-align: left;">说明</th>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 8px;"><code>M x y</code></td>
+                                    <td style="padding: 8px;">移动到指定点</td>
+                                </tr>
+                                <tr style="background: #f9f9f9;">
+                                    <td style="padding: 8px;"><code>L x y</code></td>
+                                    <td style="padding: 8px;">画直线到指定点</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 8px;"><code>H x</code></td>
+                                    <td style="padding: 8px;">水平线到x坐标</td>
+                                </tr>
+                                <tr style="background: #f9f9f9;">
+                                    <td style="padding: 8px;"><code>V y</code></td>
+                                    <td style="padding: 8px;">垂直线到y坐标</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 8px;"><code>Z</code></td>
+                                    <td style="padding: 8px;">闭合路径</td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <div>
+                            <h3>曲线命令</h3>
+                            <table style="width: 100%; border-collapse: collapse;">
+                                <tr style="border-bottom: 1px solid #ddd;">
+                                    <th style="padding: 8px; text-align: left;">命令</th>
+                                    <th style="padding: 8px; text-align: left;">说明</th>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 8px;"><code>C x1 y1 x2 y2 x y</code></td>
+                                    <td style="padding: 8px;">三次贝塞尔曲线</td>
+                                </tr>
+                                <tr style="background: #f9f9f9;">
+                                    <td style="padding: 8px;"><code>S x2 y2 x y</code></td>
+                                    <td style="padding: 8px;">平滑三次曲线</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 8px;"><code>Q x1 y1 x y</code></td>
+                                    <td style="padding: 8px;">二次贝塞尔曲线</td>
+                                </tr>
+                                <tr style="background: #f9f9f9;">
+                                    <td style="padding: 8px;"><code>T x y</code></td>
+                                    <td style="padding: 8px;">平滑二次曲线</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 8px;"><code>A rx ry ...</code></td>
+                                    <td style="padding: 8px;">椭圆弧</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 移动和直线示例 -->
+                <div class="card">
+                    <h2>📐 移动和直线</h2>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">基本直线路径</div>
+                                </div>
+                                <div class="code-content">&lt;path d="M 10 10 L 90 50 L 50 90 L 10 50 Z" 
+      fill="none" stroke="blue" stroke-width="2" /&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="100" height="100" viewBox="0 0 100 100">
+                                    <path d="M 10 10 L 90 50 L 50 90 L 10 50 Z" fill="none" stroke="blue" stroke-width="2"/>
+                                    <!-- 显示控制点 -->
+                                    <circle cx="10" cy="10" r="2" fill="red"/>
+                                    <circle cx="90" cy="50" r="2" fill="red"/>
+                                    <circle cx="50" cy="90" r="2" fill="red"/>
+                                    <circle cx="10" cy="50" r="2" fill="red"/>
+                                </svg>
+                                <div class="svg-description">闭合的多边形路径（红点为路径点）</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">水平和垂直线</div>
+                                </div>
+                                <div class="code-content">&lt;path d="M 20 20 H 80 V 80 H 20 Z" 
+      fill="lightblue" stroke="navy" stroke-width="2" /&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="100" height="100" viewBox="0 0 100 100">
+                                    <path d="M 20 20 H 80 V 80 H 20 Z" fill="lightblue" stroke="navy" stroke-width="2"/>
+                                    <!-- 方向箭头 -->
+                                    <defs>
+                                        <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                                            <path d="M0,0 L0,6 L9,3 z" fill="red"/>
+                                        </marker>
+                                    </defs>
+                                    <path d="M 20 15 H 40" stroke="red" stroke-width="1" marker-end="url(#arrow)"/>
+                                    <text x="30" y="12" text-anchor="middle" font-size="8" fill="red">H</text>
+                                    <path d="M 85 20 V 40" stroke="red" stroke-width="1" marker-end="url(#arrow)"/>
+                                    <text x="88" y="30" font-size="8" fill="red">V</text>
+                                </svg>
+                                <div class="svg-description">使用H和V命令的矩形</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 二次贝塞尔曲线 -->
+                <div class="card">
+                    <h2>🌀 二次贝塞尔曲线</h2>
+                    <p>二次贝塞尔曲线有一个控制点，用Q命令创建，T命令创建平滑连接的曲线。</p>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">基本二次曲线</div>
+                                </div>
+                                <div class="code-content">&lt;path d="M 10 80 Q 50 10 90 80" 
+      fill="none" stroke="green" stroke-width="3" /&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="100" height="90" viewBox="0 0 100 90">
+                                    <path d="M 10 80 Q 50 10 90 80" fill="none" stroke="green" stroke-width="3"/>
+                                    <!-- 控制点和辅助线 -->
+                                    <line x1="10" y1="80" x2="50" y2="10" stroke="#ccc" stroke-width="1" stroke-dasharray="2,2"/>
+                                    <line x1="50" y1="10" x2="90" y2="80" stroke="#ccc" stroke-width="1" stroke-dasharray="2,2"/>
+                                    <circle cx="10" cy="80" r="2" fill="blue"/>
+                                    <circle cx="50" cy="10" r="2" fill="red"/>
+                                    <circle cx="90" cy="80" r="2" fill="blue"/>
+                                    <text x="50" y="8" text-anchor="middle" font-size="8" fill="red">控制点</text>
+                                </svg>
+                                <div class="svg-description">二次贝塞尔曲线及其控制点</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">平滑连接（T命令）</div>
+                                </div>
+                                <div class="code-content">&lt;path d="M 10 50 Q 30 10 50 50 T 90 50" 
+      fill="none" stroke="purple" stroke-width="3" /&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="100" height="60" viewBox="0 0 100 60">
+                                    <path d="M 10 50 Q 30 10 50 50 T 90 50" fill="none" stroke="purple" stroke-width="3"/>
+                                    <!-- 控制点 -->
+                                    <circle cx="10" cy="50" r="2" fill="blue"/>
+                                    <circle cx="30" cy="10" r="2" fill="red"/>
+                                    <circle cx="50" cy="50" r="2" fill="blue"/>
+                                    <circle cx="70" cy="90" r="2" fill="red" opacity="0.5"/>
+                                    <circle cx="90" cy="50" r="2" fill="blue"/>
+                                    <text x="50" y="45" text-anchor="middle" font-size="8" fill="purple">T命令自动计算</text>
+                                </svg>
+                                <div class="svg-description">T命令创建平滑连接的曲线</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 三次贝塞尔曲线 -->
+                <div class="card">
+                    <h2>🎨 三次贝塞尔曲线</h2>
+                    <p>三次贝塞尔曲线有两个控制点，提供更精确的曲线控制，是设计复杂形状的重要工具。</p>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">基本三次曲线</div>
+                                </div>
+                                <div class="code-content">&lt;path d="M 10 90 C 10 10, 90 10, 90 90" 
+      fill="none" stroke="orange" stroke-width="3" /&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="100" height="100" viewBox="0 0 100 100">
+                                    <path d="M 10 90 C 10 10, 90 10, 90 90" fill="none" stroke="orange" stroke-width="3"/>
+                                    <!-- 控制点和辅助线 -->
+                                    <line x1="10" y1="90" x2="10" y2="10" stroke="#ccc" stroke-width="1" stroke-dasharray="2,2"/>
+                                    <line x1="90" y1="10" x2="90" y2="90" stroke="#ccc" stroke-width="1" stroke-dasharray="2,2"/>
+                                    <circle cx="10" cy="90" r="2" fill="blue"/>
+                                    <circle cx="10" cy="10" r="2" fill="red"/>
+                                    <circle cx="90" cy="10" r="2" fill="red"/>
+                                    <circle cx="90" cy="90" r="2" fill="blue"/>
+                                </svg>
+                                <div class="svg-description">S形三次贝塞尔曲线</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">心形图案</div>
+                                </div>
+                                <div class="code-content">&lt;path d="M 50 70 C 50 50, 20 50, 20 30 C 20 10, 50 10, 50 30 C 50 10, 80 10, 80 30 C 80 50, 50 50, 50 70 Z" 
+      fill="pink" stroke="red" stroke-width="2" /&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="100" height="80" viewBox="0 0 100 80">
+                                    <path d="M 50 70 C 50 50, 20 50, 20 30 C 20 10, 50 10, 50 30 C 50 10, 80 10, 80 30 C 80 50, 50 50, 50 70 Z" 
+                                          fill="pink" stroke="red" stroke-width="2"/>
+                                </svg>
+                                <div class="svg-description">用三次曲线绘制的心形</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 椭圆弧 -->
+                <div class="card">
+                    <h2>🌙 椭圆弧</h2>
+                    <p>椭圆弧（A命令）可以创建圆弧和椭圆弧，是最复杂但功能强大的路径命令。</p>
+                    
+                    <div class="alert alert-warning">
+                        <strong>A命令语法：</strong> A rx ry x-axis-rotation large-arc-flag sweep-flag x y<br>
+                        • rx, ry: 椭圆的半径<br>
+                        • x-axis-rotation: 椭圆旋转角度<br>
+                        • large-arc-flag: 是否选择大弧（0或1）<br>
+                        • sweep-flag: 弧的方向（0或1）<br>
+                        • x, y: 终点坐标
+                    </div>
+                    
+                    <div class="grid grid-3">
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">简单圆弧</div>
+                                </div>
+                                <div class="code-content">&lt;path d="M 20 50 A 30 30 0 0 1 80 50" 
+      fill="none" stroke="blue" stroke-width="3" /&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="100" height="70" viewBox="0 0 100 70">
+                                    <path d="M 20 50 A 30 30 0 0 1 80 50" fill="none" stroke="blue" stroke-width="3"/>
+                                    <circle cx="20" cy="50" r="2" fill="red"/>
+                                    <circle cx="80" cy="50" r="2" fill="red"/>
+                                    <text x="50" y="35" text-anchor="middle" font-size="8" fill="blue">半圆弧</text>
+                                </svg>
+                                <div class="svg-description">简单的半圆弧</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">大弧 vs 小弧</div>
+                                </div>
+                                <div class="code-content">&lt;path d="M 30 30 A 20 20 0 1 0 70 30" stroke="red" /&gt;
+&lt;path d="M 30 50 A 20 20 0 0 0 70 50" stroke="blue" /&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="100" height="80" viewBox="0 0 100 80">
+                                    <path d="M 30 30 A 20 20 0 1 0 70 30" fill="none" stroke="red" stroke-width="2"/>
+                                    <path d="M 30 50 A 20 20 0 0 0 70 50" fill="none" stroke="blue" stroke-width="2"/>
+                                    <text x="50" y="15" text-anchor="middle" font-size="8" fill="red">大弧</text>
+                                    <text x="50" y="65" text-anchor="middle" font-size="8" fill="blue">小弧</text>
+                                </svg>
+                                <div class="svg-description">大弧和小弧的区别</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">月牙形状</div>
+                                </div>
+                                <div class="code-content">&lt;path d="M 30 20 A 20 20 0 1 1 30 80 A 15 15 0 1 0 30 20" 
+      fill="gold" /&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="100" height="100" viewBox="0 0 100 100">
+                                    <path d="M 30 20 A 20 20 0 1 1 30 80 A 15 15 0 1 0 30 20" fill="gold" stroke="orange" stroke-width="1"/>
+                                </svg>
+                                <div class="svg-description">月牙形状</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 复杂路径示例 -->
+                <div class="card">
+                    <h2>🎭 复杂路径示例</h2>
+                    <p>结合多种路径命令可以创建复杂而美观的图形：</p>
+                    
+                    <div class="grid grid-2">
+                        <div class="svg-example">
+                            <h3>花朵图案</h3>
+                            <svg width="150" height="150" viewBox="0 0 150 150">
+                                <!-- 花瓣 -->
+                                <path d="M 75 40 Q 90 20, 75 10 Q 60 20, 75 40" fill="#FF6B9D" opacity="0.8"/>
+                                <path d="M 110 75 Q 130 60, 140 75 Q 130 90, 110 75" fill="#FF6B9D" opacity="0.8"/>
+                                <path d="M 75 110 Q 60 130, 75 140 Q 90 130, 75 110" fill="#FF6B9D" opacity="0.8"/>
+                                <path d="M 40 75 Q 20 90, 10 75 Q 20 60, 40 75" fill="#FF6B9D" opacity="0.8"/>
+                                
+                                <!-- 对角花瓣 -->
+                                <path d="M 95 55 Q 120 30, 110 40 Q 95 65, 95 55" fill="#FFB3D1" opacity="0.7"/>
+                                <path d="M 95 95 Q 120 120, 110 110 Q 95 85, 95 95" fill="#FFB3D1" opacity="0.7"/>
+                                <path d="M 55 95 Q 30 120, 40 110 Q 55 85, 55 95" fill="#FFB3D1" opacity="0.7"/>
+                                <path d="M 55 55 Q 30 30, 40 40 Q 55 65, 55 55" fill="#FFB3D1" opacity="0.7"/>
+                                
+                                <!-- 花心 -->
+                                <circle cx="75" cy="75" r="15" fill="#FFC107"/>
+                                <circle cx="75" cy="75" r="8" fill="#FF9800"/>
+                            </svg>
+                            <div class="svg-description">使用Q命令创建的花朵</div>
+                        </div>
+                        
+                        <div class="svg-example">
+                            <h3>蝴蝶图案</h3>
+                            <svg width="150" height="120" viewBox="0 0 150 120">
+                                <!-- 左翅膀 -->
+                                <path d="M 75 60 C 40 30, 10 40, 20 70 C 30 90, 60 80, 75 60" fill="#2196F3" opacity="0.8"/>
+                                <path d="M 75 60 C 50 80, 20 85, 25 100 C 30 110, 55 105, 75 60" fill="#3F51B5" opacity="0.8"/>
+                                
+                                <!-- 右翅膀 -->
+                                <path d="M 75 60 C 110 30, 140 40, 130 70 C 120 90, 90 80, 75 60" fill="#2196F3" opacity="0.8"/>
+                                <path d="M 75 60 C 100 80, 130 85, 125 100 C 120 110, 95 105, 75 60" fill="#3F51B5" opacity="0.8"/>
+                                
+                                <!-- 身体 -->
+                                <ellipse cx="75" cy="70" rx="3" ry="25" fill="#4A4A4A"/>
+                                
+                                <!-- 触角 -->
+                                <path d="M 72 45 Q 68 35, 70 30" fill="none" stroke="#4A4A4A" stroke-width="2"/>
+                                <path d="M 78 45 Q 82 35, 80 30" fill="none" stroke="#4A4A4A" stroke-width="2"/>
+                                <circle cx="70" cy="30" r="1.5" fill="#4A4A4A"/>
+                                <circle cx="80" cy="30" r="1.5" fill="#4A4A4A"/>
+                                
+                                <!-- 装饰点 -->
+                                <circle cx="50" cy="55" r="3" fill="white" opacity="0.9"/>
+                                <circle cx="100" cy="55" r="3" fill="white" opacity="0.9"/>
+                                <circle cx="45" cy="85" r="2" fill="white" opacity="0.9"/>
+                                <circle cx="105" cy="85" r="2" fill="white" opacity="0.9"/>
+                            </svg>
+                            <div class="svg-description">使用C命令创建的蝴蝶</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 侧边栏控制器 -->
+            <div class="demo-sidebar">
+                <h3>🎮 交互式路径编辑器</h3>
+                <div class="interactive-controls">
+                    <div class="control-section">
+                        <h4>路径类型</h4>
+                        <div class="control-row">
+                            <label class="control-label">类型</label>
+                            <select id="pathType" class="control-input">
+                                <option value="line">直线路径</option>
+                                <option value="quad">二次曲线</option>
+                                <option value="cubic">三次曲线</option>
+                                <option value="arc">圆弧</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="control-section">
+                        <h4>控制点</h4>
+                        <div class="control-row">
+                            <label class="control-label">起点X</label>
+                            <input type="range" id="startX" class="control-input range-input" min="10" max="190" value="50">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">起点Y</label>
+                            <input type="range" id="startY" class="control-input range-input" min="10" max="140" value="100">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">终点X</label>
+                            <input type="range" id="endX" class="control-input range-input" min="10" max="190" value="150">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">终点Y</label>
+                            <input type="range" id="endY" class="control-input range-input" min="10" max="140" value="100">
+                        </div>
+                        <div class="control-row" id="controlRow1">
+                            <label class="control-label">控制点1X</label>
+                            <input type="range" id="control1X" class="control-input range-input" min="10" max="190" value="100">
+                        </div>
+                        <div class="control-row" id="controlRow1Y">
+                            <label class="control-label">控制点1Y</label>
+                            <input type="range" id="control1Y" class="control-input range-input" min="10" max="140" value="50">
+                        </div>
+                        <div class="control-row" id="controlRow2" style="display: none;">
+                            <label class="control-label">控制点2X</label>
+                            <input type="range" id="control2X" class="control-input range-input" min="10" max="190" value="100">
+                        </div>
+                        <div class="control-row" id="controlRow2Y" style="display: none;">
+                            <label class="control-label">控制点2Y</label>
+                            <input type="range" id="control2Y" class="control-input range-input" min="10" max="140" value="50">
+                        </div>
+                    </div>
+                    
+                    <div class="control-section">
+                        <h4>样式</h4>
+                        <div class="control-row">
+                            <label class="control-label">描边色</label>
+                            <input type="color" id="strokeColor" class="control-input color-input" value="#2196F3">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">描边宽度</label>
+                            <input type="range" id="strokeWidth" class="control-input range-input" min="1" max="8" value="3">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">显示控制点</label>
+                            <input type="checkbox" id="showControls" class="control-input checkbox-input" checked>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="svg-display has-content">
+                    <svg id="pathSVG" width="200" height="150" viewBox="0 0 200 150">
+                        <!-- 背景网格 -->
+                        <defs>
+                            <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#f0f0f0" stroke-width="1"/>
+                            </pattern>
+                        </defs>
+                        <rect width="200" height="150" fill="url(#grid)"/>
+                        
+                        <!-- 路径 -->
+                        <path id="dynamicPath" d="M 50 100 Q 100 50 150 100" fill="none" stroke="#2196F3" stroke-width="3"/>
+                        
+                        <!-- 控制点 -->
+                        <g id="controlPoints">
+                            <line id="controlLine1" x1="50" y1="100" x2="100" y2="50" stroke="#ccc" stroke-width="1" stroke-dasharray="3,3"/>
+                            <line id="controlLine2" x1="100" y1="50" x2="150" y2="100" stroke="#ccc" stroke-width="1" stroke-dasharray="3,3"/>
+                            <circle id="startPoint" cx="50" cy="100" r="4" fill="blue"/>
+                            <circle id="endPoint" cx="150" cy="100" r="4" fill="blue"/>
+                            <circle id="control1Point" cx="100" cy="50" r="3" fill="red"/>
+                            <circle id="control2Point" cx="100" cy="50" r="3" fill="red" style="display: none;"/>
+                        </g>
+                    </svg>
+                </div>
+
+                <div class="code-editor">
+                    <div class="code-header">
+                        <div class="code-title">生成的路径代码</div>
+                        <div class="code-actions">
+                            <button class="code-btn" onclick="copyPathCode()">复制</button>
+                        </div>
+                    </div>
+                    <div class="code-content" id="pathCode">&lt;path d="M 50 100 Q 100 50 150 100" fill="none" stroke="#2196F3" stroke-width="3" /&gt;</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 导航 -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <a href="../basic-shapes/" class="btn">← 上一章：基本图形绘制</a>
+                <a href="../text-images/" class="btn btn-primary">下一章：文本和图像 →</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../common/utils.js"></script>
+    <script>
+        // 路径编辑器
+        const pathType = document.getElementById('pathType');
+        const startX = document.getElementById('startX');
+        const startY = document.getElementById('startY');
+        const endX = document.getElementById('endX');
+        const endY = document.getElementById('endY');
+        const control1X = document.getElementById('control1X');
+        const control1Y = document.getElementById('control1Y');
+        const control2X = document.getElementById('control2X');
+        const control2Y = document.getElementById('control2Y');
+        const strokeColor = document.getElementById('strokeColor');
+        const strokeWidth = document.getElementById('strokeWidth');
+        const showControls = document.getElementById('showControls');
+        
+        const dynamicPath = document.getElementById('dynamicPath');
+        const pathCode = document.getElementById('pathCode');
+        const controlPoints = document.getElementById('controlPoints');
+
+        function updatePath() {
+            const type = pathType.value;
+            const sx = startX.value;
+            const sy = startY.value;
+            const ex = endX.value;
+            const ey = endY.value;
+            const c1x = control1X.value;
+            const c1y = control1Y.value;
+            const c2x = control2X.value;
+            const c2y = control2Y.value;
+            
+            let pathData = '';
+            let codeText = '';
+            
+            // 更新样式
+            dynamicPath.setAttribute('stroke', strokeColor.value);
+            dynamicPath.setAttribute('stroke-width', strokeWidth.value);
+            
+            // 更新控制点位置
+            document.getElementById('startPoint').setAttribute('cx', sx);
+            document.getElementById('startPoint').setAttribute('cy', sy);
+            document.getElementById('endPoint').setAttribute('cx', ex);
+            document.getElementById('endPoint').setAttribute('cy', ey);
+            document.getElementById('control1Point').setAttribute('cx', c1x);
+            document.getElementById('control1Point').setAttribute('cy', c1y);
+            document.getElementById('control2Point').setAttribute('cx', c2x);
+            document.getElementById('control2Point').setAttribute('cy', c2y);
+            
+            // 更新辅助线
+            document.getElementById('controlLine1').setAttribute('x1', sx);
+            document.getElementById('controlLine1').setAttribute('y1', sy);
+            document.getElementById('controlLine1').setAttribute('x2', c1x);
+            document.getElementById('controlLine1').setAttribute('y2', c1y);
+            document.getElementById('controlLine2').setAttribute('x1', c1x);
+            document.getElementById('controlLine2').setAttribute('y1', c1y);
+            document.getElementById('controlLine2').setAttribute('x2', ex);
+            document.getElementById('controlLine2').setAttribute('y2', ey);
+            
+            switch(type) {
+                case 'line':
+                    pathData = `M ${sx} ${sy} L ${ex} ${ey}`;
+                    codeText = `&lt;path d="M ${sx} ${sy} L ${ex} ${ey}" fill="none" stroke="${strokeColor.value}" stroke-width="${strokeWidth.value}" /&gt;`;
+                    document.getElementById('control1Point').style.display = 'none';
+                    document.getElementById('control2Point').style.display = 'none';
+                    document.getElementById('controlLine1').style.display = 'none';
+                    document.getElementById('controlLine2').style.display = 'none';
+                    break;
+                    
+                case 'quad':
+                    pathData = `M ${sx} ${sy} Q ${c1x} ${c1y} ${ex} ${ey}`;
+                    codeText = `&lt;path d="M ${sx} ${sy} Q ${c1x} ${c1y} ${ex} ${ey}" fill="none" stroke="${strokeColor.value}" stroke-width="${strokeWidth.value}" /&gt;`;
+                    document.getElementById('control1Point').style.display = 'block';
+                    document.getElementById('control2Point').style.display = 'none';
+                    document.getElementById('controlLine1').style.display = 'block';
+                    document.getElementById('controlLine2').style.display = 'block';
+                    break;
+                    
+                case 'cubic':
+                    pathData = `M ${sx} ${sy} C ${c1x} ${c1y} ${c2x} ${c2y} ${ex} ${ey}`;
+                    codeText = `&lt;path d="M ${sx} ${sy} C ${c1x} ${c1y} ${c2x} ${c2y} ${ex} ${ey}" fill="none" stroke="${strokeColor.value}" stroke-width="${strokeWidth.value}" /&gt;`;
+                    document.getElementById('control1Point').style.display = 'block';
+                    document.getElementById('control2Point').style.display = 'block';
+                    document.getElementById('controlLine1').style.display = 'block';
+                    document.getElementById('controlLine2').setAttribute('x1', c2x);
+                    document.getElementById('controlLine2').setAttribute('y1', c2y);
+                    document.getElementById('controlLine2').style.display = 'block';
+                    break;
+                    
+                case 'arc':
+                    const radius = Math.abs(ex - sx) / 2;
+                    pathData = `M ${sx} ${sy} A ${radius} ${radius} 0 0 1 ${ex} ${ey}`;
+                    codeText = `&lt;path d="M ${sx} ${sy} A ${radius} ${radius} 0 0 1 ${ex} ${ey}" fill="none" stroke="${strokeColor.value}" stroke-width="${strokeWidth.value}" /&gt;`;
+                    document.getElementById('control1Point').style.display = 'none';
+                    document.getElementById('control2Point').style.display = 'none';
+                    document.getElementById('controlLine1').style.display = 'none';
+                    document.getElementById('controlLine2').style.display = 'none';
+                    break;
+            }
+            
+            dynamicPath.setAttribute('d', pathData);
+            pathCode.innerHTML = codeText;
+            
+            // 显示/隐藏控制点
+            controlPoints.style.display = showControls.checked ? 'block' : 'none';
+        }
+
+        function updateControlVisibility() {
+            const type = pathType.value;
+            
+            // 隐藏所有控制行
+            document.getElementById('controlRow1').style.display = 'none';
+            document.getElementById('controlRow1Y').style.display = 'none';
+            document.getElementById('controlRow2').style.display = 'none';
+            document.getElementById('controlRow2Y').style.display = 'none';
+            
+            // 根据类型显示相应控制
+            if (type === 'quad') {
+                document.getElementById('controlRow1').style.display = 'flex';
+                document.getElementById('controlRow1Y').style.display = 'flex';
+            } else if (type === 'cubic') {
+                document.getElementById('controlRow1').style.display = 'flex';
+                document.getElementById('controlRow1Y').style.display = 'flex';
+                document.getElementById('controlRow2').style.display = 'flex';
+                document.getElementById('controlRow2Y').style.display = 'flex';
+            }
+        }
+
+        // 绑定事件
+        pathType.addEventListener('change', () => {
+            updateControlVisibility();
+            updatePath();
+        });
+        
+        [startX, startY, endX, endY, control1X, control1Y, control2X, control2Y, strokeColor, strokeWidth, showControls].forEach(element => {
+            element.addEventListener('input', updatePath);
+            element.addEventListener('change', updatePath);
+        });
+
+        function copyPathCode() {
+            const code = pathCode.textContent.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+            navigator.clipboard.writeText(code).then(() => {
+                document.querySelector('.code-actions .code-btn').textContent = '已复制!';
+                setTimeout(() => {
+                    document.querySelector('.code-actions .code-btn').textContent = '复制';
+                }, 2000);
+            });
+        }
+
+        // 初始化
+        updateControlVisibility();
+        updatePath();
+    </script>
+</body>
+</html> 

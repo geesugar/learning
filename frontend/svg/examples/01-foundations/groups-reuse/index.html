@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分组和重用 - SVG学习示例</title>
+    <link rel="stylesheet" href="../../common/styles.css">
+    <link rel="stylesheet" href="../../common/demo.css">
+</head>
+<body class="demo-page">
+    <div class="demo-header">
+        <div class="container">
+            <nav class="breadcrumb">
+                <ol class="breadcrumb-list">
+                    <li class="breadcrumb-item"><a href="../../index.html">示例首页</a></li>
+                    <li class="breadcrumb-item"><a href="../index.html">基础入门</a></li>
+                    <li class="breadcrumb-item active">分组和重用</li>
+                </ol>
+            </nav>
+            <h1 class="demo-title">分组和重用</h1>
+            <p class="demo-subtitle">学习使用g、defs、use等元素组织和重用SVG内容</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- g元素分组 -->
+        <div class="card">
+            <h2>👥 g元素分组</h2>
+            <div class="grid grid-2">
+                <div>
+                    <div class="code-editor">
+                        <div class="code-header">
+                            <div class="code-title">基本分组</div>
+                        </div>
+                        <div class="code-content">&lt;g fill="blue" stroke="navy"&gt;
+  &lt;circle cx="50" cy="50" r="20"/&gt;
+  &lt;rect x="30" y="80" width="40" height="20"/&gt;
+&lt;/g&gt;</div>
+                    </div>
+                    
+                    <div class="svg-example">
+                        <svg width="120" height="120" viewBox="0 0 120 120">
+                            <g fill="blue" stroke="navy" stroke-width="2">
+                                <circle cx="50" cy="50" r="20"/>
+                                <rect x="30" y="80" width="40" height="20"/>
+                            </g>
+                        </svg>
+                        <div class="svg-description">组内元素共享样式</div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="code-editor">
+                        <div class="code-header">
+                            <div class="code-title">组变换</div>
+                        </div>
+                        <div class="code-content">&lt;g transform="translate(60,60) rotate(30)"&gt;
+  &lt;rect x="-20" y="-10" width="40" height="20" fill="red"/&gt;
+&lt;/g&gt;</div>
+                    </div>
+                    
+                    <div class="svg-example">
+                        <svg width="120" height="120" viewBox="0 0 120 120">
+                            <g transform="translate(60,60) rotate(30)">
+                                <rect x="-20" y="-10" width="40" height="20" fill="red"/>
+                                <circle cx="0" cy="0" r="3" fill="white"/>
+                            </g>
+                        </svg>
+                        <div class="svg-description">变换作用于整个组</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- defs和use重用 -->
+        <div class="card">
+            <h2>🔄 defs和use重用</h2>
+            <div class="grid grid-2">
+                <div>
+                    <div class="code-editor">
+                        <div class="code-header">
+                            <div class="code-title">定义和重用</div>
+                        </div>
+                        <div class="code-content">&lt;defs&gt;
+  &lt;g id="star"&gt;
+    &lt;polygon points="0,-15 4,-4 15,-4 6,2 9,12 0,6 -9,12 -6,2 -15,-4 -4,-4" 
+             fill="gold"/&gt;
+  &lt;/g&gt;
+&lt;/defs&gt;
+
+&lt;use href="#star" x="40" y="40"/&gt;
+&lt;use href="#star" x="80" y="40" transform="scale(0.7)"/&gt;</div>
+                    </div>
+                    
+                    <div class="svg-example">
+                        <svg width="120" height="80" viewBox="0 0 120 80">
+                            <defs>
+                                <g id="star">
+                                    <polygon points="0,-15 4,-4 15,-4 6,2 9,12 0,6 -9,12 -6,2 -15,-4 -4,-4" 
+                                             fill="gold" stroke="orange"/>
+                                </g>
+                            </defs>
+                            
+                            <use href="#star" x="30" y="40"/>
+                            <use href="#star" x="80" y="40" transform="scale(0.7)"/>
+                        </svg>
+                        <div class="svg-description">重用星形图案</div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="code-editor">
+                        <div class="code-header">
+                            <div class="code-title">复杂图案</div>
+                        </div>
+                        <div class="code-content">&lt;defs&gt;
+  &lt;g id="flower"&gt;
+    &lt;circle cx="0" cy="-6" r="3" fill="pink"/&gt;
+    &lt;circle cx="-4" cy="3" r="3" fill="pink"/&gt;
+    &lt;circle cx="4" cy="3" r="3" fill="pink"/&gt;
+    &lt;circle cx="0" cy="0" r="2" fill="yellow"/&gt;
+  &lt;/g&gt;
+&lt;/defs&gt;</div>
+                    </div>
+                    
+                    <div class="svg-example">
+                        <svg width="120" height="80" viewBox="0 0 120 80">
+                            <defs>
+                                <g id="flower">
+                                    <circle cx="0" cy="-6" r="3" fill="pink"/>
+                                    <circle cx="-4" cy="3" r="3" fill="pink"/>
+                                    <circle cx="4" cy="3" r="3" fill="pink"/>
+                                    <circle cx="0" cy="0" r="2" fill="yellow"/>
+                                </g>
+                            </defs>
+                            
+                            <use href="#flower" x="25" y="25"/>
+                            <use href="#flower" x="60" y="30" transform="scale(0.8)"/>
+                            <use href="#flower" x="90" y="25" transform="scale(1.2)"/>
+                        </svg>
+                        <div class="svg-description">花朵图案的重用</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- symbol元素 -->
+        <div class="card">
+            <h2>🎯 symbol元素</h2>
+            <div class="grid grid-2">
+                <div>
+                    <div class="code-editor">
+                        <div class="code-header">
+                            <div class="code-title">图标定义</div>
+                        </div>
+                        <div class="code-content">&lt;defs&gt;
+  &lt;symbol id="home" viewBox="0 0 24 24"&gt;
+    &lt;path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="currentColor"/&gt;
+  &lt;/symbol&gt;
+&lt;/defs&gt;
+
+&lt;use href="#home" width="24" height="24" fill="blue"/&gt;</div>
+                    </div>
+                    
+                    <div class="svg-example">
+                        <svg width="120" height="80" viewBox="0 0 120 80">
+                            <defs>
+                                <symbol id="home" viewBox="0 0 24 24">
+                                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="currentColor"/>
+                                </symbol>
+                            </defs>
+                            
+                            <use href="#home" x="20" y="20" width="24" height="24" fill="blue"/>
+                            <use href="#home" x="60" y="25" width="18" height="18" fill="green"/>
+                        </svg>
+                        <div class="svg-description">可缩放的图标</div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="code-editor">
+                        <div class="code-header">
+                            <div class="code-title">交互示例</div>
+                        </div>
+                        <div class="code-content">&lt;use href="#home" x="10" y="10" width="32" height="32" 
+     fill="blue" onmouseover="this.setAttribute('fill', 'red')"
+     onmouseout="this.setAttribute('fill', 'blue')"/&gt;</div>
+                    </div>
+                    
+                    <div class="svg-example">
+                        <svg width="120" height="80" viewBox="0 0 120 80">
+                            <use href="#home" x="40" y="20" width="32" height="32" 
+                                 fill="blue" style="cursor: pointer;"/>
+                        </svg>
+                        <div class="svg-description">鼠标悬停试试看</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 练习示例 -->
+        <div class="card">
+            <h2>🎯 综合练习</h2>
+            <div class="svg-example">
+                <h3>场景组合示例</h3>
+                <svg width="300" height="200" viewBox="0 0 300 200">
+                    <!-- 定义可重用元素 -->
+                    <defs>
+                        <g id="tree">
+                            <rect x="-2" y="15" width="4" height="15" fill="brown"/>
+                            <circle cx="0" cy="10" r="8" fill="green"/>
+                        </g>
+                        
+                        <g id="house">
+                            <rect x="0" y="20" width="40" height="30" fill="lightblue"/>
+                            <polygon points="0,20 20,5 40,20" fill="red"/>
+                            <rect x="8" y="30" width="8" height="12" fill="brown"/>
+                            <rect x="25" y="25" width="8" height="8" fill="yellow"/>
+                        </g>
+                        
+                        <g id="cloud">
+                            <ellipse cx="0" cy="0" rx="12" ry="8" fill="white"/>
+                            <ellipse cx="8" cy="0" rx="10" ry="6" fill="white"/>
+                        </g>
+                    </defs>
+                    
+                    <!-- 天空 -->
+                    <rect width="300" height="100" fill="lightblue"/>
+                    
+                    <!-- 云朵 -->
+                    <use href="#cloud" x="50" y="30"/>
+                    <use href="#cloud" x="200" y="40" transform="scale(0.8)"/>
+                    
+                    <!-- 太阳 -->
+                    <circle cx="250" cy="30" r="12" fill="yellow"/>
+                    
+                    <!-- 地面 -->
+                    <rect y="100" width="300" height="100" fill="lightgreen"/>
+                    
+                    <!-- 房子 -->
+                    <use href="#house" x="80" y="80"/>
+                    <use href="#house" x="180" y="85" transform="scale(0.8)"/>
+                    
+                    <!-- 树木 -->
+                    <use href="#tree" x="50" y="120"/>
+                    <use href="#tree" x="160" y="115"/>
+                    <use href="#tree" x="250" y="125"/>
+                </svg>
+                <div class="svg-description">使用分组和重用构建的完整场景</div>
+            </div>
+        </div>
+
+        <!-- 最佳实践 -->
+        <div class="card">
+            <h2>💡 最佳实践</h2>
+            <div class="grid grid-2">
+                <div>
+                    <h3>组织原则</h3>
+                    <ul>
+                        <li>按功能或视觉层次分组</li>
+                        <li>使用有意义的ID命名</li>
+                        <li>避免过深的嵌套结构</li>
+                        <li>合理利用样式继承</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3>性能建议</h3>
+                    <ul>
+                        <li>重复元素使用defs和use</li>
+                        <li>建立统一的图标符号库</li>
+                        <li>在组级别应用变换</li>
+                        <li>分离定义与使用内容</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 导航 -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem;">
+            <a href="../coordinate-transform/" class="btn">← 上一章：坐标系统和变换</a>
+            <a href="../../02-styling/" class="btn btn-primary">下一阶段：样式与效果 →</a>
+        </div>
+    </div>
+
+    <script src="../../common/utils.js"></script>
+    <script>
+        // 添加简单的交互效果
+        document.addEventListener('DOMContentLoaded', function() {
+            const homeIcons = document.querySelectorAll('use[href="#home"]');
+            
+            homeIcons.forEach(icon => {
+                icon.addEventListener('mouseover', function() {
+                    this.setAttribute('fill', 'red');
+                });
+                
+                icon.addEventListener('mouseout', function() {
+                    this.setAttribute('fill', 'blue');
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

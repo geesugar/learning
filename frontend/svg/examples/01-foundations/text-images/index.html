@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文本和图像 - SVG学习示例</title>
+    <link rel="stylesheet" href="../../common/styles.css">
+    <link rel="stylesheet" href="../../common/demo.css">
+</head>
+<body class="demo-page">
+    <!-- 页面头部 -->
+    <div class="demo-header">
+        <div class="container">
+            <nav class="breadcrumb">
+                <ol class="breadcrumb-list">
+                    <li class="breadcrumb-item"><a href="../../index.html">示例首页</a></li>
+                    <li class="breadcrumb-item"><a href="../index.html">基础入门</a></li>
+                    <li class="breadcrumb-item active">文本和图像</li>
+                </ol>
+            </nav>
+            <h1 class="demo-title">文本和图像</h1>
+            <p class="demo-subtitle">掌握SVG中的文本处理和图像嵌入技术</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="demo-main">
+            <!-- 主要内容区域 -->
+            <div class="demo-content">
+                <!-- 基本文本 -->
+                <div class="card">
+                    <h2>📝 基本文本元素</h2>
+                    <p>text元素是SVG中处理文本的核心元素，支持丰富的样式和布局选项。</p>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">基本文本</div>
+                                </div>
+                                <div class="code-content">&lt;text x="50" y="30" font-family="Arial" font-size="16" fill="blue"&gt;
+  Hello SVG!
+&lt;/text&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="200" height="60" viewBox="0 0 200 60">
+                                    <text x="50" y="30" font-family="Arial" font-size="16" fill="blue">Hello SVG!</text>
+                                </svg>
+                                <div class="svg-description">基本文本显示</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">文本对齐</div>
+                                </div>
+                                <div class="code-content">&lt;text x="100" y="20" text-anchor="middle" font-size="14"&gt;居中对齐&lt;/text&gt;
+&lt;text x="100" y="40" text-anchor="start" font-size="14"&gt;左对齐&lt;/text&gt;
+&lt;text x="100" y="60" text-anchor="end" font-size="14"&gt;右对齐&lt;/text&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="200" height="80" viewBox="0 0 200 80">
+                                    <!-- 基准线 -->
+                                    <line x1="100" y1="0" x2="100" y2="80" stroke="#ddd" stroke-width="1"/>
+                                    <text x="100" y="20" text-anchor="middle" font-size="14" fill="#333">居中对齐</text>
+                                    <text x="100" y="40" text-anchor="start" font-size="14" fill="#333">左对齐</text>
+                                    <text x="100" y="60" text-anchor="end" font-size="14" fill="#333">右对齐</text>
+                                </svg>
+                                <div class="svg-description">不同的文本对齐方式</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 文本样式 -->
+                <div class="card">
+                    <h2>🎨 文本样式</h2>
+                    <p>SVG文本支持丰富的样式属性，包括字体、颜色、装饰等。</p>
+                    
+                    <div class="grid grid-3">
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">字体样式</div>
+                                </div>
+                                <div class="code-content">&lt;text y="20" font-weight="bold"&gt;粗体文本&lt;/text&gt;
+&lt;text y="40" font-style="italic"&gt;斜体文本&lt;/text&gt;
+&lt;text y="60" text-decoration="underline"&gt;下划线&lt;/text&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="150" height="80" viewBox="0 0 150 80">
+                                    <text x="10" y="20" font-weight="bold" font-size="14" fill="#333">粗体文本</text>
+                                    <text x="10" y="40" font-style="italic" font-size="14" fill="#333">斜体文本</text>
+                                    <text x="10" y="60" text-decoration="underline" font-size="14" fill="#333">下划线</text>
+                                </svg>
+                                <div class="svg-description">字体样式示例</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">文本填充和描边</div>
+                                </div>
+                                <div class="code-content">&lt;text y="25" fill="red" font-size="18"&gt;填充文本&lt;/text&gt;
+&lt;text y="50" fill="none" stroke="blue" stroke-width="1"&gt;描边文本&lt;/text&gt;
+&lt;text y="75" fill="yellow" stroke="red" stroke-width="1"&gt;填充+描边&lt;/text&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="150" height="80" viewBox="0 0 150 80">
+                                    <text x="10" y="25" fill="red" font-size="16">填充文本</text>
+                                    <text x="10" y="50" fill="none" stroke="blue" stroke-width="1" font-size="16">描边文本</text>
+                                    <text x="10" y="75" fill="yellow" stroke="red" stroke-width="1" font-size="16">填充+描边</text>
+                                </svg>
+                                <div class="svg-description">文本填充和描边</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">渐变文本</div>
+                                </div>
+                                <div class="code-content">&lt;defs&gt;
+  &lt;linearGradient id="textGrad"&gt;
+    &lt;stop offset="0%" stop-color="red"/&gt;
+    &lt;stop offset="100%" stop-color="blue"/&gt;
+  &lt;/linearGradient&gt;
+&lt;/defs&gt;
+&lt;text fill="url(#textGrad)"&gt;渐变文本&lt;/text&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="150" height="80" viewBox="0 0 150 80">
+                                    <defs>
+                                        <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" style="stop-color:#FF6B9D"/>
+                                            <stop offset="50%" style="stop-color:#4FC3F7"/>
+                                            <stop offset="100%" style="stop-color:#42A5F5"/>
+                                        </linearGradient>
+                                    </defs>
+                                    <text x="10" y="40" fill="url(#textGrad)" font-size="18" font-weight="bold">渐变文本</text>
+                                </svg>
+                                <div class="svg-description">应用渐变的文本</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- tspan元素 -->
+                <div class="card">
+                    <h2>🔤 tspan元素 - 文本分段</h2>
+                    <p>tspan元素可以在text元素内部创建不同样式的文本段落。</p>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">多样式文本</div>
+                                </div>
+                                <div class="code-content">&lt;text x="10" y="30" font-size="16"&gt;
+  这是&lt;tspan fill="red" font-weight="bold"&gt;红色粗体&lt;/tspan&gt;
+  和&lt;tspan fill="blue" font-style="italic"&gt;蓝色斜体&lt;/tspan&gt;文本
+&lt;/text&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="250" height="60" viewBox="0 0 250 60">
+                                    <text x="10" y="30" font-size="16" font-family="Arial">
+                                        这是<tspan fill="red" font-weight="bold">红色粗体</tspan>
+                                        和<tspan fill="blue" font-style="italic">蓝色斜体</tspan>文本
+                                    </text>
+                                </svg>
+                                <div class="svg-description">在同一行中应用不同样式</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">多行文本</div>
+                                </div>
+                                <div class="code-content">&lt;text x="10" y="20" font-size="14"&gt;
+  &lt;tspan x="10" dy="0"&gt;第一行文本&lt;/tspan&gt;
+  &lt;tspan x="10" dy="20"&gt;第二行文本&lt;/tspan&gt;
+  &lt;tspan x="10" dy="20" fill="green"&gt;第三行绿色文本&lt;/tspan&gt;
+&lt;/text&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="200" height="80" viewBox="0 0 200 80">
+                                    <text x="10" y="20" font-size="14" font-family="Arial">
+                                        <tspan x="10" dy="0">第一行文本</tspan>
+                                        <tspan x="10" dy="20">第二行文本</tspan>
+                                        <tspan x="10" dy="20" fill="green">第三行绿色文本</tspan>
+                                    </text>
+                                </svg>
+                                <div class="svg-description">使用tspan创建多行文本</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 路径文本 -->
+                <div class="card">
+                    <h2>🌊 textPath - 路径文本</h2>
+                    <p>textPath元素可以让文本沿着指定的路径排列，创建特殊的文本效果。</p>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">曲线文本</div>
+                                </div>
+                                <div class="code-content">&lt;defs&gt;
+  &lt;path id="curve" d="M 20 100 Q 150 20 280 100"/&gt;
+&lt;/defs&gt;
+&lt;text font-size="16" fill="blue"&gt;
+  &lt;textPath href="#curve"&gt;沿着曲线的文本&lt;/textPath&gt;
+&lt;/text&gt;
+&lt;use href="#curve" fill="none" stroke="#ddd"/&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="300" height="120" viewBox="0 0 300 120">
+                                    <defs>
+                                        <path id="curve1" d="M 20 100 Q 150 20 280 100"/>
+                                    </defs>
+                                    <text font-size="16" fill="blue" font-family="Arial">
+                                        <textPath href="#curve1">沿着曲线的文本示例</textPath>
+                                    </text>
+                                    <use href="#curve1" fill="none" stroke="#ddd" stroke-width="1"/>
+                                </svg>
+                                <div class="svg-description">文本沿二次贝塞尔曲线排列</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">圆形文本</div>
+                                </div>
+                                <div class="code-content">&lt;defs&gt;
+  &lt;path id="circle" d="M 150 50 A 50 50 0 1 1 149 50"/&gt;
+&lt;/defs&gt;
+&lt;text font-size="14" fill="purple"&gt;
+  &lt;textPath href="#circle"&gt;• 圆形路径上的文本 •&lt;/textPath&gt;
+&lt;/text&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="200" height="120" viewBox="0 0 200 120">
+                                    <defs>
+                                        <path id="circle1" d="M 150 60 A 50 50 0 1 1 149 60"/>
+                                    </defs>
+                                    <text font-size="14" fill="purple" font-family="Arial">
+                                        <textPath href="#circle1">• 圆形路径上的文本 • 圆形路径上的文本 •</textPath>
+                                    </text>
+                                    <use href="#circle1" fill="none" stroke="#eee" stroke-width="1"/>
+                                </svg>
+                                <div class="svg-description">文本沿圆形路径排列</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 图像嵌入 -->
+                <div class="card">
+                    <h2>🖼️ 图像嵌入</h2>
+                    <p>SVG可以使用image元素嵌入外部图像，也可以使用Data URI嵌入Base64编码的图像。</p>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">外部图像</div>
+                                </div>
+                                <div class="code-content">&lt;image x="10" y="10" width="80" height="60" 
+       href="https://via.placeholder.com/80x60/4CAF50/FFFFFF?text=IMG"/&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="120" height="80" viewBox="0 0 120 80">
+                                    <!-- 模拟图像的矩形 -->
+                                    <rect x="10" y="10" width="80" height="60" fill="#4CAF50" stroke="#2E7D32" stroke-width="2"/>
+                                    <text x="50" y="45" text-anchor="middle" fill="white" font-size="14" font-weight="bold">IMG</text>
+                                </svg>
+                                <div class="svg-description">外部图像引用示例</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">图像变换</div>
+                                </div>
+                                <div class="code-content">&lt;image x="10" y="10" width="60" height="45"
+       transform="rotate(15 40 32)"
+       href="image.jpg"/&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="120" height="80" viewBox="0 0 120 80">
+                                    <!-- 模拟旋转的图像 -->
+                                    <rect x="10" y="10" width="60" height="45" fill="#2196F3" stroke="#1976D2" stroke-width="2" transform="rotate(15 40 32)"/>
+                                    <text x="40" y="35" text-anchor="middle" fill="white" font-size="12" font-weight="bold" transform="rotate(15 40 32)">IMG</text>
+                                </svg>
+                                <div class="svg-description">旋转变换的图像</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 图像剪裁和遮罩 -->
+                <div class="card">
+                    <h2>✂️ 图像剪裁和遮罩</h2>
+                    <p>使用clipPath和mask可以对图像进行剪裁和添加遮罩效果。</p>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">圆形剪裁</div>
+                                </div>
+                                <div class="code-content">&lt;defs&gt;
+  &lt;clipPath id="circleClip"&gt;
+    &lt;circle cx="50" cy="40" r="30"/&gt;
+  &lt;/clipPath&gt;
+&lt;/defs&gt;
+&lt;rect width="100" height="80" fill="url(#pattern)" clip-path="url(#circleClip)"/&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="120" height="100" viewBox="0 0 120 100">
+                                    <defs>
+                                        <clipPath id="circleClip">
+                                            <circle cx="60" cy="50" r="35"/>
+                                        </clipPath>
+                                        <pattern id="pattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                                            <rect width="10" height="10" fill="#FF9800"/>
+                                            <rect x="10" y="10" width="10" height="10" fill="#FF9800"/>
+                                            <rect x="10" y="0" width="10" height="10" fill="#FFC107"/>
+                                            <rect x="0" y="10" width="10" height="10" fill="#FFC107"/>
+                                        </pattern>
+                                    </defs>
+                                    <rect width="120" height="100" fill="url(#pattern)" clip-path="url(#circleClip)"/>
+                                </svg>
+                                <div class="svg-description">圆形剪裁效果</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="code-editor">
+                                <div class="code-header">
+                                    <div class="code-title">渐变遮罩</div>
+                                </div>
+                                <div class="code-content">&lt;defs&gt;
+  &lt;mask id="fadeMask"&gt;
+    &lt;linearGradient id="fade"&gt;
+      &lt;stop offset="0%" stop-color="white"/&gt;
+      &lt;stop offset="100%" stop-color="black"/&gt;
+    &lt;/linearGradient&gt;
+    &lt;rect width="100%" height="100%" fill="url(#fade)"/&gt;
+  &lt;/mask&gt;
+&lt;/defs&gt;</div>
+                            </div>
+                            
+                            <div class="svg-example">
+                                <svg width="120" height="100" viewBox="0 0 120 100">
+                                    <defs>
+                                        <mask id="fadeMask">
+                                            <linearGradient id="fade" x1="0%" y1="0%" x2="100%" y2="0%">
+                                                <stop offset="0%" style="stop-color:white"/>
+                                                <stop offset="100%" style="stop-color:black"/>
+                                            </linearGradient>
+                                            <rect width="100%" height="100%" fill="url(#fade)"/>
+                                        </mask>
+                                    </defs>
+                                    <rect width="120" height="100" fill="#4CAF50" mask="url(#fadeMask)"/>
+                                    <text x="60" y="55" text-anchor="middle" fill="white" font-size="12" font-weight="bold">渐变遮罩</text>
+                                </svg>
+                                <div class="svg-description">渐变遮罩效果</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 文本特效 -->
+                <div class="card">
+                    <h2>✨ 文本特效</h2>
+                    <p>结合滤镜、阴影、变换等技术可以创建各种文本特效。</p>
+                    
+                    <div class="grid grid-3">
+                        <div class="svg-example">
+                            <h3>阴影文本</h3>
+                            <svg width="150" height="80" viewBox="0 0 150 80">
+                                <defs>
+                                    <filter id="shadow">
+                                        <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.3)"/>
+                                    </filter>
+                                </defs>
+                                <text x="75" y="45" text-anchor="middle" font-size="24" font-weight="bold" fill="#2196F3" filter="url(#shadow)">阴影</text>
+                            </svg>
+                            <div class="svg-description">带阴影的文本效果</div>
+                        </div>
+                        
+                        <div class="svg-example">
+                            <h3>描边渐变</h3>
+                            <svg width="150" height="80" viewBox="0 0 150 80">
+                                <defs>
+                                    <linearGradient id="strokeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#FF6B9D"/>
+                                        <stop offset="100%" style="stop-color:#4FC3F7"/>
+                                    </linearGradient>
+                                </defs>
+                                <text x="75" y="45" text-anchor="middle" font-size="20" font-weight="bold" 
+                                      fill="none" stroke="url(#strokeGrad)" stroke-width="2">描边</text>
+                            </svg>
+                            <div class="svg-description">渐变描边文本</div>
+                        </div>
+                        
+                        <div class="svg-example">
+                            <h3>3D效果</h3>
+                            <svg width="150" height="80" viewBox="0 0 150 80">
+                                <!-- 底层阴影 -->
+                                <text x="77" y="47" text-anchor="middle" font-size="22" font-weight="bold" fill="#333">3D</text>
+                                <!-- 中层 -->
+                                <text x="76" y="46" text-anchor="middle" font-size="22" font-weight="bold" fill="#666">3D</text>
+                                <!-- 顶层 -->
+                                <text x="75" y="45" text-anchor="middle" font-size="22" font-weight="bold" fill="#FF9800">3D</text>
+                            </svg>
+                            <div class="svg-description">3D立体文本效果</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 侧边栏控制器 -->
+            <div class="demo-sidebar">
+                <h3>🎮 文本样式编辑器</h3>
+                <div class="interactive-controls">
+                    <div class="control-section">
+                        <h4>文本内容</h4>
+                        <div class="control-row">
+                            <label class="control-label">文本</label>
+                            <input type="text" id="textContent" class="control-input" value="SVG文本示例" style="width: 100%;">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">X位置</label>
+                            <input type="range" id="textX" class="control-input range-input" min="10" max="190" value="100">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">Y位置</label>
+                            <input type="range" id="textY" class="control-input range-input" min="20" max="130" value="75">
+                        </div>
+                    </div>
+                    
+                    <div class="control-section">
+                        <h4>字体属性</h4>
+                        <div class="control-row">
+                            <label class="control-label">字体大小</label>
+                            <input type="range" id="fontSize" class="control-input range-input" min="12" max="36" value="20">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">字体粗细</label>
+                            <select id="fontWeight" class="control-input">
+                                <option value="normal">正常</option>
+                                <option value="bold">粗体</option>
+                                <option value="lighter">细体</option>
+                            </select>
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">字体样式</label>
+                            <select id="fontStyle" class="control-input">
+                                <option value="normal">正常</option>
+                                <option value="italic">斜体</option>
+                            </select>
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">文本对齐</label>
+                            <select id="textAnchor" class="control-input">
+                                <option value="start">左对齐</option>
+                                <option value="middle">居中</option>
+                                <option value="end">右对齐</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="control-section">
+                        <h4>颜色和效果</h4>
+                        <div class="control-row">
+                            <label class="control-label">填充色</label>
+                            <input type="color" id="textFill" class="control-input color-input" value="#2196F3">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">描边色</label>
+                            <input type="color" id="textStroke" class="control-input color-input" value="#000000">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">描边宽度</label>
+                            <input type="range" id="textStrokeWidth" class="control-input range-input" min="0" max="3" value="0">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">旋转角度</label>
+                            <input type="range" id="textRotation" class="control-input range-input" min="0" max="360" value="0">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="svg-display has-content">
+                    <svg id="textSVG" width="200" height="150" viewBox="0 0 200 150">
+                        <!-- 参考线 -->
+                        <line x1="100" y1="0" x2="100" y2="150" stroke="#f0f0f0" stroke-width="1"/>
+                        <line x1="0" y1="75" x2="200" y2="75" stroke="#f0f0f0" stroke-width="1"/>
+                        
+                        <text id="demoText" x="100" y="75" text-anchor="middle" font-size="20" fill="#2196F3">SVG文本示例</text>
+                    </svg>
+                </div>
+
+                <div class="code-editor">
+                    <div class="code-header">
+                        <div class="code-title">生成的代码</div>
+                        <div class="code-actions">
+                            <button class="code-btn" onclick="copyTextCode()">复制</button>
+                        </div>
+                    </div>
+                    <div class="code-content" id="textCode">&lt;text x="100" y="75" text-anchor="middle" font-size="20" fill="#2196F3"&gt;SVG文本示例&lt;/text&gt;</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 导航 -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <a href="../paths/" class="btn">← 上一章：路径系统</a>
+                <a href="../coordinate-transform/" class="btn btn-primary">下一章：坐标系统和变换 →</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../common/utils.js"></script>
+    <script>
+        // 文本编辑器
+        const textContent = document.getElementById('textContent');
+        const textX = document.getElementById('textX');
+        const textY = document.getElementById('textY');
+        const fontSize = document.getElementById('fontSize');
+        const fontWeight = document.getElementById('fontWeight');
+        const fontStyle = document.getElementById('fontStyle');
+        const textAnchor = document.getElementById('textAnchor');
+        const textFill = document.getElementById('textFill');
+        const textStroke = document.getElementById('textStroke');
+        const textStrokeWidth = document.getElementById('textStrokeWidth');
+        const textRotation = document.getElementById('textRotation');
+        
+        const demoText = document.getElementById('demoText');
+        const textCode = document.getElementById('textCode');
+
+        function updateText() {
+            const content = textContent.value;
+            const x = textX.value;
+            const y = textY.value;
+            const size = fontSize.value;
+            const weight = fontWeight.value;
+            const style = fontStyle.value;
+            const anchor = textAnchor.value;
+            const fill = textFill.value;
+            const stroke = textStroke.value;
+            const strokeWidth = textStrokeWidth.value;
+            const rotation = textRotation.value;
+            
+            // 更新文本元素
+            demoText.textContent = content;
+            demoText.setAttribute('x', x);
+            demoText.setAttribute('y', y);
+            demoText.setAttribute('font-size', size);
+            demoText.setAttribute('font-weight', weight);
+            demoText.setAttribute('font-style', style);
+            demoText.setAttribute('text-anchor', anchor);
+            demoText.setAttribute('fill', fill);
+            
+            if (strokeWidth > 0) {
+                demoText.setAttribute('stroke', stroke);
+                demoText.setAttribute('stroke-width', strokeWidth);
+            } else {
+                demoText.removeAttribute('stroke');
+                demoText.removeAttribute('stroke-width');
+            }
+            
+            if (rotation > 0) {
+                demoText.setAttribute('transform', `rotate(${rotation} ${x} ${y})`);
+            } else {
+                demoText.removeAttribute('transform');
+            }
+            
+            // 生成代码
+            let code = `&lt;text x="${x}" y="${y}"`;
+            if (anchor !== 'start') code += ` text-anchor="${anchor}"`;
+            if (size !== '16') code += ` font-size="${size}"`;
+            if (weight !== 'normal') code += ` font-weight="${weight}"`;
+            if (style !== 'normal') code += ` font-style="${style}"`;
+            code += ` fill="${fill}"`;
+            if (strokeWidth > 0) {
+                code += ` stroke="${stroke}" stroke-width="${strokeWidth}"`;
+            }
+            if (rotation > 0) {
+                code += ` transform="rotate(${rotation} ${x} ${y})"`;
+            }
+            code += `&gt;${content}&lt;/text&gt;`;
+            
+            textCode.innerHTML = code;
+        }
+
+        // 绑定事件
+        [textContent, textX, textY, fontSize, fontWeight, fontStyle, textAnchor, textFill, textStroke, textStrokeWidth, textRotation].forEach(element => {
+            element.addEventListener('input', updateText);
+            element.addEventListener('change', updateText);
+        });
+
+        function copyTextCode() {
+            const code = textCode.textContent.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+            navigator.clipboard.writeText(code).then(() => {
+                document.querySelector('.code-actions .code-btn').textContent = '已复制!';
+                setTimeout(() => {
+                    document.querySelector('.code-actions .code-btn').textContent = '复制';
+                }, 2000);
+            });
+        }
+
+        // 初始化
+        updateText();
+    </script>
+</body>
+</html> 

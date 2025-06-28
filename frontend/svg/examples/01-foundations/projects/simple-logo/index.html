@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简单Logo设计 - SVG实践项目</title>
+    <link rel="stylesheet" href="../../../common/styles.css">
+    <link rel="stylesheet" href="../../../common/demo.css">
+</head>
+<body class="demo-page">
+    <div class="demo-header">
+        <div class="container">
+            <nav class="breadcrumb">
+                <ol class="breadcrumb-list">
+                    <li class="breadcrumb-item"><a href="../../../index.html">示例首页</a></li>
+                    <li class="breadcrumb-item"><a href="../../index.html">基础入门</a></li>
+                    <li class="breadcrumb-item active">简单Logo设计</li>
+                </ol>
+            </nav>
+            <h1 class="demo-title">简单Logo设计</h1>
+            <p class="demo-subtitle">运用基础图形和文本创建一个简单而有效的Logo</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- 项目目标 -->
+        <div class="card">
+            <h2>🎯 项目目标</h2>
+            <p>学会用SVG基本元素设计Logo，掌握简洁设计原则，创建可缩放的矢量标识。</p>
+        </div>
+
+        <!-- 设计步骤 -->
+        <div class="card">
+            <h2>🛠️ 设计步骤</h2>
+            
+            <div class="grid grid-2">
+                <div>
+                    <h3>步骤1：基础形状</h3>
+                    <div class="svg-example">
+                        <svg width="120" height="80" viewBox="0 0 120 80">
+                            <circle cx="60" cy="40" r="25" fill="none" stroke="#3498db" stroke-width="3"/>
+                        </svg>
+                        <div class="svg-description">从一个圆形开始</div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3>步骤2：添加图标</h3>
+                    <div class="svg-example">
+                        <svg width="120" height="80" viewBox="0 0 120 80">
+                            <circle cx="60" cy="40" r="25" fill="none" stroke="#3498db" stroke-width="3"/>
+                            <polygon points="60,25 70,45 50,45" fill="#3498db"/>
+                        </svg>
+                        <div class="svg-description">添加三角形元素</div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3>步骤3：添加文本</h3>
+                    <div class="svg-example">
+                        <svg width="120" height="90" viewBox="0 0 120 90">
+                            <circle cx="60" cy="35" r="25" fill="none" stroke="#3498db" stroke-width="3"/>
+                            <polygon points="60,20 70,40 50,40" fill="#3498db"/>
+                            <text x="60" y="75" text-anchor="middle" font-size="12" font-weight="bold" fill="#3498db">SUMMIT</text>
+                        </svg>
+                        <div class="svg-description">添加品牌名称</div>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3>步骤4：完善细节</h3>
+                    <div class="svg-example">
+                        <svg width="120" height="90" viewBox="0 0 120 90">
+                            <circle cx="60" cy="35" r="25" fill="none" stroke="#3498db" stroke-width="3"/>
+                            <polygon points="60,20 70,40 50,40" fill="#3498db"/>
+                            <circle cx="60" cy="43" r="2" fill="#3498db"/>
+                            <text x="60" y="75" text-anchor="middle" font-size="12" font-weight="bold" fill="#3498db">SUMMIT</text>
+                        </svg>
+                        <div class="svg-description">添加装饰点</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logo变体 -->
+        <div class="card">
+            <h2>🎨 Logo变体</h2>
+            
+            <div class="grid grid-3">
+                <div>
+                    <h3>标准版</h3>
+                    <div class="svg-example">
+                        <svg width="120" height="100" viewBox="0 0 120 100">
+                            <circle cx="60" cy="40" r="25" fill="none" stroke="#3498db" stroke-width="3"/>
+                            <polygon points="60,25 70,45 50,45" fill="#3498db"/>
+                            <circle cx="60" cy="48" r="2" fill="#3498db"/>
+                            <text x="60" y="85" text-anchor="middle" font-size="12" font-weight="bold" fill="#3498db">SUMMIT</text>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3>单色版</h3>
+                    <div class="svg-example">
+                        <svg width="120" height="100" viewBox="0 0 120 100">
+                            <circle cx="60" cy="40" r="25" fill="none" stroke="#333" stroke-width="3"/>
+                            <polygon points="60,25 70,45 50,45" fill="#333"/>
+                            <circle cx="60" cy="48" r="2" fill="white"/>
+                            <text x="60" y="85" text-anchor="middle" font-size="12" font-weight="bold" fill="#333">SUMMIT</text>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3>图标版</h3>
+                    <div class="svg-example">
+                        <svg width="120" height="100" viewBox="0 0 120 100">
+                            <circle cx="60" cy="50" r="25" fill="#3498db"/>
+                            <polygon points="60,35 70,55 50,55" fill="white"/>
+                            <circle cx="60" cy="58" r="2" fill="white"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 更多创意 -->
+        <div class="card">
+            <h2>🌟 更多Logo创意</h2>
+            
+            <div class="grid grid-3">
+                <div>
+                    <h3>科技风</h3>
+                    <div class="svg-example">
+                        <svg width="120" height="90" viewBox="0 0 120 90">
+                            <circle cx="60" cy="35" r="22" fill="none" stroke="#2196F3" stroke-width="2"/>
+                            <line x1="45" y1="35" x2="75" y2="35" stroke="#2196F3" stroke-width="2"/>
+                            <line x1="60" y1="20" x2="60" y2="50" stroke="#2196F3" stroke-width="2"/>
+                            <circle cx="50" cy="25" r="2" fill="#2196F3"/>
+                            <circle cx="70" cy="25" r="2" fill="#2196F3"/>
+                            <circle cx="50" cy="45" r="2" fill="#2196F3"/>
+                            <circle cx="70" cy="45" r="2" fill="#2196F3"/>
+                            <text x="60" y="75" text-anchor="middle" font-size="10" font-weight="bold" fill="#2196F3">TECH</text>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3>自然风</h3>
+                    <div class="svg-example">
+                        <svg width="120" height="90" viewBox="0 0 120 90">
+                            <rect x="57" y="45" width="6" height="15" fill="#8B4513"/>
+                            <ellipse cx="60" cy="30" rx="15" ry="20" fill="#4CAF50"/>
+                            <ellipse cx="55" cy="25" rx="8" ry="12" fill="#66BB6A"/>
+                            <ellipse cx="65" cy="25" rx="8" ry="12" fill="#66BB6A"/>
+                            <text x="60" y="75" text-anchor="middle" font-size="10" font-weight="bold" fill="#4CAF50">GREEN</text>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3>创意风</h3>
+                    <div class="svg-example">
+                        <svg width="120" height="90" viewBox="0 0 120 90">
+                            <ellipse cx="60" cy="32" rx="12" ry="16" fill="none" stroke="#FFC107" stroke-width="2"/>
+                            <rect x="55" y="45" width="10" height="6" fill="#FFC107"/>
+                            <path d="M 48 25 Q 45 20, 50 18" fill="none" stroke="#FFC107" stroke-width="1.5"/>
+                            <path d="M 72 25 Q 75 20, 70 18" fill="none" stroke="#FFC107" stroke-width="1.5"/>
+                            <text x="60" y="75" text-anchor="middle" font-size="10" font-weight="bold" fill="#FFC107">IDEA</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 实践练习 -->
+        <div class="card">
+            <h2>📝 实践练习</h2>
+            <div class="grid grid-2">
+                <div>
+                    <h3>练习任务</h3>
+                    <ol>
+                        <li>选择一个主题（如科技、自然、创意等）</li>
+                        <li>使用基本图形设计核心图标</li>
+                        <li>添加合适的文字</li>
+                        <li>选择协调的配色方案</li>
+                        <li>创建多个变体版本</li>
+                    </ol>
+                </div>
+                
+                <div>
+                    <h3>设计要点</h3>
+                    <ul>
+                        <li><strong>简洁性：</strong>避免过于复杂的设计</li>
+                        <li><strong>识别性：</strong>确保容易识别和记忆</li>
+                        <li><strong>可缩放：</strong>在各种尺寸下都清晰</li>
+                        <li><strong>适应性：</strong>考虑不同使用场景</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 完整代码示例 -->
+        <div class="card">
+            <h2>💻 完整代码示例</h2>
+            <div class="code-editor">
+                <div class="code-header">
+                    <div class="code-title">SUMMIT Logo 完整代码</div>
+                </div>
+                <div class="code-content">&lt;svg width="120" height="100" viewBox="0 0 120 100"&gt;
+  &lt;!-- 外圆 --&gt;
+  &lt;circle cx="60" cy="40" r="25" fill="none" stroke="#3498db" stroke-width="3"/&gt;
+  
+  &lt;!-- 山峰图标 --&gt;
+  &lt;polygon points="60,25 70,45 50,45" fill="#3498db"/&gt;
+  
+  &lt;!-- 装饰点 --&gt;
+  &lt;circle cx="60" cy="48" r="2" fill="#3498db"/&gt;
+  
+  &lt;!-- 文字 --&gt;
+  &lt;text x="60" y="85" text-anchor="middle" font-size="12" font-weight="bold" fill="#3498db"&gt;SUMMIT&lt;/text&gt;
+&lt;/svg&gt;</div>
+            </div>
+        </div>
+
+        <!-- 导航 -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 2rem;">
+            <a href="../../index.html" class="btn">← 返回基础入门</a>
+            <a href="../icon-set/" class="btn btn-primary">下一个项目：图标集合 →</a>
+        </div>
+    </div>
+
+    <script src="../../../common/utils.js"></script>
+</body>
+</html> 
