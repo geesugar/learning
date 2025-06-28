@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMIL动画系统 - SVG学习示例</title>
+    <link rel="stylesheet" href="../../common/styles.css">
+    <link rel="stylesheet" href="../../common/demo.css">
+    <style>
+        .demo-svg {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fafafa;
+            overflow: visible;
+        }
+    </style>
+</head>
+<body class="demo-page">
+    <div class="demo-header">
+        <div class="container">
+            <nav class="breadcrumb">
+                <ol class="breadcrumb-list">
+                    <li class="breadcrumb-item"><a href="../../index.html">示例首页</a></li>
+                    <li class="breadcrumb-item"><a href="../index.html">动画与交互</a></li>
+                    <li class="breadcrumb-item active">SMIL动画系统</li>
+                </ol>
+            </nav>
+            <h1 class="demo-title">SMIL动画系统</h1>
+            <p class="demo-subtitle">掌握SVG原生动画语言SMIL，创建精确控制的动画效果</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="demo-main">
+            <div class="demo-content">
+                <!-- 基础animate动画 -->
+                <div class="card">
+                    <h2>🎯 基础animate动画</h2>
+                    <p>使用animate元素对SVG属性进行动画控制。</p>
+                    
+                    <div class="grid grid-3">
+                        <div>
+                            <h3>位置动画</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <circle cx="25" cy="50" r="8" fill="#FF5722">
+                                        <animate attributeName="cx" values="25;125;25" dur="3s" repeatCount="indefinite"/>
+                                    </circle>
+                                    <text x="75" y="85" text-anchor="middle" font-size="12" fill="#666">水平移动</text>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">&lt;animate attributeName="cx" values="25;125;25" dur="3s"/&gt;</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>大小动画</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <circle cx="75" cy="50" r="5" fill="#2196F3">
+                                        <animate attributeName="r" values="5;25;5" dur="2s" repeatCount="indefinite"/>
+                                    </circle>
+                                    <text x="75" y="85" text-anchor="middle" font-size="12" fill="#666">半径变化</text>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">&lt;animate attributeName="r" values="5;25;5" dur="2s"/&gt;</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>透明度动画</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <rect x="55" y="30" width="40" height="30" fill="#4CAF50">
+                                        <animate attributeName="opacity" values="1;0.2;1" dur="2.5s" repeatCount="indefinite"/>
+                                    </rect>
+                                    <text x="75" y="75" text-anchor="middle" font-size="12" fill="#666">淡入淡出</text>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">&lt;animate attributeName="opacity" values="1;0.2;1"/&gt;</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 颜色动画 -->
+                <div class="card">
+                    <h2>🌈 颜色动画</h2>
+                    <p>使用animate对颜色属性进行平滑过渡。</p>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <h3>填充颜色动画</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="120" viewBox="0 0 200 120" class="demo-svg">
+                                    <circle cx="100" cy="60" r="30" fill="#FF5722">
+                                        <animate attributeName="fill" 
+                                                 values="#FF5722;#2196F3;#4CAF50;#FF9800;#FF5722" 
+                                                 dur="4s" 
+                                                 repeatCount="indefinite"/>
+                                    </circle>
+                                    <text x="100" y="105" text-anchor="middle" font-size="12" fill="#666">填充颜色循环</text>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>描边颜色动画</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="120" viewBox="0 0 200 120" class="demo-svg">
+                                    <rect x="70" y="40" width="60" height="40" fill="none" stroke="#9C27B0" stroke-width="4">
+                                        <animate attributeName="stroke" 
+                                                 values="#9C27B0;#E91E63;#FF5722;#FF9800;#9C27B0" 
+                                                 dur="3s" 
+                                                 repeatCount="indefinite"/>
+                                        <animate attributeName="stroke-width" 
+                                                 values="4;8;4" 
+                                                 dur="2s" 
+                                                 repeatCount="indefinite"/>
+                                    </rect>
+                                    <text x="100" y="105" text-anchor="middle" font-size="12" fill="#666">描边动画</text>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 变换动画 -->
+                <div class="card">
+                    <h2>🔄 变换动画（animateTransform）</h2>
+                    <p>使用animateTransform对形状进行旋转、缩放、平移等变换。</p>
+                    
+                    <div class="grid grid-4">
+                        <div>
+                            <h3>旋转动画</h3>
+                            <div class="svg-example">
+                                <svg width="120" height="80" viewBox="0 0 120 80" class="demo-svg">
+                                    <rect x="50" y="30" width="20" height="20" fill="#FF5722">
+                                        <animateTransform attributeName="transform"
+                                                          type="rotate"
+                                                          values="0 60 40;360 60 40"
+                                                          dur="3s"
+                                                          repeatCount="indefinite"/>
+                                    </rect>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">type="rotate"</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>缩放动画</h3>
+                            <div class="svg-example">
+                                <svg width="120" height="80" viewBox="0 0 120 80" class="demo-svg">
+                                    <circle cx="60" cy="40" r="10" fill="#2196F3">
+                                        <animateTransform attributeName="transform"
+                                                          type="scale"
+                                                          values="1;2;1"
+                                                          dur="2s"
+                                                          repeatCount="indefinite"/>
+                                    </circle>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">type="scale"</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>平移动画</h3>
+                            <div class="svg-example">
+                                <svg width="120" height="80" viewBox="0 0 120 80" class="demo-svg">
+                                    <polygon points="60,30 70,50 50,50" fill="#4CAF50">
+                                        <animateTransform attributeName="transform"
+                                                          type="translate"
+                                                          values="0,0;30,0;0,20;-30,0;0,0"
+                                                          dur="4s"
+                                                          repeatCount="indefinite"/>
+                                    </polygon>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">type="translate"</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>倾斜动画</h3>
+                            <div class="svg-example">
+                                <svg width="120" height="80" viewBox="0 0 120 80" class="demo-svg">
+                                    <rect x="50" y="30" width="20" height="20" fill="#FF9800">
+                                        <animateTransform attributeName="transform"
+                                                          type="skewX"
+                                                          values="0;30;0;-30;0"
+                                                          dur="3s"
+                                                          repeatCount="indefinite"/>
+                                    </rect>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">type="skewX"</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 路径动画 -->
+                <div class="card">
+                    <h2>🛤️ 路径动画（animateMotion）</h2>
+                    <p>使用animateMotion让元素沿着指定路径移动。</p>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <h3>简单路径动画</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="120" viewBox="0 0 200 120" class="demo-svg">
+                                    <path d="M20,60 Q100,20 180,60" fill="none" stroke="#ddd" stroke-width="2"/>
+                                    <circle r="8" fill="#FF5722">
+                                        <animateMotion dur="3s" repeatCount="indefinite">
+                                            <mpath href="#motionPath1"/>
+                                        </animateMotion>
+                                    </circle>
+                                    <path id="motionPath1" d="M20,60 Q100,20 180,60" style="display: none;"/>
+                                    <text x="100" y="105" text-anchor="middle" font-size="12" fill="#666">曲线路径</text>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>复杂路径动画</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="120" viewBox="0 0 200 120" class="demo-svg">
+                                    <path d="M100,20 L180,60 L100,100 L20,60 Z" fill="none" stroke="#ddd" stroke-width="2"/>
+                                    <polygon points="0,-5 10,0 0,5" fill="#2196F3">
+                                        <animateMotion dur="4s" repeatCount="indefinite" rotate="auto">
+                                            <mpath href="#motionPath2"/>
+                                        </animateMotion>
+                                    </polygon>
+                                    <path id="motionPath2" d="M100,20 L180,60 L100,100 L20,60 Z" style="display: none;"/>
+                                    <text x="100" y="115" text-anchor="middle" font-size="12" fill="#666">钻石路径</text>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 时间控制 -->
+                <div class="card">
+                    <h2>⏰ 时间控制和同步</h2>
+                    <p>精确控制动画的开始时间、持续时间和重复次数。</p>
+                    
+                    <div class="svg-example">
+                        <svg width="100%" height="200" viewBox="0 0 400 200" class="demo-svg">
+                            <!-- 序列动画 -->
+                            <g>
+                                <circle cx="50" cy="50" r="10" fill="#FF5722">
+                                    <animate attributeName="cx" values="50;150;50" dur="2s" begin="0s" repeatCount="indefinite"/>
+                                </circle>
+                                <circle cx="50" cy="80" r="10" fill="#2196F3">
+                                    <animate attributeName="cx" values="50;150;50" dur="2s" begin="0.5s" repeatCount="indefinite"/>
+                                </circle>
+                                <circle cx="50" cy="110" r="10" fill="#4CAF50">
+                                    <animate attributeName="cx" values="50;150;50" dur="2s" begin="1s" repeatCount="indefinite"/>
+                                </circle>
+                                <text x="100" y="140" text-anchor="middle" font-size="12" fill="#666">延迟序列</text>
+                            </g>
+                            
+                            <!-- 同步动画 -->
+                            <g>
+                                <rect x="250" y="40" width="20" height="20" fill="#FF9800">
+                                    <animate attributeName="width" values="20;60;20" dur="3s" repeatCount="indefinite"/>
+                                    <animate attributeName="height" values="20;60;20" dur="3s" repeatCount="indefinite"/>
+                                </rect>
+                                <text x="280" y="80" text-anchor="middle" font-size="12" fill="#666">同步缩放</text>
+                            </g>
+                            
+                            <!-- 链式动画 -->
+                            <g>
+                                <circle cx="350" cy="50" r="8" fill="#9C27B0">
+                                    <animate id="anim1" attributeName="cy" values="50;100;50" dur="2s" repeatCount="indefinite"/>
+                                    <animate attributeName="fill" values="#9C27B0;#E91E63;#9C27B0" dur="2s" begin="anim1.begin" repeatCount="indefinite"/>
+                                </circle>
+                                <text x="350" y="130" text-anchor="middle" font-size="12" fill="#666">链式同步</text>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- 缓动函数 -->
+                <div class="card">
+                    <h2>📈 缓动函数（keyTimes和keySplines）</h2>
+                    <p>使用keyTimes和keySplines创建自定义的动画缓动效果。</p>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <h3>线性 vs 缓动</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="120" viewBox="0 0 200 120" class="demo-svg">
+                                    <!-- 线性动画 -->
+                                    <circle cx="20" cy="40" r="6" fill="#FF5722">
+                                        <animate attributeName="cx" values="20;180;20" dur="3s" repeatCount="indefinite"/>
+                                    </circle>
+                                    <text x="20" y="55" font-size="10" fill="#666">线性</text>
+                                    
+                                    <!-- 缓动动画 -->
+                                    <circle cx="20" cy="80" r="6" fill="#2196F3">
+                                        <animate attributeName="cx" 
+                                                 values="20;180;20" 
+                                                 dur="3s" 
+                                                 keyTimes="0;0.5;1"
+                                                 keySplines="0.25 0.1 0.25 1;0.25 0.1 0.25 1"
+                                                 calcMode="spline"
+                                                 repeatCount="indefinite"/>
+                                    </circle>
+                                    <text x="20" y="95" font-size="10" fill="#666">缓动</text>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>不同缓动类型</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="120" viewBox="0 0 200 120" class="demo-svg">
+                                    <!-- ease-in -->
+                                    <circle cx="20" cy="30" r="5" fill="#4CAF50">
+                                        <animate attributeName="cx" 
+                                                 values="20;180" 
+                                                 dur="2s" 
+                                                 keySplines="0.42 0 1 1"
+                                                 calcMode="spline"
+                                                 repeatCount="indefinite"/>
+                                    </circle>
+                                    <text x="20" y="45" font-size="9" fill="#666">ease-in</text>
+                                    
+                                    <!-- ease-out -->
+                                    <circle cx="20" cy="60" r="5" fill="#FF9800">
+                                        <animate attributeName="cx" 
+                                                 values="20;180" 
+                                                 dur="2s" 
+                                                 keySplines="0 0 0.58 1"
+                                                 calcMode="spline"
+                                                 repeatCount="indefinite"/>
+                                    </circle>
+                                    <text x="20" y="75" font-size="9" fill="#666">ease-out</text>
+                                    
+                                    <!-- bounce -->
+                                    <circle cx="20" cy="90" r="5" fill="#E91E63">
+                                        <animate attributeName="cx" 
+                                                 values="20;180" 
+                                                 dur="2s" 
+                                                 keySplines="0.68 -0.55 0.265 1.55"
+                                                 calcMode="spline"
+                                                 repeatCount="indefinite"/>
+                                    </circle>
+                                    <text x="20" y="105" font-size="9" fill="#666">bounce</text>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 复杂动画组合 -->
+                <div class="card">
+                    <h2>🎭 复杂动画组合</h2>
+                    <p>组合多种SMIL动画技术，创建复杂的动画场景。</p>
+                    
+                    <div class="svg-example">
+                        <svg width="100%" height="250" viewBox="0 0 400 250" class="demo-svg">
+                            <defs>
+                                <!-- 渐变定义 -->
+                                <linearGradient id="sunGradient" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#FF8C00;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            
+                            <!-- 太阳 -->
+                            <circle cx="350" cy="80" r="25" fill="url(#sunGradient)">
+                                <animate attributeName="cy" values="80;50;80" dur="10s" repeatCount="indefinite"/>
+                                <animateTransform attributeName="transform" 
+                                                  type="rotate" 
+                                                  values="0 350 80;360 350 80" 
+                                                  dur="8s" 
+                                                  repeatCount="indefinite"/>
+                            </circle>
+                            
+                            <!-- 太阳光线 -->
+                            <g stroke="#FFD700" stroke-width="2" opacity="0.7">
+                                <line x1="320" y1="50" x2="310" y2="40">
+                                    <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" repeatCount="indefinite"/>
+                                </line>
+                                <line x1="380" y1="50" x2="390" y2="40">
+                                    <animate attributeName="opacity" values="1;0.7;1" dur="2s" repeatCount="indefinite"/>
+                                </line>
+                                <line x1="320" y1="110" x2="310" y2="120">
+                                    <animate attributeName="opacity" values="0.7;1;0.7" dur="2s" begin="1s" repeatCount="indefinite"/>
+                                </line>
+                                <line x1="380" y1="110" x2="390" y2="120">
+                                    <animate attributeName="opacity" values="1;0.7;1" dur="2s" begin="1s" repeatCount="indefinite"/>
+                                </line>
+                            </g>
+                            
+                            <!-- 云朵 -->
+                            <g fill="#E0E0E0" opacity="0.8">
+                                <ellipse cx="100" cy="60" rx="30" ry="15">
+                                    <animateTransform attributeName="transform" 
+                                                      type="translate" 
+                                                      values="0,0;300,0" 
+                                                      dur="15s" 
+                                                      repeatCount="indefinite"/>
+                                </ellipse>
+                                <ellipse cx="120" cy="55" rx="20" ry="12">
+                                    <animateTransform attributeName="transform" 
+                                                      type="translate" 
+                                                      values="0,0;300,0" 
+                                                      dur="15s" 
+                                                      repeatCount="indefinite"/>
+                                </ellipse>
+                            </g>
+                            
+                            <!-- 小鸟 -->
+                            <g fill="#8B4513">
+                                <ellipse cx="50" cy="100" rx="8" ry="4">
+                                    <animateMotion dur="12s" repeatCount="indefinite">
+                                        <mpath href="#birdPath"/>
+                                    </animateMotion>
+                                </ellipse>
+                                <path id="birdPath" d="M50,100 Q200,80 350,100 Q200,120 50,100" style="display: none;"/>
+                            </g>
+                            
+                            <!-- 树木 -->
+                            <g>
+                                <!-- 树干 -->
+                                <rect x="45" y="180" width="10" height="40" fill="#8B4513"/>
+                                
+                                <!-- 树叶 -->
+                                <circle cx="50" cy="170" r="20" fill="#4CAF50">
+                                    <animateTransform attributeName="transform" 
+                                                      type="rotate" 
+                                                      values="0 50 170;5 50 170;0 50 170;-5 50 170;0 50 170" 
+                                                      dur="4s" 
+                                                      repeatCount="indefinite"/>
+                                </circle>
+                            </g>
+                            
+                            <!-- 花朵 -->
+                            <g>
+                                <circle cx="150" cy="200" r="3" fill="#FF69B4">
+                                    <animate attributeName="r" values="3;6;3" dur="2s" repeatCount="indefinite"/>
+                                </circle>
+                                <circle cx="180" cy="205" r="3" fill="#FF1493">
+                                    <animate attributeName="r" values="3;6;3" dur="2s" begin="0.5s" repeatCount="indefinite"/>
+                                </circle>
+                                <circle cx="200" cy="195" r="3" fill="#FF69B4">
+                                    <animate attributeName="r" values="3;6;3" dur="2s" begin="1s" repeatCount="indefinite"/>
+                                </circle>
+                            </g>
+                        </svg>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <strong>动画场景说明：</strong>太阳旋转并上下移动，云朵飘过，小鸟飞行，树叶摇摆，花朵绽放，所有动画协调配合形成完整的自然场景。
+                    </div>
+                </div>
+            </div>
+
+            <!-- 侧边栏交互控制器 -->
+            <div class="demo-sidebar">
+                <h3>🎮 SMIL动画编辑器</h3>
+                <div class="interactive-controls">
+                    <div class="control-section">
+                        <h4>动画类型</h4>
+                        <div class="control-row">
+                            <label class="control-label">动画类型</label>
+                            <select id="smilType" class="control-input">
+                                <option value="animate">属性动画</option>
+                                <option value="animateTransform">变换动画</option>
+                                <option value="animateMotion">路径动画</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="control-section" id="animateControls">
+                        <h4>属性动画参数</h4>
+                        <div class="control-row">
+                            <label class="control-label">动画属性</label>
+                            <select id="attributeName" class="control-input">
+                                <option value="cx">位置X</option>
+                                <option value="cy">位置Y</option>
+                                <option value="r">半径</option>
+                                <option value="fill">填充色</option>
+                                <option value="opacity">透明度</option>
+                            </select>
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">起始值</label>
+                            <input type="text" id="startValue" class="control-input" value="30">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">结束值</label>
+                            <input type="text" id="endValue" class="control-input" value="170">
+                        </div>
+                    </div>
+                    
+                    <div class="control-section" id="transformControls" style="display: none;">
+                        <h4>变换动画参数</h4>
+                        <div class="control-row">
+                            <label class="control-label">变换类型</label>
+                            <select id="transformType" class="control-input">
+                                <option value="translate">平移</option>
+                                <option value="rotate">旋转</option>
+                                <option value="scale">缩放</option>
+                                <option value="skewX">倾斜X</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="control-section">
+                        <h4>时间控制</h4>
+                        <div class="control-row">
+                            <label class="control-label">持续时间(秒)</label>
+                            <input type="range" id="duration" class="control-input range-input" min="0.5" max="5" step="0.1" value="2">
+                            <span id="durationValue">2.0s</span>
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">重复次数</label>
+                            <select id="repeatCount" class="control-input">
+                                <option value="1">1次</option>
+                                <option value="3">3次</option>
+                                <option value="indefinite">无限循环</option>
+                            </select>
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">缓动类型</label>
+                            <select id="easingType" class="control-input">
+                                <option value="linear">线性</option>
+                                <option value="ease">缓动</option>
+                                <option value="ease-in">缓入</option>
+                                <option value="ease-out">缓出</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="svg-display has-content">
+                    <svg id="demoSVG" width="200" height="150" viewBox="0 0 200 150">
+                        <circle id="demoCircle" cx="100" cy="75" r="15" fill="#2196F3"/>
+                        <text x="100" y="125" text-anchor="middle" font-size="12" fill="#666">SMIL动画预览</text>
+                    </svg>
+                </div>
+
+                <div class="code-editor">
+                    <div class="code-header">
+                        <div class="code-title">生成的SMIL代码</div>
+                        <div class="code-actions">
+                            <button class="code-btn" onclick="copySmilCode()">复制</button>
+                            <button class="code-btn" onclick="restartSmilAnimation()">重启</button>
+                        </div>
+                    </div>
+                    <div class="code-content" id="smilCode">&lt;animate .../&gt;</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 导航 -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <a href="../css-animations/" class="btn">← 上一章：CSS动画应用</a>
+                <a href="../javascript-control/" class="btn btn-primary">下一章：JavaScript控制 →</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../common/utils.js"></script>
+    <script>
+        // SMIL动画编辑器
+        const smilType = document.getElementById('smilType');
+        const attributeName = document.getElementById('attributeName');
+        const startValue = document.getElementById('startValue');
+        const endValue = document.getElementById('endValue');
+        const transformType = document.getElementById('transformType');
+        const duration = document.getElementById('duration');
+        const durationValue = document.getElementById('durationValue');
+        const repeatCount = document.getElementById('repeatCount');
+        const easingType = document.getElementById('easingType');
+        const demoCircle = document.getElementById('demoCircle');
+        const smilCode = document.getElementById('smilCode');
+
+        function updateSmilAnimation() {
+            const type = smilType.value;
+            const attr = attributeName.value;
+            const start = startValue.value;
+            const end = endValue.value;
+            const transform = transformType.value;
+            const dur = duration.value;
+            const repeat = repeatCount.value;
+            const easing = easingType.value;
+            
+            // 更新时长显示
+            durationValue.textContent = dur + 's';
+            
+            // 清除现有动画
+            const existingAnimations = demoCircle.querySelectorAll('animate, animateTransform, animateMotion');
+            existingAnimations.forEach(anim => anim.remove());
+            
+            let animationElement;
+            let code = '';
+            
+            // 根据类型创建不同的动画元素
+            switch (type) {
+                case 'animate':
+                    animationElement = document.createElementNS('http://www.w3.org/2000/svg', 'animate');
+                    animationElement.setAttribute('attributeName', attr);
+                    
+                    if (attr === 'fill') {
+                        animationElement.setAttribute('values', '#FF5722;#2196F3;#4CAF50;#FF5722');
+                    } else {
+                        animationElement.setAttribute('values', `${start};${end};${start}`);
+                    }
+                    
+                    code = `&lt;animate 
+  attributeName="${attr}" 
+  values="${attr === 'fill' ? '#FF5722;#2196F3;#4CAF50;#FF5722' : start + ';' + end + ';' + start}" 
+  dur="${dur}s" 
+  repeatCount="${repeat}"/&gt;`;
+                    break;
+                    
+                case 'animateTransform':
+                    animationElement = document.createElementNS('http://www.w3.org/2000/svg', 'animateTransform');
+                    animationElement.setAttribute('attributeName', 'transform');
+                    animationElement.setAttribute('type', transform);
+                    
+                    let values;
+                    switch (transform) {
+                        case 'rotate':
+                            values = '0 100 75;360 100 75';
+                            break;
+                        case 'scale':
+                            values = '1;2;1';
+                            break;
+                        case 'translate':
+                            values = '0,0;50,0;0,0';
+                            break;
+                        case 'skewX':
+                            values = '0;30;0';
+                            break;
+                    }
+                    animationElement.setAttribute('values', values);
+                    
+                    code = `&lt;animateTransform 
+  attributeName="transform" 
+  type="${transform}" 
+  values="${values}" 
+  dur="${dur}s" 
+  repeatCount="${repeat}"/&gt;`;
+                    break;
+                    
+                case 'animateMotion':
+                    // 为路径动画创建一个简单的路径
+                    animationElement = document.createElementNS('http://www.w3.org/2000/svg', 'animateMotion');
+                    animationElement.setAttribute('path', 'M0,0 Q50,-30 100,0 Q50,30 0,0');
+                    
+                    code = `&lt;animateMotion 
+  path="M0,0 Q50,-30 100,0 Q50,30 0,0" 
+  dur="${dur}s" 
+  repeatCount="${repeat}"/&gt;`;
+                    break;
+            }
+            
+            // 设置通用属性
+            animationElement.setAttribute('dur', dur + 's');
+            animationElement.setAttribute('repeatCount', repeat);
+            
+            // 应用缓动函数
+            if (easing !== 'linear') {
+                let keySplines;
+                switch (easing) {
+                    case 'ease':
+                        keySplines = '0.25 0.1 0.25 1';
+                        break;
+                    case 'ease-in':
+                        keySplines = '0.42 0 1 1';
+                        break;
+                    case 'ease-out':
+                        keySplines = '0 0 0.58 1';
+                        break;
+                }
+                animationElement.setAttribute('keySplines', keySplines);
+                animationElement.setAttribute('calcMode', 'spline');
+            }
+            
+            // 添加动画到元素
+            demoCircle.appendChild(animationElement);
+            
+            // 更新代码显示
+            smilCode.textContent = code;
+            
+            // 显示/隐藏控制面板
+            document.getElementById('animateControls').style.display = type === 'animate' ? 'block' : 'none';
+            document.getElementById('transformControls').style.display = type === 'animateTransform' ? 'block' : 'none';
+        }
+        
+        function restartSmilAnimation() {
+            const animations = demoCircle.querySelectorAll('animate, animateTransform, animateMotion');
+            animations.forEach(anim => {
+                anim.beginElement();
+            });
+        }
+
+        function copySmilCode() {
+            navigator.clipboard.writeText(smilCode.textContent).then(() => {
+                document.querySelector('.code-actions .code-btn').textContent = '已复制!';
+                setTimeout(() => {
+                    document.querySelector('.code-actions .code-btn').textContent = '复制';
+                }, 2000);
+            });
+        }
+
+        // 绑定事件
+        [smilType, attributeName, startValue, endValue, transformType, duration, repeatCount, easingType].forEach(element => {
+            element.addEventListener('input', updateSmilAnimation);
+            element.addEventListener('change', updateSmilAnimation);
+        });
+
+        // 初始化
+        updateSmilAnimation();
+    </script>
+</body>
+</html> 

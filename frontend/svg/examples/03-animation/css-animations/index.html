@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS动画应用 - SVG学习示例</title>
+    <link rel="stylesheet" href="../../common/styles.css">
+    <link rel="stylesheet" href="../../common/demo.css">
+    <style>
+        .demo-svg {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fafafa;
+            overflow: visible;
+        }
+        
+        /* CSS过渡动画 */
+        .transition-hover {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .transition-hover:hover {
+            transform: scale(1.2);
+            fill: #FF5722;
+        }
+        
+        /* 旋转动画 */
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .rotate-animation {
+            animation: rotate 3s linear infinite;
+            transform-origin: center;
+        }
+        
+        /* 脉冲动画 */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+        }
+        .pulse-animation {
+            animation: pulse 2s ease-in-out infinite;
+            transform-origin: center;
+        }
+        
+        /* 弹跳动画 */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        .bounce-animation {
+            animation: bounce 1.5s ease-in-out infinite;
+        }
+        
+        /* 路径动画 */
+        @keyframes pathDraw {
+            0% { stroke-dashoffset: 100; }
+            100% { stroke-dashoffset: 0; }
+        }
+        .path-draw {
+            stroke-dasharray: 100;
+            animation: pathDraw 3s ease-in-out infinite;
+        }
+        
+        /* 复杂组合动画 */
+        @keyframes complexMove {
+            0% { transform: translateX(0) rotate(0deg) scale(1); }
+            25% { transform: translateX(50px) rotate(90deg) scale(1.2); }
+            50% { transform: translateX(50px) translateY(-30px) rotate(180deg) scale(0.8); }
+            75% { transform: translateX(0) translateY(-30px) rotate(270deg) scale(1.2); }
+            100% { transform: translateX(0) rotate(360deg) scale(1); }
+        }
+        .complex-animation {
+            animation: complexMove 4s ease-in-out infinite;
+            transform-origin: center;
+        }
+    </style>
+</head>
+<body class="demo-page">
+    <div class="demo-header">
+        <div class="container">
+            <nav class="breadcrumb">
+                <ol class="breadcrumb-list">
+                    <li class="breadcrumb-item"><a href="../../index.html">示例首页</a></li>
+                    <li class="breadcrumb-item"><a href="../index.html">动画与交互</a></li>
+                    <li class="breadcrumb-item active">CSS动画应用</li>
+                </ol>
+            </nav>
+            <h1 class="demo-title">CSS动画应用</h1>
+            <p class="demo-subtitle">学习在SVG中使用CSS动画创建流畅的过渡效果和关键帧动画</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="demo-main">
+            <div class="demo-content">
+                <!-- CSS过渡动画 -->
+                <div class="card">
+                    <h2>🎯 CSS过渡动画</h2>
+                    <p>使用CSS transition属性为SVG元素添加平滑的过渡效果。</p>
+                    
+                    <div class="grid grid-3">
+                        <div>
+                            <h3>悬停变换</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <circle cx="75" cy="50" r="20" fill="#2196F3" class="transition-hover"/>
+                                    <text x="75" y="85" text-anchor="middle" font-size="12" fill="#666">悬停试试</text>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">transition: all 0.3s ease;</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>颜色过渡</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <style>
+                                        .color-transition {
+                                            fill: #4CAF50;
+                                            transition: fill 0.5s ease;
+                                            cursor: pointer;
+                                        }
+                                        .color-transition:hover {
+                                            fill: #FF9800;
+                                        }
+                                    </style>
+                                    <rect x="50" y="30" width="50" height="30" class="color-transition"/>
+                                    <text x="75" y="75" text-anchor="middle" font-size="12" fill="#666">颜色过渡</text>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">transition: fill 0.5s ease;</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>描边过渡</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <style>
+                                        .stroke-transition {
+                                            fill: none;
+                                            stroke: #9C27B0;
+                                            stroke-width: 2;
+                                            transition: stroke-width 0.3s ease, stroke 0.3s ease;
+                                            cursor: pointer;
+                                        }
+                                        .stroke-transition:hover {
+                                            stroke: #E91E63;
+                                            stroke-width: 6;
+                                        }
+                                    </style>
+                                    <polygon points="75,20 95,50 75,80 55,50" class="stroke-transition"/>
+                                    <text x="75" y="95" text-anchor="middle" font-size="12" fill="#666">描边过渡</text>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">transition: stroke-width 0.3s;</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 关键帧动画 -->
+                <div class="card">
+                    <h2>🎬 关键帧动画</h2>
+                    <p>使用CSS @keyframes创建复杂的循环动画效果。</p>
+                    
+                    <div class="grid grid-4">
+                        <div>
+                            <h3>旋转动画</h3>
+                            <div class="svg-example">
+                                <svg width="120" height="80" viewBox="0 0 120 80" class="demo-svg">
+                                    <rect x="45" y="25" width="30" height="30" fill="#FF5722" class="rotate-animation"/>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">rotate 3s linear infinite</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>脉冲动画</h3>
+                            <div class="svg-example">
+                                <svg width="120" height="80" viewBox="0 0 120 80" class="demo-svg">
+                                    <circle cx="60" cy="40" r="15" fill="#2196F3" class="pulse-animation"/>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">pulse 2s ease-in-out infinite</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>弹跳动画</h3>
+                            <div class="svg-example">
+                                <svg width="120" height="80" viewBox="0 0 120 80" class="demo-svg">
+                                    <circle cx="60" cy="55" r="12" fill="#4CAF50" class="bounce-animation"/>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">bounce 1.5s ease-in-out infinite</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>路径绘制</h3>
+                            <div class="svg-example">
+                                <svg width="120" height="80" viewBox="0 0 120 80" class="demo-svg">
+                                    <path d="M20,40 Q60,20 100,40 T100,60" fill="none" stroke="#FF9800" stroke-width="3" class="path-draw"/>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">stroke-dasharray animation</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 变换动画 -->
+                <div class="card">
+                    <h2>🔄 变换动画</h2>
+                    <p>使用CSS transform属性创建移动、旋转、缩放等变换动画。</p>
+                    
+                    <div class="svg-example">
+                        <svg width="100%" height="200" viewBox="0 0 400 200" class="demo-svg">
+                            <style>
+                                @keyframes slideRight {
+                                    0% { transform: translateX(0); }
+                                    100% { transform: translateX(300px); }
+                                }
+                                @keyframes scaleUp {
+                                    0%, 100% { transform: scale(1); }
+                                    50% { transform: scale(1.5); }
+                                }
+                                @keyframes rotateY {
+                                    0% { transform: rotateY(0deg); }
+                                    100% { transform: rotateY(360deg); }
+                                }
+                                @keyframes colorShift {
+                                    0% { fill: #FF5722; }
+                                    25% { fill: #2196F3; }
+                                    50% { fill: #4CAF50; }
+                                    75% { fill: #FF9800; }
+                                    100% { fill: #FF5722; }
+                                }
+                                
+                                .slide-animation {
+                                    animation: slideRight 3s ease-in-out infinite alternate;
+                                }
+                                .scale-animation {
+                                    animation: scaleUp 2s ease-in-out infinite;
+                                    transform-origin: center;
+                                }
+                                .rotate-y-animation {
+                                    animation: rotateY 4s linear infinite;
+                                }
+                                .color-animation {
+                                    animation: colorShift 3s ease-in-out infinite;
+                                }
+                            </style>
+                            
+                            <circle cx="40" cy="50" r="15" fill="#FF5722" class="slide-animation"/>
+                            <text x="40" y="80" text-anchor="middle" font-size="12" fill="#666">滑动</text>
+                            
+                            <circle cx="40" cy="120" r="15" fill="#2196F3" class="scale-animation"/>
+                            <text x="40" y="150" text-anchor="middle" font-size="12" fill="#666">缩放</text>
+                            
+                            <rect x="25" y="30" width="30" height="20" fill="#4CAF50" class="rotate-y-animation"/>
+                            <text x="200" y="25" text-anchor="middle" font-size="12" fill="#666">3D旋转</text>
+                            
+                            <polygon points="200,80 220,120 180,120" class="color-animation"/>
+                            <text x="200" y="140" text-anchor="middle" font-size="12" fill="#666">颜色变换</text>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- 复杂组合动画 -->
+                <div class="card">
+                    <h2>🎭 复杂组合动画</h2>
+                    <p>组合多种动画效果，创建复杂的视觉表现。</p>
+                    
+                    <div class="svg-example">
+                        <svg width="100%" height="200" viewBox="0 0 400 200" class="demo-svg">
+                            <style>
+                                @keyframes orbit {
+                                    0% { transform: rotate(0deg) translateX(60px) rotate(0deg); }
+                                    100% { transform: rotate(360deg) translateX(60px) rotate(-360deg); }
+                                }
+                                @keyframes morphing {
+                                    0%, 100% { 
+                                        d: path("M200,100 L220,80 L240,100 L220,120 Z");
+                                        fill: #FF5722;
+                                    }
+                                    25% { 
+                                        d: path("M200,100 L230,90 L240,110 L210,110 Z");
+                                        fill: #2196F3;
+                                    }
+                                    50% { 
+                                        d: path("M200,100 L235,85 L245,105 L205,115 Z");
+                                        fill: #4CAF50;
+                                    }
+                                    75% { 
+                                        d: path("M200,100 L225,85 L235,105 L215,115 Z");
+                                        fill: #FF9800;
+                                    }
+                                }
+                                
+                                .orbit-center {
+                                    fill: #FFD700;
+                                }
+                                .orbit-planet {
+                                    animation: orbit 4s linear infinite;
+                                    transform-origin: 200px 100px;
+                                }
+                                .morph-shape {
+                                    animation: morphing 3s ease-in-out infinite;
+                                }
+                            </style>
+                            
+                            <!-- 轨道动画 -->
+                            <g>
+                                <circle cx="200" cy="100" r="60" fill="none" stroke="#ddd" stroke-width="1" stroke-dasharray="3,3"/>
+                                <circle cx="200" cy="100" r="8" class="orbit-center"/>
+                                <circle cx="260" cy="100" r="5" fill="#FF5722" class="orbit-planet"/>
+                                <text x="200" y="180" text-anchor="middle" font-size="12" fill="#666">轨道动画</text>
+                            </g>
+                            
+                            <!-- 形状变形动画 -->
+                            <g>
+                                <path d="M350,100 L370,80 L390,100 L370,120 Z" class="morph-shape"/>
+                                <text x="370" y="140" text-anchor="middle" font-size="12" fill="#666">形状变形</text>
+                            </g>
+                            
+                            <!-- 复杂组合动画 -->
+                            <circle cx="80" cy="100" r="12" fill="#9C27B0" class="complex-animation"/>
+                            <text x="80" y="140" text-anchor="middle" font-size="12" fill="#666">复杂组合</text>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- 动画性能优化 -->
+                <div class="card">
+                    <h2>⚡ 动画性能优化</h2>
+                    <p>掌握CSS动画的性能优化技巧，创建流畅的动画效果。</p>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <h3>使用transform而非位置属性</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="120" viewBox="0 0 200 120" class="demo-svg">
+                                    <style>
+                                        .bad-performance {
+                                            animation: badMove 2s linear infinite alternate;
+                                        }
+                                        .good-performance {
+                                            animation: goodMove 2s linear infinite alternate;
+                                        }
+                                        @keyframes badMove {
+                                            0% { x: 20; }
+                                            100% { x: 120; }
+                                        }
+                                        @keyframes goodMove {
+                                            0% { transform: translateX(0); }
+                                            100% { transform: translateX(100px); }
+                                        }
+                                    </style>
+                                    <circle cx="30" cy="40" r="8" fill="#FF5722" class="bad-performance"/>
+                                    <text x="30" y="60" font-size="10" fill="#666">使用x属性 (慢)</text>
+                                    
+                                    <circle cx="30" cy="80" r="8" fill="#4CAF50" class="good-performance"/>
+                                    <text x="30" y="100" font-size="10" fill="#666">使用transform (快)</text>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>will-change优化</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="120" viewBox="0 0 200 120" class="demo-svg">
+                                    <style>
+                                        .optimized-animation {
+                                            will-change: transform;
+                                            animation: optimizedRotate 2s linear infinite;
+                                            transform-origin: center;
+                                        }
+                                        @keyframes optimizedRotate {
+                                            from { transform: rotate(0deg); }
+                                            to { transform: rotate(360deg); }
+                                        }
+                                    </style>
+                                    <rect x="85" y="45" width="30" height="30" fill="#2196F3" class="optimized-animation"/>
+                                    <text x="100" y="90" text-anchor="middle" font-size="10" fill="#666">GPU加速</text>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <strong>性能提示：</strong>
+                        <ul>
+                            <li>优先使用 transform 和 opacity 属性</li>
+                            <li>使用 will-change 声明要变化的属性</li>
+                            <li>避免频繁修改布局相关属性</li>
+                            <li>合理使用 animation-fill-mode</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 侧边栏交互控制器 -->
+            <div class="demo-sidebar">
+                <h3>🎮 CSS动画编辑器</h3>
+                <div class="interactive-controls">
+                    <div class="control-section">
+                        <h4>动画类型</h4>
+                        <div class="control-row">
+                            <label class="control-label">动画类型</label>
+                            <select id="animationType" class="control-input">
+                                <option value="none">无动画</option>
+                                <option value="rotate">旋转</option>
+                                <option value="scale">缩放</option>
+                                <option value="translate">平移</option>
+                                <option value="pulse">脉冲</option>
+                                <option value="bounce">弹跳</option>
+                            </select>
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">动画时长(秒)</label>
+                            <input type="range" id="animationDuration" class="control-input range-input" min="0.5" max="5" step="0.1" value="2">
+                            <span id="durationValue">2.0s</span>
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">缓动函数</label>
+                            <select id="animationEasing" class="control-input">
+                                <option value="linear">linear</option>
+                                <option value="ease">ease</option>
+                                <option value="ease-in">ease-in</option>
+                                <option value="ease-out">ease-out</option>
+                                <option value="ease-in-out">ease-in-out</option>
+                            </select>
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">循环次数</label>
+                            <select id="animationIteration" class="control-input">
+                                <option value="1">1次</option>
+                                <option value="3">3次</option>
+                                <option value="infinite">无限循环</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="control-section">
+                        <h4>形状属性</h4>
+                        <div class="control-row">
+                            <label class="control-label">形状</label>
+                            <select id="shapeType" class="control-input">
+                                <option value="circle">圆形</option>
+                                <option value="rect">矩形</option>
+                                <option value="polygon">多边形</option>
+                            </select>
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">颜色</label>
+                            <input type="color" id="shapeColor" class="control-input color-input" value="#2196F3">
+                        </div>
+                    </div>
+                    
+                    <div class="control-section">
+                        <h4>动画控制</h4>
+                        <div class="control-row">
+                            <button id="playPause" class="btn btn-primary">暂停</button>
+                            <button id="restart" class="btn">重启</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="svg-display has-content">
+                    <svg id="demoSVG" width="200" height="150" viewBox="0 0 200 150">
+                        <style id="dynamicAnimation">
+                            .demo-shape {
+                                animation: none;
+                            }
+                        </style>
+                        <circle id="demoShape" cx="100" cy="75" r="20" fill="#2196F3" class="demo-shape"/>
+                        <text x="100" y="125" text-anchor="middle" font-size="12" fill="#666">动画预览</text>
+                    </svg>
+                </div>
+
+                <div class="code-editor">
+                    <div class="code-header">
+                        <div class="code-title">生成的CSS代码</div>
+                        <div class="code-actions">
+                            <button class="code-btn" onclick="copyAnimationCode()">复制</button>
+                        </div>
+                    </div>
+                    <div class="code-content" id="animationCode">无动画</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 导航 -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <a href="../index.html" class="btn">← 返回动画与交互</a>
+                <a href="../smil-animations/" class="btn btn-primary">下一章：SMIL动画系统 →</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../common/utils.js"></script>
+    <script>
+        // CSS动画编辑器
+        const animationType = document.getElementById('animationType');
+        const animationDuration = document.getElementById('animationDuration');
+        const durationValue = document.getElementById('durationValue');
+        const animationEasing = document.getElementById('animationEasing');
+        const animationIteration = document.getElementById('animationIteration');
+        const shapeType = document.getElementById('shapeType');
+        const shapeColor = document.getElementById('shapeColor');
+        const playPause = document.getElementById('playPause');
+        const restart = document.getElementById('restart');
+        const dynamicAnimation = document.getElementById('dynamicAnimation');
+        const demoShape = document.getElementById('demoShape');
+        const animationCode = document.getElementById('animationCode');
+        
+        let isPlaying = true;
+
+        function updateAnimation() {
+            const type = animationType.value;
+            const duration = animationDuration.value;
+            const easing = animationEasing.value;
+            const iteration = animationIteration.value;
+            const shape = shapeType.value;
+            const color = shapeColor.value;
+            
+            // 更新时长显示
+            durationValue.textContent = duration + 's';
+            
+            // 更新形状
+            updateShape(shape, color);
+            
+            // 生成动画CSS
+            let animationCSS = '';
+            let keyframes = '';
+            
+            if (type !== 'none') {
+                const animationName = `demo${type}`;
+                
+                switch (type) {
+                    case 'rotate':
+                        keyframes = `@keyframes ${animationName} {
+                            from { transform: rotate(0deg); }
+                            to { transform: rotate(360deg); }
+                        }`;
+                        break;
+                    case 'scale':
+                        keyframes = `@keyframes ${animationName} {
+                            0%, 100% { transform: scale(1); }
+                            50% { transform: scale(1.5); }
+                        }`;
+                        break;
+                    case 'translate':
+                        keyframes = `@keyframes ${animationName} {
+                            0% { transform: translateX(0); }
+                            50% { transform: translateX(50px); }
+                            100% { transform: translateX(0); }
+                        }`;
+                        break;
+                    case 'pulse':
+                        keyframes = `@keyframes ${animationName} {
+                            0%, 100% { transform: scale(1); opacity: 1; }
+                            50% { transform: scale(1.3); opacity: 0.7; }
+                        }`;
+                        break;
+                    case 'bounce':
+                        keyframes = `@keyframes ${animationName} {
+                            0%, 100% { transform: translateY(0); }
+                            50% { transform: translateY(-20px); }
+                        }`;
+                        break;
+                }
+                
+                animationCSS = `.demo-shape {
+                    animation: ${animationName} ${duration}s ${easing} ${iteration};
+                    transform-origin: center;
+                }`;
+            } else {
+                animationCSS = '.demo-shape { animation: none; }';
+            }
+            
+            // 应用动画
+            dynamicAnimation.textContent = keyframes + '\n' + animationCSS;
+            
+            // 更新代码显示
+            if (type !== 'none') {
+                animationCode.textContent = keyframes + '\n\n' + animationCSS;
+            } else {
+                animationCode.textContent = '无动画';
+            }
+        }
+        
+        function updateShape(shape, color) {
+            const svg = demoShape.parentNode;
+            const oldShape = demoShape;
+            let newShape;
+            
+            switch (shape) {
+                case 'circle':
+                    newShape = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    newShape.setAttribute('cx', '100');
+                    newShape.setAttribute('cy', '75');
+                    newShape.setAttribute('r', '20');
+                    break;
+                case 'rect':
+                    newShape = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                    newShape.setAttribute('x', '80');
+                    newShape.setAttribute('y', '55');
+                    newShape.setAttribute('width', '40');
+                    newShape.setAttribute('height', '40');
+                    break;
+                case 'polygon':
+                    newShape = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                    newShape.setAttribute('points', '100,55 120,85 80,85');
+                    break;
+            }
+            
+            newShape.setAttribute('id', 'demoShape');
+            newShape.setAttribute('fill', color);
+            newShape.setAttribute('class', 'demo-shape');
+            
+            svg.replaceChild(newShape, oldShape);
+            window.demoShape = newShape;
+        }
+        
+        function togglePlayPause() {
+            if (isPlaying) {
+                demoShape.style.animationPlayState = 'paused';
+                playPause.textContent = '播放';
+                isPlaying = false;
+            } else {
+                demoShape.style.animationPlayState = 'running';
+                playPause.textContent = '暂停';
+                isPlaying = true;
+            }
+        }
+        
+        function restartAnimation() {
+            demoShape.style.animation = 'none';
+            setTimeout(() => {
+                updateAnimation();
+                if (!isPlaying) {
+                    demoShape.style.animationPlayState = 'paused';
+                }
+            }, 10);
+        }
+
+        function copyAnimationCode() {
+            navigator.clipboard.writeText(animationCode.textContent).then(() => {
+                document.querySelector('.code-actions .code-btn').textContent = '已复制!';
+                setTimeout(() => {
+                    document.querySelector('.code-actions .code-btn').textContent = '复制';
+                }, 2000);
+            });
+        }
+
+        // 绑定事件
+        [animationType, animationDuration, animationEasing, animationIteration, shapeType, shapeColor].forEach(element => {
+            element.addEventListener('input', updateAnimation);
+            element.addEventListener('change', updateAnimation);
+        });
+        
+        playPause.addEventListener('click', togglePlayPause);
+        restart.addEventListener('click', restartAnimation);
+
+        // 初始化
+        updateAnimation();
+    </script>
+</body>
+</html> 

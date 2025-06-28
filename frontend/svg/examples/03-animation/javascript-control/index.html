@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript控制 - SVG学习示例</title>
+    <link rel="stylesheet" href="../../common/styles.css">
+    <link rel="stylesheet" href="../../common/demo.css">
+    <style>
+        .demo-svg {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fafafa;
+            overflow: visible;
+        }
+        
+        .interactive-svg {
+            cursor: pointer;
+        }
+        
+        .draggable {
+            cursor: move;
+        }
+        
+        .drawing-canvas {
+            background: #f8f8f8;
+            border: 2px dashed #ccc;
+        }
+    </style>
+</head>
+<body class="demo-page">
+    <div class="demo-header">
+        <div class="container">
+            <nav class="breadcrumb">
+                <ol class="breadcrumb-list">
+                    <li class="breadcrumb-item"><a href="../../index.html">示例首页</a></li>
+                    <li class="breadcrumb-item"><a href="../index.html">动画与交互</a></li>
+                    <li class="breadcrumb-item active">JavaScript控制</li>
+                </ol>
+            </nav>
+            <h1 class="demo-title">JavaScript控制</h1>
+            <p class="demo-subtitle">使用JavaScript操作SVG元素，创建动态交互的图形应用</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="demo-main">
+            <div class="demo-content">
+                <!-- 基础DOM操作 -->
+                <div class="card">
+                    <h2>🎯 基础DOM操作</h2>
+                    <p>使用JavaScript获取和操作SVG元素的属性和样式。</p>
+                    
+                    <div class="grid grid-3">
+                        <div>
+                            <h3>属性操作</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <circle id="circle1" cx="75" cy="50" r="20" fill="#2196F3"/>
+                                </svg>
+                                <div class="control-group">
+                                    <button onclick="changeCircleSize()" class="btn btn-sm">改变大小</button>
+                                    <button onclick="changeCircleColor()" class="btn btn-sm">改变颜色</button>
+                                </div>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">element.setAttribute('r', '30');</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>样式操作</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <rect id="rect1" x="50" y="30" width="50" height="30" fill="#4CAF50"/>
+                                </svg>
+                                <div class="control-group">
+                                    <button onclick="toggleOpacity()" class="btn btn-sm">切换透明度</button>
+                                    <button onclick="addBorder()" class="btn btn-sm">添加边框</button>
+                                </div>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">element.style.opacity = '0.5';</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>类名操作</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <style>
+                                        .highlighted { fill: #FF5722; transform: scale(1.2); transform-origin: center; }
+                                        .animated { transition: all 0.3s ease; }
+                                    </style>
+                                    <polygon id="polygon1" points="75,20 95,50 75,80 55,50" fill="#FF9800" class="animated"/>
+                                </svg>
+                                <div class="control-group">
+                                    <button onclick="toggleHighlight()" class="btn btn-sm">切换高亮</button>
+                                </div>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">element.classList.toggle('highlighted');</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 事件处理 -->
+                <div class="card">
+                    <h2>👆 事件处理</h2>
+                    <p>为SVG元素添加各种交互事件。</p>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <h3>鼠标事件</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="120" viewBox="0 0 200 120" class="demo-svg interactive-svg">
+                                    <circle id="mouseCircle" cx="50" cy="60" r="15" fill="#2196F3"/>
+                                    <rect id="mouseRect" x="100" y="40" width="30" height="30" fill="#4CAF50"/>
+                                    <polygon id="mousePolygon" points="170,40 185,60 170,80 155,60" fill="#FF9800"/>
+                                    <text id="eventText" x="100" y="100" text-anchor="middle" font-size="12" fill="#666">移动鼠标到图形上</text>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>键盘事件</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="120" viewBox="0 0 200 120" class="demo-svg" tabindex="0" id="keyboardSVG">
+                                    <circle id="keyboardCircle" cx="100" cy="60" r="15" fill="#9C27B0"/>
+                                    <text x="100" y="100" text-anchor="middle" font-size="12" fill="#666">点击聚焦，按方向键移动</text>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 动态创建元素 -->
+                <div class="card">
+                    <h2>⚡ 动态创建元素</h2>
+                    <p>使用JavaScript动态创建和插入SVG元素。</p>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <h3>点击创建图形</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="120" viewBox="0 0 200 120" class="demo-svg drawing-canvas" id="createSVG">
+                                    <text x="100" y="60" text-anchor="middle" font-size="14" fill="#999">点击空白处创建圆形</text>
+                                </svg>
+                                <div class="control-group">
+                                    <button onclick="clearCanvas()" class="btn btn-sm">清空画布</button>
+                                    <button onclick="changeCreateMode()" class="btn btn-sm" id="modeBtn">创建模式：圆形</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>动态路径绘制</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="120" viewBox="0 0 200 120" class="demo-svg drawing-canvas" id="pathSVG">
+                                    <path id="dynamicPath" d="" fill="none" stroke="#FF5722" stroke-width="3"/>
+                                    <text x="100" y="60" text-anchor="middle" font-size="14" fill="#999">鼠标拖拽绘制路径</text>
+                                </svg>
+                                <div class="control-group">
+                                    <button onclick="clearPath()" class="btn btn-sm">清空路径</button>
+                                    <button onclick="togglePathMode()" class="btn btn-sm" id="pathModeBtn">绘制模式</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 拖拽交互 -->
+                <div class="card">
+                    <h2>🖱️ 拖拽交互</h2>
+                    <p>实现SVG元素的拖拽功能。</p>
+                    
+                    <div class="svg-example">
+                        <svg width="100%" height="200" viewBox="0 0 400 200" class="demo-svg">
+                            <defs>
+                                <filter id="dropShadow" x="-50%" y="-50%" width="200%" height="200%">
+                                    <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="#00000040"/>
+                                </filter>
+                            </defs>
+                            
+                            <rect id="dragRect" x="50" y="80" width="40" height="30" fill="#FF5722" class="draggable" filter="url(#dropShadow)"/>
+                            <circle id="dragCircle" cx="150" cy="100" r="20" fill="#2196F3" class="draggable" filter="url(#dropShadow)"/>
+                            <polygon id="dragPolygon" points="250,80 270,100 250,120 230,100" fill="#4CAF50" class="draggable" filter="url(#dropShadow)"/>
+                            
+                            <text x="200" y="30" text-anchor="middle" font-size="14" fill="#666">拖拽上面的图形</text>
+                            <text x="200" y="180" text-anchor="middle" font-size="12" fill="#999">支持边界限制和碰撞检测</text>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- 动画控制 -->
+                <div class="card">
+                    <h2>🎬 动画控制</h2>
+                    <p>使用JavaScript控制CSS和SMIL动画的播放、暂停和重启。</p>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <h3>CSS动画控制</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="120" viewBox="0 0 200 120" class="demo-svg">
+                                    <style>
+                                        @keyframes cssRotate {
+                                            from { transform: rotate(0deg); }
+                                            to { transform: rotate(360deg); }
+                                        }
+                                        .css-animated {
+                                            animation: cssRotate 3s linear infinite;
+                                            transform-origin: center;
+                                        }
+                                    </style>
+                                    <rect id="cssAnimRect" x="85" y="45" width="30" height="30" fill="#FF9800"/>
+                                </svg>
+                                <div class="control-group">
+                                    <button onclick="toggleCSSAnimation()" class="btn btn-sm" id="cssAnimBtn">开始动画</button>
+                                    <button onclick="pauseCSSAnimation()" class="btn btn-sm">暂停/继续</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>SMIL动画控制</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="120" viewBox="0 0 200 120" class="demo-svg">
+                                    <circle cx="100" cy="60" r="15" fill="#9C27B0">
+                                        <animate id="smilAnim" attributeName="r" values="15;25;15" dur="2s" begin="indefinite" repeatCount="indefinite"/>
+                                        <animate attributeName="fill" values="#9C27B0;#E91E63;#9C27B0" dur="2s" begin="smilAnim.begin" repeatCount="indefinite"/>
+                                    </circle>
+                                </svg>
+                                <div class="control-group">
+                                    <button onclick="startSMILAnimation()" class="btn btn-sm">开始</button>
+                                    <button onclick="stopSMILAnimation()" class="btn btn-sm">停止</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 高级交互 -->
+                <div class="card">
+                    <h2>🚀 高级交互技术</h2>
+                    <p>实现复杂的交互效果和数据可视化。</p>
+                    
+                    <div class="svg-example">
+                        <svg width="100%" height="250" viewBox="0 0 400 250" class="demo-svg">
+                            <!-- 数据可视化图表 -->
+                            <g id="chart">
+                                <text x="200" y="25" text-anchor="middle" font-size="16" font-weight="bold" fill="#333">交互式数据图表</text>
+                                
+                                <!-- 坐标轴 -->
+                                <line x1="50" y1="200" x2="350" y2="200" stroke="#666" stroke-width="2"/>
+                                <line x1="50" y1="200" x2="50" y2="50" stroke="#666" stroke-width="2"/>
+                                
+                                <!-- 数据点 -->
+                                <g id="dataPoints">
+                                    <!-- 动态生成的数据点将插入这里 -->
+                                </g>
+                                
+                                <!-- 提示框 -->
+                                <g id="tooltip" style="display: none;">
+                                    <rect x="0" y="0" width="80" height="40" fill="rgba(0,0,0,0.8)" rx="5"/>
+                                    <text x="10" y="15" fill="white" font-size="12" id="tooltipTitle">数据点</text>
+                                    <text x="10" y="30" fill="white" font-size="11" id="tooltipValue">值: 0</text>
+                                </g>
+                            </g>
+                        </svg>
+                        
+                        <div class="control-group">
+                            <button onclick="generateRandomData()" class="btn btn-sm">生成随机数据</button>
+                            <button onclick="animateChart()" class="btn btn-sm">动画展示</button>
+                            <button onclick="clearChart()" class="btn btn-sm">清空图表</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 侧边栏代码示例 -->
+            <div class="demo-sidebar">
+                <h3>💻 JavaScript代码示例</h3>
+                
+                <div class="code-section">
+                    <h4>获取SVG元素</h4>
+                    <div class="code-editor">
+                        <div class="code-content">// 获取SVG元素
+const circle = document.getElementById('myCircle');
+const rect = document.querySelector('rect');
+const allCircles = document.querySelectorAll('circle');</div>
+                    </div>
+                </div>
+                
+                <div class="code-section">
+                    <h4>创建SVG元素</h4>
+                    <div class="code-editor">
+                        <div class="code-content">// 创建SVG元素
+const circle = document.createElementNS(
+  'http://www.w3.org/2000/svg', 'circle'
+);
+circle.setAttribute('cx', '50');
+circle.setAttribute('cy', '50');
+circle.setAttribute('r', '20');
+svg.appendChild(circle);</div>
+                    </div>
+                </div>
+                
+                <div class="code-section">
+                    <h4>事件处理</h4>
+                    <div class="code-editor">
+                        <div class="code-content">// 添加事件监听器
+element.addEventListener('click', function(e) {
+  console.log('点击了元素');
+});
+
+// 鼠标事件
+element.addEventListener('mouseover', handleMouseOver);
+element.addEventListener('mouseout', handleMouseOut);</div>
+                    </div>
+                </div>
+                
+                <div class="code-section">
+                    <h4>动画控制</h4>
+                    <div class="code-editor">
+                        <div class="code-content">// CSS动画控制
+element.style.animationPlayState = 'paused';
+element.style.animationPlayState = 'running';
+
+// SMIL动画控制
+animation.beginElement(); // 开始
+animation.endElement();   // 结束</div>
+                    </div>
+                </div>
+                
+                <div class="code-section">
+                    <h4>坐标转换</h4>
+                    <div class="code-editor">
+                        <div class="code-content">// 获取SVG坐标
+const pt = svg.createSVGPoint();
+pt.x = event.clientX;
+pt.y = event.clientY;
+const svgP = pt.matrixTransform(
+  svg.getScreenCTM().inverse()
+);</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 导航 -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <a href="../smil-animations/" class="btn">← 上一章：SMIL动画系统</a>
+                <a href="../index.html" class="btn btn-primary">返回动画与交互 →</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../common/utils.js"></script>
+    <script>
+        // 全局变量
+        let createMode = 'circle';
+        let isDrawing = false;
+        let currentPath = '';
+        let dragElement = null;
+        let offset = { x: 0, y: 0 };
+        let cssAnimationRunning = false;
+        let cssAnimationPaused = false;
+
+        // ===== 基础DOM操作 =====
+        function changeCircleSize() {
+            const circle = document.getElementById('circle1');
+            const currentR = parseInt(circle.getAttribute('r'));
+            const newR = currentR === 20 ? 30 : 20;
+            circle.setAttribute('r', newR);
+        }
+
+        function changeCircleColor() {
+            const circle = document.getElementById('circle1');
+            const colors = ['#2196F3', '#FF5722', '#4CAF50', '#FF9800'];
+            const currentColor = circle.getAttribute('fill');
+            const currentIndex = colors.indexOf(currentColor);
+            const newIndex = (currentIndex + 1) % colors.length;
+            circle.setAttribute('fill', colors[newIndex]);
+        }
+
+        function toggleOpacity() {
+            const rect = document.getElementById('rect1');
+            const currentOpacity = rect.style.opacity || '1';
+            rect.style.opacity = currentOpacity === '1' ? '0.5' : '1';
+        }
+
+        function addBorder() {
+            const rect = document.getElementById('rect1');
+            const currentStroke = rect.getAttribute('stroke');
+            if (currentStroke) {
+                rect.removeAttribute('stroke');
+                rect.removeAttribute('stroke-width');
+            } else {
+                rect.setAttribute('stroke', '#333');
+                rect.setAttribute('stroke-width', '2');
+            }
+        }
+
+        function toggleHighlight() {
+            const polygon = document.getElementById('polygon1');
+            polygon.classList.toggle('highlighted');
+        }
+
+        // ===== 事件处理 =====
+        function setupMouseEvents() {
+            const shapes = ['mouseCircle', 'mouseRect', 'mousePolygon'];
+            const eventText = document.getElementById('eventText');
+            
+            shapes.forEach(id => {
+                const element = document.getElementById(id);
+                
+                element.addEventListener('mouseover', function() {
+                    eventText.textContent = `鼠标悬停在 ${id} 上`;
+                    this.style.opacity = '0.7';
+                });
+                
+                element.addEventListener('mouseout', function() {
+                    eventText.textContent = '移动鼠标到图形上';
+                    this.style.opacity = '1';
+                });
+                
+                element.addEventListener('click', function() {
+                    eventText.textContent = `点击了 ${id}`;
+                    this.style.transform = 'scale(1.2)';
+                    setTimeout(() => {
+                        this.style.transform = 'scale(1)';
+                    }, 200);
+                });
+            });
+        }
+
+        function setupKeyboardEvents() {
+            const svg = document.getElementById('keyboardSVG');
+            const circle = document.getElementById('keyboardCircle');
+            
+            svg.addEventListener('keydown', function(e) {
+                const step = 10;
+                let cx = parseInt(circle.getAttribute('cx'));
+                let cy = parseInt(circle.getAttribute('cy'));
+                
+                switch(e.key) {
+                    case 'ArrowUp':
+                        cy = Math.max(15, cy - step);
+                        break;
+                    case 'ArrowDown':
+                        cy = Math.min(105, cy + step);
+                        break;
+                    case 'ArrowLeft':
+                        cx = Math.max(15, cx - step);
+                        break;
+                    case 'ArrowRight':
+                        cx = Math.min(185, cx + step);
+                        break;
+                }
+                
+                circle.setAttribute('cx', cx);
+                circle.setAttribute('cy', cy);
+                e.preventDefault();
+            });
+        }
+
+        // ===== 动态创建元素 =====
+        function setupCreateCanvas() {
+            const svg = document.getElementById('createSVG');
+            
+            svg.addEventListener('click', function(e) {
+                const rect = svg.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 200;
+                const y = ((e.clientY - rect.top) / rect.height) * 120;
+                
+                if (e.target === svg) {
+                    createShape(svg, x, y);
+                }
+            });
+        }
+
+        function createShape(svg, x, y) {
+            const colors = ['#FF5722', '#2196F3', '#4CAF50', '#FF9800', '#9C27B0'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            
+            let element;
+            
+            switch(createMode) {
+                case 'circle':
+                    element = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    element.setAttribute('cx', x);
+                    element.setAttribute('cy', y);
+                    element.setAttribute('r', Math.random() * 10 + 5);
+                    break;
+                case 'rect':
+                    element = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                    element.setAttribute('x', x - 10);
+                    element.setAttribute('y', y - 10);
+                    element.setAttribute('width', Math.random() * 20 + 10);
+                    element.setAttribute('height', Math.random() * 20 + 10);
+                    break;
+                case 'polygon':
+                    element = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                    const size = Math.random() * 10 + 8;
+                    element.setAttribute('points', `${x},${y-size} ${x+size},${y+size} ${x-size},${y+size}`);
+                    break;
+            }
+            
+            element.setAttribute('fill', color);
+            element.style.cursor = 'pointer';
+            
+            // 添加点击删除功能
+            element.addEventListener('click', function(e) {
+                e.stopPropagation();
+                this.remove();
+            });
+            
+            svg.appendChild(element);
+        }
+
+        function clearCanvas() {
+            const svg = document.getElementById('createSVG');
+            const shapes = svg.querySelectorAll('circle, rect, polygon');
+            shapes.forEach(shape => shape.remove());
+        }
+
+        function changeCreateMode() {
+            const modes = ['circle', 'rect', 'polygon'];
+            const currentIndex = modes.indexOf(createMode);
+            createMode = modes[(currentIndex + 1) % modes.length];
+            document.getElementById('modeBtn').textContent = `创建模式：${createMode === 'circle' ? '圆形' : createMode === 'rect' ? '矩形' : '三角形'}`;
+        }
+
+        // ===== 路径绘制 =====
+        function setupPathDrawing() {
+            const svg = document.getElementById('pathSVG');
+            const path = document.getElementById('dynamicPath');
+            
+            svg.addEventListener('mousedown', function(e) {
+                if (e.target === svg) {
+                    isDrawing = true;
+                    const rect = svg.getBoundingClientRect();
+                    const x = ((e.clientX - rect.left) / rect.width) * 200;
+                    const y = ((e.clientY - rect.top) / rect.height) * 120;
+                    currentPath = `M${x},${y}`;
+                    path.setAttribute('d', currentPath);
+                }
+            });
+            
+            svg.addEventListener('mousemove', function(e) {
+                if (isDrawing) {
+                    const rect = svg.getBoundingClientRect();
+                    const x = ((e.clientX - rect.left) / rect.width) * 200;
+                    const y = ((e.clientY - rect.top) / rect.height) * 120;
+                    currentPath += ` L${x},${y}`;
+                    path.setAttribute('d', currentPath);
+                }
+            });
+            
+            svg.addEventListener('mouseup', function() {
+                isDrawing = false;
+            });
+        }
+
+        function clearPath() {
+            document.getElementById('dynamicPath').setAttribute('d', '');
+            currentPath = '';
+        }
+
+        function togglePathMode() {
+            const btn = document.getElementById('pathModeBtn');
+            btn.textContent = btn.textContent === '绘制模式' ? '查看模式' : '绘制模式';
+        }
+
+        // ===== 拖拽功能 =====
+        function setupDragAndDrop() {
+            const draggables = document.querySelectorAll('.draggable');
+            
+            draggables.forEach(element => {
+                element.addEventListener('mousedown', startDrag);
+            });
+            
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', stopDrag);
+        }
+
+        function startDrag(e) {
+            dragElement = e.target;
+            const svg = dragElement.closest('svg');
+            const rect = svg.getBoundingClientRect();
+            
+            // 计算鼠标相对于SVG的位置
+            const mouseX = ((e.clientX - rect.left) / rect.width) * 400;
+            const mouseY = ((e.clientY - rect.top) / rect.height) * 200;
+            
+            // 计算偏移量
+            if (dragElement.tagName === 'circle') {
+                offset.x = mouseX - parseFloat(dragElement.getAttribute('cx'));
+                offset.y = mouseY - parseFloat(dragElement.getAttribute('cy'));
+            } else if (dragElement.tagName === 'rect') {
+                offset.x = mouseX - parseFloat(dragElement.getAttribute('x'));
+                offset.y = mouseY - parseFloat(dragElement.getAttribute('y'));
+            } else if (dragElement.tagName === 'polygon') {
+                const points = dragElement.getAttribute('points').split(' ');
+                const firstPoint = points[0].split(',');
+                offset.x = mouseX - parseFloat(firstPoint[0]);
+                offset.y = mouseY - parseFloat(firstPoint[1]);
+            }
+            
+            dragElement.style.cursor = 'grabbing';
+            e.preventDefault();
+        }
+
+        function drag(e) {
+            if (!dragElement) return;
+            
+            const svg = dragElement.closest('svg');
+            const rect = svg.getBoundingClientRect();
+            
+            const mouseX = ((e.clientX - rect.left) / rect.width) * 400;
+            const mouseY = ((e.clientY - rect.top) / rect.height) * 200;
+            
+            const newX = mouseX - offset.x;
+            const newY = mouseY - offset.y;
+            
+            // 边界限制
+            if (dragElement.tagName === 'circle') {
+                const r = parseFloat(dragElement.getAttribute('r'));
+                const clampedX = Math.max(r, Math.min(400 - r, newX));
+                const clampedY = Math.max(r, Math.min(200 - r, newY));
+                dragElement.setAttribute('cx', clampedX);
+                dragElement.setAttribute('cy', clampedY);
+            } else if (dragElement.tagName === 'rect') {
+                const w = parseFloat(dragElement.getAttribute('width'));
+                const h = parseFloat(dragElement.getAttribute('height'));
+                const clampedX = Math.max(0, Math.min(400 - w, newX));
+                const clampedY = Math.max(0, Math.min(200 - h, newY));
+                dragElement.setAttribute('x', clampedX);
+                dragElement.setAttribute('y', clampedY);
+            }
+        }
+
+        function stopDrag() {
+            if (dragElement) {
+                dragElement.style.cursor = 'move';
+                dragElement = null;
+            }
+        }
+
+        // ===== 动画控制 =====
+        function toggleCSSAnimation() {
+            const rect = document.getElementById('cssAnimRect');
+            const btn = document.getElementById('cssAnimBtn');
+            
+            if (!cssAnimationRunning) {
+                rect.classList.add('css-animated');
+                btn.textContent = '停止动画';
+                cssAnimationRunning = true;
+            } else {
+                rect.classList.remove('css-animated');
+                btn.textContent = '开始动画';
+                cssAnimationRunning = false;
+                cssAnimationPaused = false;
+            }
+        }
+
+        function pauseCSSAnimation() {
+            const rect = document.getElementById('cssAnimRect');
+            
+            if (cssAnimationRunning) {
+                if (!cssAnimationPaused) {
+                    rect.style.animationPlayState = 'paused';
+                    cssAnimationPaused = true;
+                } else {
+                    rect.style.animationPlayState = 'running';
+                    cssAnimationPaused = false;
+                }
+            }
+        }
+
+        function startSMILAnimation() {
+            const animation = document.getElementById('smilAnim');
+            animation.beginElement();
+        }
+
+        function stopSMILAnimation() {
+            const animation = document.getElementById('smilAnim');
+            animation.endElement();
+        }
+
+        // ===== 数据可视化 =====
+        function generateRandomData() {
+            const dataPoints = document.getElementById('dataPoints');
+            dataPoints.innerHTML = '';
+            
+            const data = [];
+            for (let i = 0; i < 8; i++) {
+                data.push({
+                    x: 70 + i * 35,
+                    y: 200 - Math.random() * 130,
+                    value: Math.floor(Math.random() * 100)
+                });
+            }
+            
+            data.forEach((point, index) => {
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', point.x);
+                circle.setAttribute('cy', point.y);
+                circle.setAttribute('r', '5');
+                circle.setAttribute('fill', '#2196F3');
+                circle.setAttribute('stroke', '#fff');
+                circle.setAttribute('stroke-width', '2');
+                circle.style.cursor = 'pointer';
+                
+                // 添加悬停效果
+                circle.addEventListener('mouseover', function(e) {
+                    this.setAttribute('r', '7');
+                    showTooltip(e, point.value, index);
+                });
+                
+                circle.addEventListener('mouseout', function() {
+                    this.setAttribute('r', '5');
+                    hideTooltip();
+                });
+                
+                dataPoints.appendChild(circle);
+            });
+        }
+
+        function showTooltip(e, value, index) {
+            const tooltip = document.getElementById('tooltip');
+            const tooltipTitle = document.getElementById('tooltipTitle');
+            const tooltipValue = document.getElementById('tooltipValue');
+            
+            tooltipTitle.textContent = `数据点 ${index + 1}`;
+            tooltipValue.textContent = `值: ${value}`;
+            
+            tooltip.setAttribute('transform', `translate(${e.target.getAttribute('cx') - 40}, ${e.target.getAttribute('cy') - 50})`);
+            tooltip.style.display = 'block';
+        }
+
+        function hideTooltip() {
+            document.getElementById('tooltip').style.display = 'none';
+        }
+
+        function animateChart() {
+            const circles = document.querySelectorAll('#dataPoints circle');
+            circles.forEach((circle, index) => {
+                circle.style.opacity = '0';
+                circle.style.transform = 'scale(0)';
+                circle.style.transition = 'all 0.5s ease';
+                
+                setTimeout(() => {
+                    circle.style.opacity = '1';
+                    circle.style.transform = 'scale(1)';
+                }, index * 100);
+            });
+        }
+
+        function clearChart() {
+            document.getElementById('dataPoints').innerHTML = '';
+        }
+
+        // ===== 初始化 =====
+        document.addEventListener('DOMContentLoaded', function() {
+            setupMouseEvents();
+            setupKeyboardEvents();
+            setupCreateCanvas();
+            setupPathDrawing();
+            setupDragAndDrop();
+            generateRandomData();
+        });
+    </script>
+</body>
+</html> 
