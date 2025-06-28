@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS 学习示例 - 总览</title>
+    <link rel="stylesheet" href="common/reset.css">
+    <link rel="stylesheet" href="common/common.css">
+    <link rel="stylesheet" href="common/demo-styles.css">
+    <style>
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 4rem 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .stage-card {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .stage-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .stage-number {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            line-height: 40px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .demo-list {
+            list-style: none;
+            margin-top: 1rem;
+        }
+        
+        .demo-list li {
+            margin: 0.5rem 0;
+        }
+        
+        .demo-list a {
+            color: var(--primary-color);
+            text-decoration: none;
+            padding: 0.25rem 0;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+        
+        .demo-list a:hover {
+            border-bottom-color: var(--primary-color);
+        }
+        
+        .stats {
+            background: var(--light-color);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            margin: 3rem 0;
+        }
+        
+        .stat-item {
+            display: inline-block;
+            margin: 0 2rem;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            display: block;
+        }
+        
+        .quick-nav {
+            position: fixed;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            z-index: 1000;
+        }
+        
+        .quick-nav a {
+            display: block;
+            width: 12px;
+            height: 12px;
+            background: var(--border-color);
+            border-radius: 50%;
+            margin: 8px 0;
+            transition: background-color 0.3s ease;
+        }
+        
+        .quick-nav a:hover,
+        .quick-nav a.active {
+            background: var(--primary-color);
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .stat-item {
+                display: block;
+                margin: 1rem 0;
+            }
+            
+            .quick-nav {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 快速导航 -->
+    <nav class="quick-nav">
+        <a href="#hero" title="顶部"></a>
+        <a href="#stage1" title="基础概念"></a>
+        <a href="#stage2" title="现代布局"></a>
+        <a href="#stage3" title="进阶技术"></a>
+        <a href="#stage4" title="工程化"></a>
+    </nav>
+
+    <!-- 头部 -->
+    <section id="hero" class="hero">
+        <h1>🎨 CSS 学习示例</h1>
+        <p>通过实践掌握CSS技能 • 从基础到进阶的完整学习路径</p>
+    </section>
+
+    <div class="container">
+        <!-- 统计信息 -->
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-number">4</span>
+                <span>学习阶段</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">16</span>
+                <span>知识章节</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">50+</span>
+                <span>实战示例</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">100%</span>
+                <span>中文注释</span>
+            </div>
+        </div>
+
+        <!-- 第一阶段：CSS基础 -->
+        <section id="stage1" class="section">
+            <div class="stage-card">
+                <div class="stage-number">1</div>
+                <h2>CSS 核心概念</h2>
+                <p>掌握CSS的基础语法、选择器、基本属性、盒模型和定位系统。这是所有CSS技能的根基。</p>
+                
+                <h3>📚 示例目录</h3>
+                <ul class="demo-list">
+                    <li><a href="01-core-concepts/css-basics/">CSS基础语法</a> - 语法规则、引入方式、注释</li>
+                    <li><a href="01-core-concepts/selectors/">选择器详解</a> - 基础选择器、组合选择器、伪类</li>
+                    <li><a href="01-core-concepts/basic-properties/">基本样式属性</a> - 颜色、字体、边框、间距</li>
+                    <li><a href="01-core-concepts/box-model/">盒模型深入</a> - 标准盒模型、IE盒模型、BFC</li>
+                    <li><a href="01-core-concepts/positioning/">显示与定位</a> - display、position、z-index</li>
+                </ul>
+                
+                <div class="mt-2">
+                    <a href="01-core-concepts/" class="btn btn-primary">进入基础学习 →</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 第二阶段：现代布局 -->
+        <section id="stage2" class="section">
+            <div class="stage-card">
+                <div class="stage-number">2</div>
+                <h2>现代布局技术</h2>
+                <p>学习Flexbox、Grid等现代布局技术，掌握响应式设计，告别传统布局的复杂性。</p>
+                
+                <h3>📚 示例目录</h3>
+                <ul class="demo-list">
+                    <li><a href="02-layouts/flexbox/">Flexbox 弹性布局</a> - 一维布局解决方案</li>
+                    <li><a href="02-layouts/grid/">Grid 网格布局</a> - 二维布局系统</li>
+                    <li><a href="02-layouts/responsive/">响应式设计</a> - 媒体查询、移动优先</li>
+                    <li><a href="02-layouts/layout-comparison/">布局方法对比</a> - 选择最适合的布局</li>
+                </ul>
+                
+                <div class="mt-2">
+                    <a href="02-layouts/" class="btn btn-primary">进入布局学习 →</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 第三阶段：进阶技术 -->
+        <section id="stage3" class="section">
+            <div class="stage-card">
+                <div class="stage-number">3</div>
+                <h2>CSS 进阶技术</h2>
+                <p>探索CSS动画、预处理器、架构方法论和高级特性，提升开发效率和代码质量。</p>
+                
+                <h3>📚 示例目录</h3>
+                <ul class="demo-list">
+                    <li><a href="03-advanced/animations/">动画与过渡</a> - transition、transform、keyframes</li>
+                    <li><a href="03-advanced/architecture/">CSS架构</a> - BEM、OOCSS、原子化CSS</li>
+                    <li><a href="03-advanced/advanced-features/">高级特性</a> - 变量、函数、滤镜、裁剪</li>
+                    <li><a href="03-advanced/preprocessors/">预处理器</a> - Sass/SCSS、Less使用</li>
+                </ul>
+                
+                <div class="mt-2">
+                    <a href="03-advanced/" class="btn btn-primary">进入进阶学习 →</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 第四阶段：工程化 -->
+        <section id="stage4" class="section">
+            <div class="stage-card">
+                <div class="stage-number">4</div>
+                <h2>现代CSS工程化</h2>
+                <p>学习CSS模块化、构建工具、性能优化等现代前端工程化实践，打造高质量的CSS架构。</p>
+                
+                <h3>📚 示例目录</h3>
+                <ul class="demo-list">
+                    <li><a href="04-engineering/css-modules/">CSS模块化</a> - CSS Modules、CSS-in-JS</li>
+                    <li><a href="04-engineering/performance/">性能优化</a> - 关键CSS、懒加载、压缩优化</li>
+                    <li><a href="04-engineering/tools/">工具链实践</a> - PostCSS、构建工具集成</li>
+                </ul>
+                
+                <div class="mt-2">
+                    <a href="04-engineering/" class="btn btn-primary">进入工程化学习 →</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 学习建议 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">💡 学习建议</div>
+                <div class="demo-content">
+                    <div class="grid grid-2">
+                        <div>
+                            <h3>🎯 学习方法</h3>
+                            <ul style="list-style: disc; margin-left: 1.5rem;">
+                                <li>按阶段循序渐进学习</li>
+                                <li>每个示例都要动手实践</li>
+                                <li>修改代码观察效果变化</li>
+                                <li>结合文档理解原理</li>
+                                <li>完成每个阶段的练习</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>🛠️ 开发环境</h3>
+                            <ul style="list-style: disc; margin-left: 1.5rem;">
+                                <li>使用现代浏览器(Chrome/Firefox)</li>
+                                <li>安装VS Code + Live Server扩展</li>
+                                <li>善用浏览器开发者工具</li>
+                                <li>准备好预处理器环境</li>
+                                <li>了解基本的构建工具</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 相关资源 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">🔗 相关资源</div>
+                <div class="demo-content">
+                    <div class="grid grid-3">
+                        <div>
+                            <h3>📖 学习文档</h3>
+                            <ul class="demo-list">
+                                <li><a href="../README.md">CSS学习大纲</a></li>
+                                <li><a href="../quick-start.md">快速入门指南</a></li>
+                                <li><a href="../01-core-concepts/">核心概念详解</a></li>
+                                <li><a href="../02-layouts/">现代布局技术</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>🎮 学习游戏</h3>
+                            <ul class="demo-list">
+                                <li><a href="https://flexboxfroggy.com/" target="_blank">Flexbox Froggy</a></li>
+                                <li><a href="https://cssgridgarden.com/" target="_blank">Grid Garden</a></li>
+                                <li><a href="https://flukeout.github.io/" target="_blank">CSS Diner</a></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3>🛠️ 在线工具</h3>
+                            <ul class="demo-list">
+                                <li><a href="https://cssgrid-generator.netlify.app/" target="_blank">Grid生成器</a></li>
+                                <li><a href="https://loading.io/flexbox/" target="_blank">Flexbox生成器</a></li>
+                                <li><a href="https://animista.net/" target="_blank">CSS动画生成器</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // 快速导航高亮
+        document.addEventListener('DOMContentLoaded', function() {
+            const navLinks = document.querySelectorAll('.quick-nav a');
+            const sections = document.querySelectorAll('section[id]');
+            
+            function updateActiveNav() {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.clientHeight;
+                    if (window.scrollY >= (sectionTop - 200)) {
+                        current = section.getAttribute('id');
+                    }
+                });
+                
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === '#' + current) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', updateActiveNav);
+            updateActiveNav();
+            
+            // 平滑滚动
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetSection = document.getElementById(targetId);
+                    if (targetSection) {
+                        targetSection.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

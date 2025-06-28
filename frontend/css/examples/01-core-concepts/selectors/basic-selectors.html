@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS 基础选择器示例</title>
+    <link rel="stylesheet" href="../../common/reset.css">
+    <link rel="stylesheet" href="../../common/common.css">
+    <link rel="stylesheet" href="../../common/demo-styles.css">
+    <style>
+        /* 元素选择器 */
+        h3 {
+            color: #007bff;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 5px;
+        }
+        
+        p {
+            line-height: 1.6;
+            margin: 10px 0;
+        }
+        
+        /* ID选择器 */
+        #unique-element {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        
+        #header-title {
+            color: #dc3545;
+            font-size: 1.5em;
+            text-align: center;
+        }
+        
+        /* 类选择器 */
+        .highlight {
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        
+        .warning {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        
+        .blue-text {
+            color: #007bff;
+            font-weight: bold;
+        }
+        
+        /* 通配符选择器 */
+        .universal-demo * {
+            border: 1px dashed #6c757d;
+            margin: 2px;
+            padding: 5px;
+        }
+        
+        /* 属性选择器 */
+        input[type="text"] {
+            border: 2px solid #007bff;
+            padding: 8px;
+            border-radius: 4px;
+        }
+        
+        input[type="email"] {
+            border: 2px solid #28a745;
+            padding: 8px;
+            border-radius: 4px;
+        }
+        
+        a[href^="https"] {
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        a[href^="http"]:not([href^="https"]) {
+            color: #dc3545;
+        }
+        
+        [data-priority="high"] {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 10px;
+        }
+        
+        [data-priority="low"] {
+            background-color: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 10px;
+        }
+        
+        /* 多个类选择器 */
+        .box.special {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        /* 选择器优先级演示 */
+        .priority-demo {
+            color: blue !important; /* 最高优先级 */
+        }
+        
+        #priority-test {
+            color: red; /* ID选择器优先级高 */
+        }
+        
+        .priority-class {
+            color: green; /* 类选择器优先级中等 */
+        }
+        
+        p {
+            color: black; /* 元素选择器优先级最低 */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 面包屑导航 -->
+        <div class="breadcrumb">
+            <a href="../../">示例首页</a> > 
+            <a href="../">核心概念</a> > 
+            <a href="./">选择器</a> > 
+            <strong>基础选择器</strong>
+        </div>
+
+        <h1>🎯 CSS 基础选择器</h1>
+        <p>学习CSS中最常用的基础选择器：元素选择器、类选择器、ID选择器和属性选择器。</p>
+
+        <!-- 元素选择器 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">1. 元素选择器 (Element Selector)</div>
+                <div class="demo-content">
+                    <h3>所有的h3标题都会应用这个样式</h3>
+                    <p>这是一个段落，所有p元素都会有相同的行高和边距。</p>
+                    <p>元素选择器直接使用HTML标签名称作为选择器。</p>
+                    
+                    <div class="demo-code">
+                        <strong>CSS代码：</strong>
+                        <pre><code>/* 选择所有h3元素 */
+h3 {
+    color: #007bff;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 5px;
+}
+
+/* 选择所有p元素 */
+p {
+    line-height: 1.6;
+    margin: 10px 0;
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ID选择器 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">2. ID选择器 (ID Selector)</div>
+                <div class="demo-content">
+                    <div id="unique-element">
+                        <p>这个元素有唯一的ID，只有这一个元素会被选中。</p>
+                    </div>
+                    
+                    <h2 id="header-title">这是一个带ID的标题</h2>
+                    
+                    <div class="demo-code">
+                        <strong>CSS代码：</strong>
+                        <pre><code>/* 选择ID为unique-element的元素 */
+#unique-element {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    padding: 15px;
+    border-radius: 4px;
+}
+
+/* 选择ID为header-title的元素 */
+#header-title {
+    color: #dc3545;
+    font-size: 1.5em;
+    text-align: center;
+}</code></pre>
+                    </div>
+                    
+                    <div class="demo-highlight">
+                        <strong>注意：</strong>ID在页面中必须是唯一的，每个ID只能使用一次。
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 类选择器 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">3. 类选择器 (Class Selector)</div>
+                <div class="demo-content">
+                    <div class="highlight">
+                        <p>这是一个高亮的内容块，使用了highlight类。</p>
+                    </div>
+                    
+                    <div class="warning">
+                        <p>这是一个警告信息，使用了warning类。</p>
+                    </div>
+                    
+                    <p class="blue-text">这段文字应用了blue-text类，所以是蓝色的。</p>
+                    <p>这段普通文字没有应用任何类。</p>
+                    <p class="blue-text">这段文字也应用了blue-text类。</p>
+                    
+                    <div class="demo-code">
+                        <strong>CSS代码：</strong>
+                        <pre><code>/* 选择所有class为highlight的元素 */
+.highlight {
+    background-color: #d4edda;
+    border-left: 4px solid #28a745;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+/* 选择所有class为warning的元素 */
+.warning {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+/* 选择所有class为blue-text的元素 */
+.blue-text {
+    color: #007bff;
+    font-weight: bold;
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 属性选择器 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">4. 属性选择器 (Attribute Selector)</div>
+                <div class="demo-content">
+                    <h3>表单输入框示例：</h3>
+                    <div class="grid grid-2">
+                        <div>
+                            <label>文本输入框：</label>
+                            <input type="text" placeholder="蓝色边框">
+                        </div>
+                        <div>
+                            <label>邮箱输入框：</label>
+                            <input type="email" placeholder="绿色边框">
+                        </div>
+                    </div>
+                    
+                    <h3>链接示例：</h3>
+                    <p>
+                        <a href="https://www.example.com">HTTPS链接（绿色）</a> | 
+                        <a href="http://www.example.com">HTTP链接（红色）</a> | 
+                        <a href="/internal">内部链接</a>
+                    </p>
+                    
+                    <h3>数据属性示例：</h3>
+                    <div data-priority="high">高优先级任务</div>
+                    <div data-priority="low">低优先级任务</div>
+                    
+                    <div class="demo-code">
+                        <strong>CSS代码：</strong>
+                        <pre><code>/* 选择type属性为text的input元素 */
+input[type="text"] {
+    border: 2px solid #007bff;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+/* 选择type属性为email的input元素 */
+input[type="email"] {
+    border: 2px solid #28a745;
+    padding: 8px;
+    border-radius: 4px;
+}
+
+/* 选择href属性以https开头的a元素 */
+a[href^="https"] {
+    color: #28a745;
+    font-weight: bold;
+}
+
+/* 选择data-priority属性为high的元素 */
+[data-priority="high"] {
+    background-color: #f8d7da;
+    border-left: 4px solid #dc3545;
+    padding: 10px;
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 通配符选择器 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">5. 通配符选择器 (Universal Selector)</div>
+                <div class="demo-content">
+                    <div class="universal-demo">
+                        <p>在这个容器内</p>
+                        <span>所有元素</span>
+                        <strong>都会有虚线边框</strong>
+                    </div>
+                    
+                    <div class="demo-code">
+                        <strong>CSS代码：</strong>
+                        <pre><code>/* 选择.universal-demo内的所有元素 */
+.universal-demo * {
+    border: 1px dashed #6c757d;
+    margin: 2px;
+    padding: 5px;
+}</code></pre>
+                    </div>
+                    
+                    <div class="demo-highlight">
+                        <strong>注意：</strong>通配符选择器会选择所有元素，使用时要谨慎，可能影响性能。
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 多类选择器 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">6. 多类选择器</div>
+                <div class="demo-content">
+                    <div class="box">普通盒子</div>
+                    <div class="box special">特殊盒子（同时有box和special类）</div>
+                    
+                    <div class="demo-code">
+                        <strong>CSS代码：</strong>
+                        <pre><code>/* 同时具有box和special类的元素 */
+.box.special {
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+    color: white;
+    padding: 15px;
+    border-radius: 8px;
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 选择器优先级演示 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">7. 选择器优先级</div>
+                <div class="demo-content">
+                    <p id="priority-test" class="priority-class">这段文字展示了选择器优先级</p>
+                    <p class="priority-demo">这段文字使用了!important</p>
+                    
+                    <div class="demo-code">
+                        <strong>优先级从高到低：</strong>
+                        <pre><code>/* 1. !important 声明（最高优先级）*/
+.priority-demo {
+    color: blue !important;
+}
+
+/* 2. ID选择器 */
+#priority-test {
+    color: red;
+}
+
+/* 3. 类选择器 */
+.priority-class {
+    color: green;
+}
+
+/* 4. 元素选择器（最低优先级）*/
+p {
+    color: black;
+}</code></pre>
+                    </div>
+                    
+                    <div class="demo-highlight">
+                        <strong>结果：</strong>第一段文字是红色（ID选择器优先），第二段是蓝色（!important优先级最高）
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 实践练习 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">🛠️ 实践练习</div>
+                <div class="demo-content">
+                    <div class="demo-controls">
+                        <h3>选择器测试：</h3>
+                        <button onclick="highlightElements('h3')" class="btn">高亮所有h3</button>
+                        <button onclick="highlightElements('.highlight')" class="btn">高亮所有.highlight</button>
+                        <button onclick="highlightElements('#unique-element')" class="btn">高亮#unique-element</button>
+                        <button onclick="highlightElements('input[type=text]')" class="btn">高亮文本输入框</button>
+                        <button onclick="clearHighlight()" class="btn btn-primary">清除高亮</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 导航 -->
+        <div class="text-center mt-3">
+            <a href="../css-basics/basic-syntax.html" class="btn">← 上一个：基础语法</a>
+            <a href="combinators.html" class="btn btn-primary">下一个：组合选择器 →</a>
+        </div>
+    </div>
+
+    <script>
+        // 高亮元素的函数
+        function highlightElements(selector) {
+            // 先清除之前的高亮
+            clearHighlight();
+            
+            try {
+                const elements = document.querySelectorAll(selector);
+                elements.forEach(element => {
+                    element.style.outline = '3px solid #ff6b6b';
+                    element.style.outlineOffset = '2px';
+                });
+            } catch (error) {
+                alert('无效的选择器');
+            }
+        }
+        
+        function clearHighlight() {
+            const allElements = document.querySelectorAll('*');
+            allElements.forEach(element => {
+                element.style.outline = '';
+                element.style.outlineOffset = '';
+            });
+        }
+    </script>
+</body>
+</html> 

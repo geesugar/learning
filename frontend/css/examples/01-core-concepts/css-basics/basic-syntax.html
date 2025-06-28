@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS 基础语法示例</title>
+    <link rel="stylesheet" href="../../common/reset.css">
+    <link rel="stylesheet" href="../../common/common.css">
+    <link rel="stylesheet" href="../../common/demo-styles.css">
+    <style>
+        /* 内部样式表示例 */
+        .syntax-demo {
+            color: #333;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        
+        .property-example {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 1.5;
+        }
+        
+        /* 注释示例：这是CSS注释的写法 */
+        .comment-demo {
+            /* 
+             * 多行注释示例
+             * 可以跨越多行
+             */
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        /* 选择器和声明块示例 */
+        h2 {           /* 选择器 */
+            color: #007bff;        /* 属性: 值; */
+            font-size: 1.5em;     /* 另一个属性: 值; */
+            margin-bottom: 1rem;  /* 声明以分号结束 */
+        }
+        
+        /* 多个选择器 */
+        .demo-box,
+        .example-box {
+            border: 2px solid #28a745;
+            padding: 10px;
+            margin: 5px 0;
+        }
+        
+        /* 演示错误语法 */
+        .error-demo {
+            color: red;
+            /* background-color blue;  ← 错误：缺少冒号 */
+            /* font-size: 16px        ← 错误：缺少分号 */
+            font-weight: normal; /* 正确的语法 */
+        }
+        
+        /* 值的类型示例 */
+        .value-types {
+            /* 长度值 */
+            width: 300px;          /* 像素 */
+            height: 2em;           /* em单位 */
+            margin: 1rem;          /* rem单位 */
+            
+            /* 颜色值 */
+            color: red;            /* 颜色名称 */
+            background: #ff0000;   /* 十六进制 */
+            border-color: rgb(255, 0, 0);  /* RGB */
+            
+            /* 百分比 */
+            padding: 5%;
+            
+            /* 关键字 */
+            text-align: center;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 面包屑导航 -->
+        <div class="breadcrumb">
+            <a href="../../">示例首页</a> > 
+            <a href="../">核心概念</a> > 
+            <strong>CSS基础语法</strong>
+        </div>
+
+        <h1>📝 CSS 基础语法</h1>
+        <p>学习CSS的基本语法规则，理解选择器、属性、值和注释的写法。</p>
+
+        <!-- CSS语法结构 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">1. CSS 语法结构</div>
+                <div class="demo-content">
+                    <h3>基本语法规则：</h3>
+                    <pre><code>选择器 {
+    属性名: 属性值;
+    属性名: 属性值;
+    /* 注释内容 */
+}</code></pre>
+                    
+                    <div class="syntax-demo">
+                        <h3>这个框应用了CSS样式</h3>
+                        <p>背景色、内边距、边框和圆角都是通过CSS设置的。</p>
+                    </div>
+                    
+                    <div class="demo-code">
+                        <strong>对应的CSS代码：</strong>
+                        <pre><code>.syntax-demo {
+    color: #333;                    /* 文字颜色 */
+    background-color: #f8f9fa;      /* 背景颜色 */
+    padding: 20px;                  /* 内边距 */
+    border: 1px solid #dee2e6;      /* 边框 */
+    border-radius: 4px;             /* 圆角 */
+    margin: 10px 0;                 /* 外边距 */
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 选择器示例 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">2. 选择器类型</div>
+                <div class="demo-content">
+                    <div class="grid grid-2">
+                        <div>
+                            <h3>HTML 结构：</h3>
+                            <pre><code>&lt;h2&gt;标题元素&lt;/h2&gt;
+&lt;p id="unique"&gt;ID选择器&lt;/p&gt;
+&lt;p class="demo-box"&gt;类选择器&lt;/p&gt;
+&lt;span&gt;元素选择器&lt;/span&gt;</code></pre>
+                        </div>
+                        <div>
+                            <h3>CSS 选择器：</h3>
+                            <pre><code>h2 { color: blue; }        /* 元素选择器 */
+#unique { color: green; }   /* ID选择器 */
+.demo-box { color: red; }   /* 类选择器 */
+span { color: purple; }     /* 元素选择器 */</code></pre>
+                        </div>
+                    </div>
+                    
+                    <h3>效果展示：</h3>
+                    <h2>这是使用元素选择器的标题</h2>
+                    <p id="unique" style="color: green;">这段文字使用ID选择器设置为绿色</p>
+                    <p class="demo-box" style="color: red;">这段文字使用类选择器设置为红色</p>
+                    <span style="color: purple;">这段文字使用元素选择器设置为紫色</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 属性和值 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">3. 属性和值的类型</div>
+                <div class="demo-content">
+                    <div class="value-types">
+                        <h3>这个盒子展示了不同类型的CSS值</h3>
+                        <p>宽度用像素(px)、高度用em、边距用rem、颜色用多种格式</p>
+                    </div>
+                    
+                    <div class="demo-code">
+                        <strong>CSS代码说明：</strong>
+                        <pre><code>.value-types {
+    /* 长度单位 */
+    width: 300px;          /* 绝对单位：像素 */
+    height: 2em;           /* 相对单位：相对于字体大小 */
+    margin: 1rem;          /* 相对单位：相对于根元素字体 */
+    
+    /* 颜色值的不同写法 */
+    color: red;                    /* 颜色名称 */
+    background: #ff0000;           /* 十六进制 */
+    border-color: rgb(255, 0, 0);  /* RGB函数 */
+    
+    /* 百分比值 */
+    padding: 5%;           /* 相对于父元素的百分比 */
+    
+    /* 关键字值 */
+    text-align: center;    /* 预定义关键字 */
+    display: block;        /* 布局关键字 */
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 注释示例 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">4. CSS 注释</div>
+                <div class="demo-content">
+                    <div class="comment-demo">
+                        <h3>这个渐变背景使用了CSS注释</h3>
+                        <p>查看源代码可以看到单行和多行注释的写法</p>
+                    </div>
+                    
+                    <div class="demo-code">
+                        <strong>注释语法：</strong>
+                        <pre><code>/* 这是单行注释 */
+
+/* 
+ * 这是多行注释
+ * 可以跨越多行
+ * 用于详细说明
+ */
+
+.comment-demo {
+    /* 渐变背景：从红色到青色 */
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+    color: white;          /* 白色文字 */
+    padding: 15px;         /* 内边距 */
+    border-radius: 8px;    /* 圆角边框 */
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 常见错误 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">5. 常见语法错误</div>
+                <div class="demo-content">
+                    <div class="error-demo">
+                        <h3>注意CSS语法规则</h3>
+                        <p>每个属性后面必须有冒号，每个声明后面必须有分号</p>
+                    </div>
+                    
+                    <div class="demo-code">
+                        <strong>错误示例对比：</strong>
+                        <pre><code>/* ❌ 错误的语法 */
+.error-example {
+    color red;                    /* 缺少冒号 */
+    background-color: blue        /* 缺少分号 */
+    font-size: 16px;
+}
+
+/* ✅ 正确的语法 */
+.correct-example {
+    color: red;                   /* 有冒号 */
+    background-color: blue;       /* 有分号 */
+    font-size: 16px;             /* 完整的声明 */
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 实践练习 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">🛠️ 实践练习</div>
+                <div class="demo-content">
+                    <h3>试试修改下面的代码：</h3>
+                    <div class="property-example">
+                        <p>这段文字可以通过修改CSS来改变样式</p>
+                    </div>
+                    
+                    <div class="demo-controls">
+                        <label>文字颜色：</label>
+                        <input type="color" id="colorPicker" value="#333333">
+                        
+                        <label>字体大小：</label>
+                        <input type="range" id="fontSizeSlider" min="12" max="32" value="18">
+                        <span id="fontSizeValue">18px</span>
+                        
+                        <label>文字对齐：</label>
+                        <select id="textAlign">
+                            <option value="left">左对齐</option>
+                            <option value="center" selected>居中</option>
+                            <option value="right">右对齐</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 导航 -->
+        <div class="text-center mt-3">
+            <a href="../" class="btn">← 返回核心概念</a>
+            <a href="css-methods.html" class="btn btn-primary">下一个：CSS引入方式 →</a>
+        </div>
+    </div>
+
+    <script>
+        // 交互式演示
+        document.addEventListener('DOMContentLoaded', function() {
+            const demoElement = document.querySelector('.property-example p');
+            const colorPicker = document.getElementById('colorPicker');
+            const fontSizeSlider = document.getElementById('fontSizeSlider');
+            const fontSizeValue = document.getElementById('fontSizeValue');
+            const textAlign = document.getElementById('textAlign');
+            
+            // 颜色改变
+            colorPicker.addEventListener('change', function() {
+                demoElement.style.color = this.value;
+            });
+            
+            // 字体大小改变
+            fontSizeSlider.addEventListener('input', function() {
+                const size = this.value + 'px';
+                demoElement.style.fontSize = size;
+                fontSizeValue.textContent = size;
+            });
+            
+            // 文字对齐改变
+            textAlign.addEventListener('change', function() {
+                demoElement.style.textAlign = this.value;
+            });
+        });
+    </script>
+</body>
+</html> 

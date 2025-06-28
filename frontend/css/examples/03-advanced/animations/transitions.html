@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS 过渡动画示例</title>
+    <link rel="stylesheet" href="../../common/reset.css">
+    <link rel="stylesheet" href="../../common/common.css">
+    <link rel="stylesheet" href="../../common/demo-styles.css">
+    <style>
+        /* 基础过渡示例 */
+        .transition-basic {
+            width: 100px;
+            height: 100px;
+            background-color: #007bff;
+            transition: background-color 0.3s ease;
+            margin: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        .transition-basic:hover {
+            background-color: #dc3545;
+        }
+        
+        /* 多属性过渡 */
+        .transition-multiple {
+            width: 100px;
+            height: 100px;
+            background-color: #28a745;
+            border-radius: 4px;
+            margin: 10px;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        .transition-multiple:hover {
+            width: 150px;
+            height: 150px;
+            background-color: #ffc107;
+            border-radius: 50%;
+            transform: rotate(45deg);
+        }
+        
+        /* 不同的过渡函数 */
+        .easing-demo {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .easing-box {
+            width: 60px;
+            height: 60px;
+            background-color: #17a2b8;
+            margin: 10px 0;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .ease { transition: transform 1s ease; }
+        .linear { transition: transform 1s linear; }
+        .ease-in { transition: transform 1s ease-in; }
+        .ease-out { transition: transform 1s ease-out; }
+        .ease-in-out { transition: transform 1s ease-in-out; }
+        .cubic-bezier { transition: transform 1s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        
+        .easing-box.animate {
+            transform: translateX(200px);
+        }
+        
+        /* 按钮过渡效果 */
+        .btn-animate {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 10px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-animate::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .btn-animate:hover {
+            background-color: #0056b3;
+            box-shadow: 0 8px 25px rgba(0,123,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        .btn-animate:hover::before {
+            left: 100%;
+        }
+        
+        .btn-animate:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 15px rgba(0,123,255,0.2);
+        }
+        
+        /* 卡片悬停效果 */
+        .card-hover {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            transform: translateY(0);
+            max-width: 300px;
+        }
+        
+        .card-hover:hover {
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+            transform: translateY(-8px);
+        }
+        
+        .card-hover h3 {
+            color: #333;
+            margin-bottom: 12px;
+            transition: color 0.3s ease;
+        }
+        
+        .card-hover:hover h3 {
+            color: #007bff;
+        }
+        
+        /* 加载动画 */
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 脉冲效果 */
+        .pulse-button {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            position: relative;
+            margin: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .pulse-button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background-color: rgba(220, 53, 69, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+        
+        .pulse-button:hover::after {
+            width: 200px;
+            height: 200px;
+        }
+        
+        /* 导航菜单过渡 */
+        .nav-menu {
+            background-color: #343a40;
+            padding: 0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .nav-item {
+            display: block;
+            color: white;
+            padding: 15px 20px;
+            text-decoration: none;
+            position: relative;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #495057;
+        }
+        
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0;
+            background-color: #007bff;
+            transition: width 0.3s ease;
+            z-index: 1;
+        }
+        
+        .nav-item span {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .nav-item:hover::before {
+            width: 100%;
+        }
+        
+        .nav-item:hover {
+            padding-left: 30px;
+        }
+        
+        /* 图片遮罩效果 */
+        .image-overlay {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            margin: 20px;
+            overflow: hidden;
+            border-radius: 12px;
+            cursor: pointer;
+        }
+        
+        .image-overlay img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+        
+        .image-overlay::after {
+            content: '点击查看详情';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,123,255,0.8);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .image-overlay:hover img {
+            transform: scale(1.1);
+        }
+        
+        .image-overlay:hover::after {
+            opacity: 1;
+        }
+        
+        /* 控制面板 */
+        .control-panel {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 面包屑导航 -->
+        <div class="breadcrumb">
+            <a href="../../">示例首页</a> > 
+            <a href="../">进阶技术</a> > 
+            <strong>CSS过渡动画</strong>
+        </div>
+
+        <h1>✨ CSS 过渡动画</h1>
+        <p>学习CSS transition属性，创建流畅的过渡效果。</p>
+
+        <!-- 基础过渡 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">1. 基础过渡效果</div>
+                <div class="demo-content">
+                    <p>鼠标悬停在下面的方块上：</p>
+                    <div class="transition-basic"></div>
+                    
+                    <div class="demo-code">
+                        <pre><code>.transition-basic {
+    background-color: #007bff;
+    transition: background-color 0.3s ease;
+}
+
+.transition-basic:hover {
+    background-color: #dc3545;
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 多属性过渡 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">2. 多属性过渡</div>
+                <div class="demo-content">
+                    <p>这个方块会同时改变多个属性：</p>
+                    <div class="transition-multiple"></div>
+                    
+                    <div class="demo-code">
+                        <pre><code>.transition-multiple {
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.transition-multiple:hover {
+    width: 150px;
+    height: 150px;
+    background-color: #ffc107;
+    border-radius: 50%;
+    transform: rotate(45deg);
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 过渡函数对比 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">3. 过渡函数对比</div>
+                <div class="demo-content">
+                    <p>点击按钮看不同缓动函数的效果：</p>
+                    <button onclick="animateBoxes()" class="btn btn-primary">开始动画</button>
+                    <button onclick="resetBoxes()" class="btn">重置</button>
+                    
+                    <div class="demo-grid">
+                        <div>
+                            <strong>ease (默认)</strong>
+                            <div class="easing-box ease"></div>
+                        </div>
+                        <div>
+                            <strong>linear</strong>
+                            <div class="easing-box linear"></div>
+                        </div>
+                        <div>
+                            <strong>ease-in</strong>
+                            <div class="easing-box ease-in"></div>
+                        </div>
+                        <div>
+                            <strong>ease-out</strong>
+                            <div class="easing-box ease-out"></div>
+                        </div>
+                        <div>
+                            <strong>ease-in-out</strong>
+                            <div class="easing-box ease-in-out"></div>
+                        </div>
+                        <div>
+                            <strong>cubic-bezier</strong>
+                            <div class="easing-box cubic-bezier"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 实用按钮效果 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">4. 实用按钮效果</div>
+                <div class="demo-content">
+                    <button class="btn-animate">悬停我看效果</button>
+                    <button class="pulse-button">脉冲按钮</button>
+                    
+                    <div class="demo-code">
+                        <pre><code>/* 光泽扫过效果 */
+.btn-animate::before {
+    content: '';
+    position: absolute;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.6s ease;
+}
+
+.btn-animate:hover::before {
+    left: 100%;
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 卡片悬停效果 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">5. 卡片悬停效果</div>
+                <div class="demo-content">
+                    <div class="card-hover">
+                        <h3>产品卡片</h3>
+                        <p>鼠标悬停在这个卡片上，会有浮起的效果和阴影变化。</p>
+                        <p>这种效果常用于产品展示和文章列表。</p>
+                    </div>
+                    
+                    <div class="demo-code">
+                        <pre><code>.card-hover {
+    transition: all 0.3s ease;
+    transform: translateY(0);
+}
+
+.card-hover:hover {
+    box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+    transform: translateY(-8px);
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 导航菜单过渡 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">6. 导航菜单过渡</div>
+                <div class="demo-content">
+                    <nav class="nav-menu">
+                        <a href="#" class="nav-item"><span>首页</span></a>
+                        <a href="#" class="nav-item"><span>产品</span></a>
+                        <a href="#" class="nav-item"><span>服务</span></a>
+                        <a href="#" class="nav-item"><span>关于我们</span></a>
+                        <a href="#" class="nav-item"><span>联系我们</span></a>
+                    </nav>
+                </div>
+            </div>
+        </section>
+
+        <!-- 加载动画 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">7. 加载动画</div>
+                <div class="demo-content">
+                    <div class="loading-spinner"></div>
+                    
+                    <div class="demo-code">
+                        <pre><code>@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-spinner {
+    animation: spin 1s linear infinite;
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 实践练习 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">🛠️ 实践练习</div>
+                <div class="demo-content">
+                    <div class="control-panel">
+                        <h3>自定义过渡效果：</h3>
+                        <label>过渡时间：</label>
+                        <input type="range" id="duration" min="0.1" max="2" step="0.1" value="0.3">
+                        <span id="durationValue">0.3s</span>
+                        
+                        <label>缓动函数：</label>
+                        <select id="easing">
+                            <option value="ease">ease</option>
+                            <option value="linear">linear</option>
+                            <option value="ease-in">ease-in</option>
+                            <option value="ease-out">ease-out</option>
+                            <option value="ease-in-out">ease-in-out</option>
+                        </select>
+                        
+                        <label>变换属性：</label>
+                        <select id="property">
+                            <option value="background-color">background-color</option>
+                            <option value="transform">transform</option>
+                            <option value="opacity">opacity</option>
+                            <option value="all">all</option>
+                        </select>
+                    </div>
+                    
+                    <div id="practice-box" class="transition-basic" style="margin: 20px auto; cursor: pointer;">
+                        测试盒子
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 导航 -->
+        <div class="text-center mt-3">
+            <a href="../" class="btn">← 返回进阶技术</a>
+            <a href="transforms.html" class="btn btn-primary">下一个：Transform变换 →</a>
+        </div>
+    </div>
+
+    <script>
+        // 缓动函数演示
+        function animateBoxes() {
+            const boxes = document.querySelectorAll('.easing-box');
+            boxes.forEach(box => box.classList.add('animate'));
+        }
+        
+        function resetBoxes() {
+            const boxes = document.querySelectorAll('.easing-box');
+            boxes.forEach(box => box.classList.remove('animate'));
+        }
+        
+        // 实践练习
+        document.addEventListener('DOMContentLoaded', function() {
+            const practiceBox = document.getElementById('practice-box');
+            const duration = document.getElementById('duration');
+            const durationValue = document.getElementById('durationValue');
+            const easing = document.getElementById('easing');
+            const property = document.getElementById('property');
+            
+            let isHovered = false;
+            
+            function updateTransition() {
+                const durationVal = duration.value;
+                const easingVal = easing.value;
+                const propertyVal = property.value;
+                
+                practiceBox.style.transition = `${propertyVal} ${durationVal}s ${easingVal}`;
+                durationValue.textContent = durationVal + 's';
+            }
+            
+            duration.addEventListener('input', updateTransition);
+            easing.addEventListener('change', updateTransition);
+            property.addEventListener('change', updateTransition);
+            
+            practiceBox.addEventListener('mouseenter', function() {
+                if (!isHovered) {
+                    this.style.backgroundColor = '#28a745';
+                    this.style.transform = 'scale(1.2) rotate(10deg)';
+                    this.style.opacity = '0.8';
+                    isHovered = true;
+                }
+            });
+            
+            practiceBox.addEventListener('mouseleave', function() {
+                if (isHovered) {
+                    this.style.backgroundColor = '#007bff';
+                    this.style.transform = 'scale(1) rotate(0deg)';
+                    this.style.opacity = '1';
+                    isHovered = false;
+                }
+            });
+            
+            // 初始化
+            updateTransition();
+        });
+    </script>
+</body>
+</html> 

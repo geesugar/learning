@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS 核心概念 - 示例</title>
+    <link rel="stylesheet" href="../common/reset.css">
+    <link rel="stylesheet" href="../common/common.css">
+    <link rel="stylesheet" href="../common/demo-styles.css">
+    <style>
+        .chapter-nav {
+            background: var(--light-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .chapter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .chapter-card {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .chapter-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .chapter-number {
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .chapter-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: var(--dark-color);
+        }
+        
+        .chapter-desc {
+            color: var(--text-color);
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        
+        .demo-links {
+            list-style: none;
+        }
+        
+        .demo-links li {
+            margin: 0.5rem 0;
+        }
+        
+        .demo-links a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 0.25rem 0;
+            border-bottom: 1px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+        
+        .demo-links a:hover {
+            border-bottom-color: var(--primary-color);
+        }
+        
+        .progress-bar {
+            background: var(--light-color);
+            border-radius: 10px;
+            height: 8px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, var(--primary-color), var(--info-color));
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .breadcrumb {
+            margin-bottom: 2rem;
+            color: var(--text-color);
+        }
+        
+        .breadcrumb a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 面包屑导航 -->
+        <div class="breadcrumb">
+            <a href="../">示例首页</a> > <strong>CSS 核心概念</strong>
+        </div>
+
+        <!-- 页面标题 -->
+        <h1>🎯 CSS 核心概念</h1>
+        <p class="mb-3">这是CSS学习的第一阶段，涵盖CSS的基础语法、选择器、基本属性、盒模型和定位系统。掌握这些概念是学习所有CSS技能的根基。</p>
+
+        <!-- 学习进度 -->
+        <div class="demo-container">
+            <div class="demo-header">📊 学习进度</div>
+            <div class="demo-content">
+                <p>完成下面的示例来掌握CSS核心概念：</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <p id="progressText">0/5 已完成</p>
+            </div>
+        </div>
+
+        <!-- 章节导航 -->
+        <div class="chapter-nav">
+            <h2>📚 章节目录</h2>
+            <div class="chapter-grid">
+                <!-- 第1章：CSS基础 -->
+                <div class="chapter-card">
+                    <div class="chapter-number">1</div>
+                    <div class="chapter-title">CSS 基本概念</div>
+                    <div class="chapter-desc">
+                        学习CSS的基础语法规则、引入方式和注释写法。理解CSS与HTML的关系。
+                    </div>
+                    <ul class="demo-links">
+                        <li><a href="css-basics/basic-syntax.html">基础语法示例</a></li>
+                        <li><a href="css-basics/css-methods.html">CSS引入方式</a></li>
+                        <li><a href="css-basics/comments.html">注释和组织</a></li>
+                    </ul>
+                    <div class="mt-2">
+                        <a href="css-basics/" class="btn btn-primary">开始学习</a>
+                    </div>
+                </div>
+
+                <!-- 第2章：选择器 -->
+                <div class="chapter-card">
+                    <div class="chapter-number">2</div>
+                    <div class="chapter-title">选择器详解</div>
+                    <div class="chapter-desc">
+                        掌握各种CSS选择器的使用方法，理解选择器优先级和特异性计算。
+                    </div>
+                    <ul class="demo-links">
+                        <li><a href="selectors/basic-selectors.html">基础选择器</a></li>
+                        <li><a href="selectors/combinators.html">组合选择器</a></li>
+                        <li><a href="selectors/pseudo-classes.html">伪类选择器</a></li>
+                        <li><a href="selectors/specificity.html">优先级计算</a></li>
+                    </ul>
+                    <div class="mt-2">
+                        <a href="selectors/" class="btn btn-primary">开始学习</a>
+                    </div>
+                </div>
+
+                <!-- 第3章：基本属性 -->
+                <div class="chapter-card">
+                    <div class="chapter-number">3</div>
+                    <div class="chapter-title">基本样式属性</div>
+                    <div class="chapter-desc">
+                        学习颜色、字体、文本、边框、间距等基本样式属性的使用方法。
+                    </div>
+                    <ul class="demo-links">
+                        <li><a href="basic-properties/colors-backgrounds.html">颜色与背景</a></li>
+                        <li><a href="basic-properties/fonts-text.html">字体与文本</a></li>
+                        <li><a href="basic-properties/borders-spacing.html">边框与间距</a></li>
+                    </ul>
+                    <div class="mt-2">
+                        <a href="basic-properties/" class="btn btn-primary">开始学习</a>
+                    </div>
+                </div>
+
+                <!-- 第4章：盒模型 -->
+                <div class="chapter-card">
+                    <div class="chapter-number">4</div>
+                    <div class="chapter-title">盒模型深入</div>
+                    <div class="chapter-desc">
+                        理解CSS盒模型的工作原理，掌握box-sizing、边距重叠和BFC概念。
+                    </div>
+                    <ul class="demo-links">
+                        <li><a href="box-model/box-sizing.html">box-sizing详解</a></li>
+                        <li><a href="box-model/margin-collapse.html">边距重叠</a></li>
+                        <li><a href="box-model/bfc-demo.html">BFC演示</a></li>
+                    </ul>
+                    <div class="mt-2">
+                        <a href="box-model/" class="btn btn-primary">开始学习</a>
+                    </div>
+                </div>
+
+                <!-- 第5章：显示与定位 -->
+                <div class="chapter-card">
+                    <div class="chapter-number">5</div>
+                    <div class="chapter-title">显示与定位</div>
+                    <div class="chapter-desc">
+                        学习display属性、position定位系统和z-index层叠上下文。
+                    </div>
+                    <ul class="demo-links">
+                        <li><a href="positioning/display-types.html">display属性</a></li>
+                        <li><a href="positioning/positioning.html">定位系统</a></li>
+                        <li><a href="positioning/z-index.html">层叠上下文</a></li>
+                    </ul>
+                    <div class="mt-2">
+                        <a href="positioning/" class="btn btn-primary">开始学习</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 学习提示 -->
+        <div class="demo-container">
+            <div class="demo-header">💡 学习提示</div>
+            <div class="demo-content">
+                <div class="grid grid-2">
+                    <div>
+                        <h3>🎯 学习目标</h3>
+                        <ul style="list-style: disc; margin-left: 1.5rem;">
+                            <li>理解CSS的基本语法和工作原理</li>
+                            <li>熟练使用各种选择器</li>
+                            <li>掌握常用的样式属性</li>
+                            <li>深入理解盒模型概念</li>
+                            <li>掌握元素的显示和定位</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3>📝 实践建议</h3>
+                        <ul style="list-style: disc; margin-left: 1.5rem;">
+                            <li>每个示例都要在浏览器中运行</li>
+                            <li>修改代码观察效果变化</li>
+                            <li>使用开发者工具调试</li>
+                            <li>结合文档理解原理</li>
+                            <li>完成章节练习</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 导航按钮 -->
+        <div class="text-center mt-3">
+            <a href="../" class="btn">← 返回首页</a>
+            <a href="../02-layouts/" class="btn btn-primary">下一阶段：现代布局 →</a>
+        </div>
+    </div>
+
+    <script>
+        // 模拟学习进度
+        document.addEventListener('DOMContentLoaded', function() {
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            
+            // 从localStorage获取学习进度
+            let completedChapters = JSON.parse(localStorage.getItem('css-core-progress') || '[]');
+            updateProgress();
+            
+            function updateProgress() {
+                const total = 5;
+                const completed = completedChapters.length;
+                const percentage = (completed / total) * 100;
+                
+                progressFill.style.width = percentage + '%';
+                progressText.textContent = `${completed}/${total} 已完成`;
+            }
+            
+            // 点击学习按钮时标记为已完成
+            document.querySelectorAll('.btn-primary').forEach((btn, index) => {
+                btn.addEventListener('click', function() {
+                    if (!completedChapters.includes(index + 1)) {
+                        completedChapters.push(index + 1);
+                        localStorage.setItem('css-core-progress', JSON.stringify(completedChapters));
+                        updateProgress();
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

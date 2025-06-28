@@ -1,106 +1,187 @@
-# CSS 实践项目示例
+# CSS 学习示例代码
 
-本目录包含CSS学习过程中的各种实践项目和代码示例。
+本目录包含CSS学习文档中的所有示例代码实现，按照学习章节组织。
 
 ## 📁 目录结构
 
 ```
 examples/
-├── 01-basics/              # CSS基础练习
-│   ├── selectors/          # 选择器练习
-│   ├── box-model/          # 盒模型练习
-│   ├── colors-fonts/       # 颜色和字体练习
-│   └── positioning/        # 定位练习
-├── 02-layouts/             # 布局练习
-│   ├── flexbox/            # Flexbox布局示例
-│   ├── grid/               # Grid布局示例
-│   ├── float/              # 浮动布局示例
-│   └── responsive/         # 响应式设计示例
-├── 03-animations/          # 动画与过渡
-│   ├── transitions/        # 过渡效果
-│   ├── transforms/         # 变换效果
-│   ├── keyframes/          # 关键帧动画
-│   └── complex-animations/ # 复杂动画示例
-├── 04-components/          # 常用组件
-│   ├── navigation/         # 导航栏
-│   ├── buttons/            # 按钮样式
-│   ├── cards/              # 卡片组件
-│   ├── forms/              # 表单样式
-│   └── modals/             # 模态框
-├── 05-projects/            # 完整项目
-│   ├── portfolio/          # 个人作品集
-│   ├── landing-page/       # 着陆页
-│   ├── dashboard/          # 仪表板
-│   └── blog-theme/         # 博客主题
-└── 06-advanced/            # 高级特性
-    ├── css-variables/      # CSS变量
-    ├── css-grid-areas/     # Grid区域布局
-    ├── css-art/            # CSS艺术
-    └── performance/        # 性能优化示例
+├── README.md                    # 本文件
+├── index.html                   # 示例总览页面
+├── 01-core-concepts/           # 第一阶段：CSS基础
+│   ├── index.html
+│   ├── css-basics/
+│   │   ├── basic-syntax.html
+│   │   ├── css-methods.html
+│   │   └── styles.css
+│   ├── selectors/
+│   │   ├── basic-selectors.html
+│   │   ├── combinators.html
+│   │   ├── pseudo-classes.html
+│   │   └── specificity.html
+│   ├── basic-properties/
+│   │   ├── colors-backgrounds.html
+│   │   ├── fonts-text.html
+│   │   └── borders-spacing.html
+│   ├── box-model/
+│   │   ├── box-sizing.html
+│   │   ├── margin-collapse.html
+│   │   └── bfc-demo.html
+│   └── positioning/
+│       ├── display-types.html
+│       ├── positioning.html
+│       └── z-index.html
+├── 02-layouts/                 # 第二阶段：现代布局
+│   ├── index.html
+│   ├── flexbox/
+│   │   ├── basic-flexbox.html
+│   │   ├── flex-properties.html
+│   │   ├── common-layouts.html
+│   │   └── flexbox-game.html
+│   ├── grid/
+│   │   ├── basic-grid.html
+│   │   ├── grid-areas.html
+│   │   ├── complex-layouts.html
+│   │   └── grid-game.html
+│   ├── responsive/
+│   │   ├── media-queries.html
+│   │   ├── mobile-first.html
+│   │   ├── responsive-units.html
+│   │   └── responsive-images.html
+│   └── layout-comparison/
+│       └── layout-methods.html
+├── 03-advanced/                # 第三阶段：进阶技术
+│   ├── index.html
+│   ├── animations/
+│   │   ├── transitions.html
+│   │   ├── transforms.html
+│   │   ├── keyframes.html
+│   │   └── performance.html
+│   ├── architecture/
+│   │   ├── bem-demo.html
+│   │   ├── oocss-demo.html
+│   │   └── atomic-css.html
+│   ├── advanced-features/
+│   │   ├── css-variables.html
+│   │   ├── functions.html
+│   │   ├── filters.html
+│   │   └── clip-path.html
+│   └── preprocessors/
+│       ├── sass-demo/
+│       └── less-demo/
+├── 04-engineering/             # 第四阶段：工程化
+│   ├── index.html
+│   ├── css-modules/
+│   │   ├── vanilla-modules.html
+│   │   └── styled-components.html
+│   ├── performance/
+│   │   ├── critical-css.html
+│   │   ├── lazy-loading.html
+│   │   └── optimization.html
+│   └── tools/
+│       ├── postcss-demo/
+│       └── build-tools/
+└── common/                     # 公共资源
+    ├── reset.css
+    ├── common.css
+    └── demo-styles.css
 ```
 
-## 🎯 学习建议
+## 🚀 快速开始
 
-### 阶段一：基础练习（1-2周）
-建议从 `01-basics/` 开始，依次练习：
-1. 选择器的使用和优先级
-2. 盒模型的理解和应用
-3. 颜色、字体和文本样式
-4. 定位系统的掌握
+### 1. 在线预览
+直接在浏览器中打开 `index.html` 文件，查看所有示例的总览。
 
-### 阶段二：布局掌握（2-3周）
-重点练习 `02-layouts/` 中的内容：
-1. 现代布局方法（Flexbox、Grid）
-2. 响应式设计技巧
-3. 不同布局方法的适用场景
+### 2. 本地服务器
+推荐使用本地服务器运行示例：
 
-### 阶段三：动画进阶（1-2周）
-学习 `03-animations/` 中的动画技术：
-1. 基础过渡和变换
-2. 关键帧动画制作
-3. 性能优化的动画技巧
+```bash
+# 使用 Python 3
+python -m http.server 8000
 
-### 阶段四：组件化思维（2-3周）
-通过 `04-components/` 培养组件化思维：
-1. 可复用的CSS组件设计
-2. 模块化CSS架构
-3. 设计系统的构建
+# 使用 Node.js
+npx http-server
 
-### 阶段五：项目实战（3-4周）
-完成 `05-projects/` 中的完整项目：
-1. 应用所学知识解决实际问题
-2. 项目结构和代码组织
-3. 最佳实践的应用
+# 使用 PHP
+php -S localhost:8000
+```
 
-### 阶段六：高级特性（1-2周）
-探索 `06-advanced/` 中的高级技术：
-1. CSS新特性的使用
-2. 性能优化技巧
-3. 创意CSS的探索
+然后访问 `http://localhost:8000`
 
-## 📋 练习清单
+### 3. Live Server (VS Code)
+如果使用 VS Code，推荐安装 Live Server 扩展，可以实时预览效果。
 
-每个子目录都包含：
-- `README.md` - 该部分的学习目标和说明
-- `index.html` - HTML结构
-- `style.css` - CSS样式文件
-- `demo.gif` 或 `screenshot.png` - 效果演示
+## 📖 使用说明
 
-## 🔧 开发工具推荐
+### 示例特点
+- **渐进式学习**：从简单到复杂，符合学习曲线
+- **完整代码**：每个示例都是完整可运行的代码
+- **注释详细**：代码中包含详细的中文注释
+- **响应式设计**：示例支持移动端查看
+- **交互式体验**：部分示例包含交互功能
 
-- **代码编辑器**: VS Code + CSS相关插件
-- **浏览器**: Chrome DevTools 进行调试
-- **预处理器**: Sass/SCSS（可选）
-- **实时预览**: Live Server 扩展
+### 学习建议
+1. **按顺序学习**：建议从 01-core-concepts 开始
+2. **动手实践**：复制代码并尝试修改
+3. **对比效果**：修改代码观察变化
+4. **记录笔记**：记录学习心得和问题
 
-## 📚 学习资源
+## 🎯 示例分类
 
-每个示例都会引用相关的学习资源：
-- MDN文档链接
-- CSS-Tricks相关文章
-- 在线演示和生成器工具
-- 相关的开源项目
+### 基础示例 (01-core-concepts)
+- CSS语法基础
+- 选择器使用
+- 基本属性应用
+- 盒模型理解
+- 定位系统
+
+### 布局示例 (02-layouts)
+- Flexbox布局技巧
+- Grid网格系统
+- 响应式设计
+- 布局方法对比
+
+### 进阶示例 (03-advanced)
+- CSS动画效果
+- 架构方法论
+- 高级CSS特性
+- 预处理器使用
+
+### 工程化示例 (04-engineering)
+- 模块化方案
+- 性能优化
+- 工具链集成
+- 最佳实践
+
+## 🔧 开发环境
+
+### 推荐工具
+- **浏览器**：Chrome/Firefox (支持最新CSS特性)
+- **编辑器**：VS Code + CSS相关扩展
+- **调试工具**：Chrome DevTools
+- **预处理器**：Sass/Less (用于高级示例)
+
+### 浏览器兼容性
+- 现代浏览器全面支持
+- 部分高级特性需要最新版本
+- 示例中会标注兼容性要求
+
+## 📚 相关文档
+
+- [CSS 学习大纲](../README.md)
+- [核心概念详解](../01-core-concepts/README.md)
+- [现代布局技术](../02-layouts/README.md)
+- [CSS 进阶技术](../03-advanced/README.md)
+- [工程化实践](../04-engineering/README.md)
+
+## 🤝 贡献指南
+
+欢迎提交新的示例或改进现有示例：
+1. 遵循现有的目录结构
+2. 添加详细的注释
+3. 确保代码可以正常运行
+4. 提供清晰的说明文档
 
 ---
 
-**开始你的CSS学习之旅吧！记住：实践是学习CSS最好的方法。** 
+开始您的CSS学习之旅吧！每个示例都是一个小的学习项目，通过实践掌握CSS技能。🎨 

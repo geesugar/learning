@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flexbox 基础布局示例</title>
+    <link rel="stylesheet" href="../../common/reset.css">
+    <link rel="stylesheet" href="../../common/common.css">
+    <link rel="stylesheet" href="../../common/demo-styles.css">
+    <style>
+        /* Flexbox 容器基础样式 */
+        .flex-container {
+            display: flex;
+            background-color: #f8f9fa;
+            border: 2px solid #007bff;
+            padding: 10px;
+            margin: 15px 0;
+            min-height: 100px;
+        }
+        
+        .flex-item {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            margin: 5px;
+            text-align: center;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        /* 主轴方向演示 */
+        .flex-row {
+            flex-direction: row; /* 默认值：水平排列 */
+        }
+        
+        .flex-column {
+            flex-direction: column; /* 垂直排列 */
+            height: 200px;
+        }
+        
+        .flex-row-reverse {
+            flex-direction: row-reverse; /* 水平反向 */
+        }
+        
+        /* 换行演示 */
+        .flex-wrap {
+            flex-wrap: wrap; /* 允许换行 */
+            width: 300px;
+        }
+        
+        .flex-nowrap {
+            flex-wrap: nowrap; /* 不换行（默认）*/
+            width: 300px;
+        }
+        
+        /* 主轴对齐 */
+        .justify-start {
+            justify-content: flex-start; /* 起始对齐（默认）*/
+        }
+        
+        .justify-center {
+            justify-content: center; /* 居中对齐 */
+        }
+        
+        .justify-end {
+            justify-content: flex-end; /* 末尾对齐 */
+        }
+        
+        .justify-between {
+            justify-content: space-between; /* 两端对齐 */
+        }
+        
+        .justify-around {
+            justify-content: space-around; /* 环绕对齐 */
+        }
+        
+        .justify-evenly {
+            justify-content: space-evenly; /* 平均分布 */
+        }
+        
+        /* 交叉轴对齐 */
+        .align-stretch {
+            align-items: stretch; /* 拉伸对齐（默认）*/
+            height: 120px;
+        }
+        
+        .align-center {
+            align-items: center; /* 居中对齐 */
+            height: 120px;
+        }
+        
+        .align-start {
+            align-items: flex-start; /* 起始对齐 */
+            height: 120px;
+        }
+        
+        .align-end {
+            align-items: flex-end; /* 末尾对齐 */
+            height: 120px;
+        }
+        
+        .align-baseline {
+            align-items: baseline; /* 基线对齐 */
+            height: 120px;
+        }
+        
+        /* Flex项目属性 */
+        .flex-grow-demo .flex-item:nth-child(2) {
+            flex-grow: 1; /* 这个项目会占据剩余空间 */
+            background-color: #28a745;
+        }
+        
+        .flex-shrink-demo {
+            width: 200px; /* 容器宽度不足 */
+        }
+        
+        .flex-shrink-demo .flex-item {
+            width: 100px; /* 每个项目100px */
+        }
+        
+        .flex-shrink-demo .flex-item:nth-child(2) {
+            flex-shrink: 0; /* 这个项目不收缩 */
+            background-color: #dc3545;
+        }
+        
+        /* 实际应用示例 */
+        .header-layout {
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background-color: #343a40;
+        }
+        
+        .header-layout .logo {
+            background-color: #007bff;
+            padding: 10px 20px;
+        }
+        
+        .header-layout .nav {
+            background-color: #28a745;
+            padding: 10px 20px;
+        }
+        
+        .header-layout .user {
+            background-color: #dc3545;
+            padding: 10px 20px;
+        }
+        
+        .card-layout {
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .card {
+            flex: 1 1 200px; /* 弹性增长、收缩，基础宽度200px */
+            background-color: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            min-height: 150px;
+        }
+        
+        /* 控制面板样式 */
+        .control-panel {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .control-panel label {
+            display: inline-block;
+            width: 120px;
+            font-weight: bold;
+        }
+        
+        .control-panel select,
+        .control-panel input {
+            margin-right: 15px;
+            padding: 5px;
+        }
+        
+        #interactive-demo {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 面包屑导航 -->
+        <div class="breadcrumb">
+            <a href="../../">示例首页</a> > 
+            <a href="../">现代布局</a> > 
+            <strong>Flexbox基础</strong>
+        </div>
+
+        <h1>🔧 Flexbox 基础布局</h1>
+        <p>学习Flexbox的基本概念：主轴、交叉轴、容器属性和项目属性。</p>
+
+        <!-- 基本概念 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">1. Flexbox 基本概念</div>
+                <div class="demo-content">
+                    <div class="flex-container flex-row">
+                        <div class="flex-item">项目1</div>
+                        <div class="flex-item">项目2</div>
+                        <div class="flex-item">项目3</div>
+                    </div>
+                    
+                    <div class="demo-code">
+                        <pre><code>.flex-container {
+    display: flex; /* 设置为Flex容器 */
+}
+
+.flex-item {
+    /* Flex项目的基本样式 */
+    padding: 20px;
+    margin: 5px;
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 主轴方向 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">2. 主轴方向 (flex-direction)</div>
+                <div class="demo-content">
+                    <h3>row (默认 - 水平)</h3>
+                    <div class="flex-container flex-row">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                    </div>
+                    
+                    <h3>column (垂直)</h3>
+                    <div class="flex-container flex-column">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                    </div>
+                    
+                    <h3>row-reverse (水平反向)</h3>
+                    <div class="flex-container flex-row-reverse">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 主轴对齐 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">3. 主轴对齐 (justify-content)</div>
+                <div class="demo-content">
+                    <h3>center (居中)</h3>
+                    <div class="flex-container justify-center">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                    </div>
+                    
+                    <h3>space-between (两端对齐)</h3>
+                    <div class="flex-container justify-between">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                    </div>
+                    
+                    <h3>space-around (环绕对齐)</h3>
+                    <div class="flex-container justify-around">
+                        <div class="flex-item">1</div>
+                        <div class="flex-item">2</div>
+                        <div class="flex-item">3</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 交叉轴对齐 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">4. 交叉轴对齐 (align-items)</div>
+                <div class="demo-content">
+                    <h3>center (居中)</h3>
+                    <div class="flex-container align-center">
+                        <div class="flex-item">项目1</div>
+                        <div class="flex-item">项目2<br>多行内容</div>
+                        <div class="flex-item">项目3</div>
+                    </div>
+                    
+                    <h3>flex-start (顶部对齐)</h3>
+                    <div class="flex-container align-start">
+                        <div class="flex-item">项目1</div>
+                        <div class="flex-item">项目2<br>多行内容</div>
+                        <div class="flex-item">项目3</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 实际应用示例 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">5. 实际应用示例</div>
+                <div class="demo-content">
+                    <h3>网站头部布局</h3>
+                    <div class="flex-container header-layout">
+                        <div class="logo">LOGO</div>
+                        <div class="nav">导航菜单</div>
+                        <div class="user">用户中心</div>
+                    </div>
+                    
+                    <h3>卡片布局</h3>
+                    <div class="flex-container card-layout">
+                        <div class="card">
+                            <h4>卡片1</h4>
+                            <p>这是第一个卡片的内容</p>
+                        </div>
+                        <div class="card">
+                            <h4>卡片2</h4>
+                            <p>这是第二个卡片的内容，内容比较多一些</p>
+                        </div>
+                        <div class="card">
+                            <h4>卡片3</h4>
+                            <p>第三个卡片</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 交互式演示 -->
+        <section class="section">
+            <div class="demo-container">
+                <div class="demo-header">🛠️ 交互式演示</div>
+                <div class="demo-content">
+                    <div class="control-panel">
+                        <label>flex-direction:</label>
+                        <select id="flexDirection">
+                            <option value="row">row</option>
+                            <option value="column">column</option>
+                            <option value="row-reverse">row-reverse</option>
+                            <option value="column-reverse">column-reverse</option>
+                        </select>
+                        
+                        <label>justify-content:</label>
+                        <select id="justifyContent">
+                            <option value="flex-start">flex-start</option>
+                            <option value="center">center</option>
+                            <option value="flex-end">flex-end</option>
+                            <option value="space-between">space-between</option>
+                            <option value="space-around">space-around</option>
+                            <option value="space-evenly">space-evenly</option>
+                        </select>
+                        
+                        <label>align-items:</label>
+                        <select id="alignItems">
+                            <option value="stretch">stretch</option>
+                            <option value="center">center</option>
+                            <option value="flex-start">flex-start</option>
+                            <option value="flex-end">flex-end</option>
+                            <option value="baseline">baseline</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex-container" id="interactive-demo" style="height: 150px;">
+                        <div class="flex-item">项目1</div>
+                        <div class="flex-item">项目2</div>
+                        <div class="flex-item">项目3</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 导航 -->
+        <div class="text-center mt-3">
+            <a href="../" class="btn">← 返回布局首页</a>
+            <a href="flex-properties.html" class="btn btn-primary">下一个：Flex属性详解 →</a>
+        </div>
+    </div>
+
+    <script>
+        // 交互式演示
+        document.addEventListener('DOMContentLoaded', function() {
+            const demo = document.getElementById('interactive-demo');
+            const flexDirection = document.getElementById('flexDirection');
+            const justifyContent = document.getElementById('justifyContent');
+            const alignItems = document.getElementById('alignItems');
+            
+            function updateDemo() {
+                demo.style.flexDirection = flexDirection.value;
+                demo.style.justifyContent = justifyContent.value;
+                demo.style.alignItems = alignItems.value;
+            }
+            
+            flexDirection.addEventListener('change', updateDemo);
+            justifyContent.addEventListener('change', updateDemo);
+            alignItems.addEventListener('change', updateDemo);
+        });
+    </script>
+</body>
+</html> 
