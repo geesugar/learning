@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>填充和描边 - SVG学习示例</title>
+    <link rel="stylesheet" href="../../common/styles.css">
+    <link rel="stylesheet" href="../../common/demo.css">
+    <style>
+        .demo-svg {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+    </style>
+</head>
+<body class="demo-page">
+    <div class="demo-header">
+        <div class="container">
+            <nav class="breadcrumb">
+                <ol class="breadcrumb-list">
+                    <li class="breadcrumb-item"><a href="../../index.html">示例首页</a></li>
+                    <li class="breadcrumb-item"><a href="../index.html">样式与效果</a></li>
+                    <li class="breadcrumb-item active">填充和描边</li>
+                </ol>
+            </nav>
+            <h1 class="demo-title">填充和描边</h1>
+            <p class="demo-subtitle">掌握SVG中的fill和stroke属性，创建丰富的视觉效果</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="demo-main">
+            <div class="demo-content">
+                <!-- 基础填充 -->
+                <div class="card">
+                    <h2>🎨 基础填充（fill）</h2>
+                    <p>fill属性控制SVG形状的内部填充色彩。</p>
+                    
+                    <div class="grid grid-3">
+                        <div>
+                            <h3>纯色填充</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="120" viewBox="0 0 150 120" class="demo-svg">
+                                    <circle cx="50" cy="40" r="25" fill="#FF5722"/>
+                                    <rect x="25" y="75" width="50" height="30" fill="#4CAF50"/>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">fill="#FF5722"</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>透明度填充</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="120" viewBox="0 0 150 120" class="demo-svg">
+                                    <circle cx="40" cy="40" r="25" fill="#FF5722" fill-opacity="0.3"/>
+                                    <circle cx="60" cy="50" r="25" fill="#2196F3" fill-opacity="0.6"/>
+                                    <rect x="25" y="80" width="50" height="25" fill="#4CAF50" fill-opacity="0.8"/>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">fill-opacity="0.6"</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>无填充</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="120" viewBox="0 0 150 120" class="demo-svg">
+                                    <circle cx="50" cy="40" r="25" fill="none" stroke="#FF5722" stroke-width="3"/>
+                                    <rect x="25" y="75" width="50" height="30" fill="none" stroke="#4CAF50" stroke-width="2"/>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">fill="none"</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 基础描边 -->
+                <div class="card">
+                    <h2>✏️ 基础描边（stroke）</h2>
+                    <p>stroke属性控制SVG形状的边框线条样式。</p>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <h3>描边宽度</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="150" viewBox="0 0 200 150" class="demo-svg">
+                                    <circle cx="50" cy="40" r="20" fill="none" stroke="#FF5722" stroke-width="1"/>
+                                    <circle cx="120" cy="40" r="20" fill="none" stroke="#FF5722" stroke-width="3"/>
+                                    <circle cx="50" cy="100" r="20" fill="none" stroke="#FF5722" stroke-width="6"/>
+                                    <circle cx="120" cy="100" r="20" fill="none" stroke="#FF5722" stroke-width="10"/>
+                                    
+                                    <text x="50" y="70" text-anchor="middle" font-size="10" fill="#666">width=1</text>
+                                    <text x="120" y="70" text-anchor="middle" font-size="10" fill="#666">width=3</text>
+                                    <text x="50" y="130" text-anchor="middle" font-size="10" fill="#666">width=6</text>
+                                    <text x="120" y="130" text-anchor="middle" font-size="10" fill="#666">width=10</text>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>描边颜色和透明度</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="150" viewBox="0 0 200 150" class="demo-svg">
+                                    <circle cx="50" cy="40" r="20" fill="none" stroke="#FF5722" stroke-width="4"/>
+                                    <circle cx="120" cy="40" r="20" fill="none" stroke="#2196F3" stroke-width="4"/>
+                                    <circle cx="50" cy="100" r="20" fill="none" stroke="#4CAF50" stroke-width="4" stroke-opacity="0.5"/>
+                                    <circle cx="120" cy="100" r="20" fill="none" stroke="#9C27B0" stroke-width="4" stroke-opacity="0.3"/>
+                                    
+                                    <text x="100" y="135" text-anchor="middle" font-size="12" fill="#666">描边透明度</text>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 线帽和连接 -->
+                <div class="card">
+                    <h2>🔗 线帽和连接样式</h2>
+                    <p>控制线段末端和连接点的外观样式。</p>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <h3>线帽样式（stroke-linecap）</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="120" viewBox="0 0 200 120" class="demo-svg">
+                                    <line x1="20" y1="30" x2="80" y2="30" stroke="#FF5722" stroke-width="8" stroke-linecap="butt"/>
+                                    <line x1="20" y1="60" x2="80" y2="60" stroke="#2196F3" stroke-width="8" stroke-linecap="round"/>
+                                    <line x1="20" y1="90" x2="80" y2="90" stroke="#4CAF50" stroke-width="8" stroke-linecap="square"/>
+                                    
+                                    <text x="90" y="34" font-size="12" fill="#666">butt</text>
+                                    <text x="90" y="64" font-size="12" fill="#666">round</text>
+                                    <text x="90" y="94" font-size="12" fill="#666">square</text>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>连接样式（stroke-linejoin）</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="120" viewBox="0 0 200 120" class="demo-svg">
+                                    <polyline points="20,20 50,40 20,60" fill="none" stroke="#FF5722" stroke-width="8" stroke-linejoin="miter"/>
+                                    <polyline points="80,20 110,40 80,60" fill="none" stroke="#2196F3" stroke-width="8" stroke-linejoin="round"/>
+                                    <polyline points="140,20 170,40 140,60" fill="none" stroke="#4CAF50" stroke-width="8" stroke-linejoin="bevel"/>
+                                    
+                                    <text x="35" y="75" text-anchor="middle" font-size="10" fill="#666">miter</text>
+                                    <text x="95" y="75" text-anchor="middle" font-size="10" fill="#666">round</text>
+                                    <text x="155" y="75" text-anchor="middle" font-size="10" fill="#666">bevel</text>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 虚线样式 -->
+                <div class="card">
+                    <h2>📏 虚线样式（stroke-dasharray）</h2>
+                    <p>使用stroke-dasharray创建各种虚线效果。</p>
+                    
+                    <div class="svg-example">
+                        <svg width="100%" height="200" viewBox="0 0 400 200" class="demo-svg">
+                            <!-- 基础虚线 -->
+                            <line x1="20" y1="30" x2="380" y2="30" stroke="#FF5722" stroke-width="3" stroke-dasharray="5,5"/>
+                            <text x="20" y="20" font-size="12" fill="#666">stroke-dasharray="5,5"</text>
+                            
+                            <!-- 不同间隔 -->
+                            <line x1="20" y1="60" x2="380" y2="60" stroke="#2196F3" stroke-width="3" stroke-dasharray="10,5"/>
+                            <text x="20" y="50" font-size="12" fill="#666">stroke-dasharray="10,5"</text>
+                            
+                            <!-- 复杂模式 -->
+                            <line x1="20" y1="90" x2="380" y2="90" stroke="#4CAF50" stroke-width="3" stroke-dasharray="15,5,5,5"/>
+                            <text x="20" y="80" font-size="12" fill="#666">stroke-dasharray="15,5,5,5"</text>
+                            
+                            <!-- 圆形虚线 -->
+                            <circle cx="100" cy="150" r="30" fill="none" stroke="#9C27B0" stroke-width="3" stroke-dasharray="10,5"/>
+                            <text x="100" y="185" text-anchor="middle" font-size="12" fill="#666">圆形虚线</text>
+                            
+                            <!-- 矩形虚线 -->
+                            <rect x="180" y="120" width="60" height="40" fill="none" stroke="#FF9800" stroke-width="3" stroke-dasharray="8,3,3,3"/>
+                            <text x="210" y="175" text-anchor="middle" font-size="12" fill="#666">矩形虚线</text>
+                            
+                            <!-- 路径虚线 -->
+                            <path d="M280,140 Q320,120 350,140 T380,160" fill="none" stroke="#607D8B" stroke-width="3" stroke-dasharray="6,4"/>
+                            <text x="320" y="185" text-anchor="middle" font-size="12" fill="#666">路径虚线</text>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- 动画虚线 -->
+                <div class="card">
+                    <h2>🏃 动画虚线（stroke-dashoffset）</h2>
+                    <p>使用stroke-dashoffset创建动态虚线效果。</p>
+                    
+                    <div class="svg-example">
+                        <svg width="100%" height="150" viewBox="0 0 400 150" class="demo-svg">
+                            <style>
+                                @keyframes dash {
+                                    to { stroke-dashoffset: -30; }
+                                }
+                                .animated-dash {
+                                    animation: dash 2s linear infinite;
+                                }
+                            </style>
+                            
+                            <line x1="20" y1="40" x2="380" y2="40" stroke="#FF5722" stroke-width="4" 
+                                  stroke-dasharray="15,10" class="animated-dash"/>
+                            <text x="200" y="30" text-anchor="middle" font-size="12" fill="#666">动画虚线</text>
+                            
+                            <circle cx="200" cy="100" r="40" fill="none" stroke="#2196F3" stroke-width="4" 
+                                    stroke-dasharray="20,10" class="animated-dash"/>
+                            <text x="200" y="150" text-anchor="middle" font-size="12" fill="#666">动画圆环</text>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- 渐变填充和描边 -->
+                <div class="card">
+                    <h2>🌈 渐变填充和描边</h2>
+                    <p>使用渐变作为填充色和描边色，创建更丰富的视觉效果。</p>
+                    
+                    <div class="svg-example">
+                        <svg width="100%" height="150" viewBox="0 0 400 150" class="demo-svg">
+                            <defs>
+                                <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" style="stop-color:#FF5722;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#FF9800;stop-opacity:1" />
+                                </linearGradient>
+                                
+                                <linearGradient id="gradient2" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#2196F3;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#9C27B0;stop-opacity:1" />
+                                </linearGradient>
+                                
+                                <radialGradient id="radial1" cx="50%" cy="50%" r="50%">
+                                    <stop offset="0%" style="stop-color:#4CAF50;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#1976D2;stop-opacity:1" />
+                                </radialGradient>
+                            </defs>
+                            
+                            <rect x="30" y="40" width="80" height="50" fill="url(#gradient1)"/>
+                            <text x="70" y="105" text-anchor="middle" font-size="12" fill="#666">渐变填充</text>
+                            
+                            <rect x="160" y="40" width="80" height="50" fill="none" stroke="url(#gradient2)" stroke-width="4"/>
+                            <text x="200" y="105" text-anchor="middle" font-size="12" fill="#666">渐变描边</text>
+                            
+                            <circle cx="320" cy="65" r="30" fill="url(#radial1)"/>
+                            <text x="320" y="105" text-anchor="middle" font-size="12" fill="#666">径向渐变</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 侧边栏交互控制器 -->
+            <div class="demo-sidebar">
+                <h3>🎮 填充描边编辑器</h3>
+                <div class="interactive-controls">
+                    <div class="control-section">
+                        <h4>填充属性</h4>
+                        <div class="control-row">
+                            <label class="control-label">填充颜色</label>
+                            <input type="color" id="fillColor" class="control-input color-input" value="#2196F3">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">填充透明度</label>
+                            <input type="range" id="fillOpacity" class="control-input range-input" min="0" max="1" step="0.1" value="1">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">无填充</label>
+                            <input type="checkbox" id="noFill" class="control-input checkbox-input">
+                        </div>
+                    </div>
+                    
+                    <div class="control-section">
+                        <h4>描边属性</h4>
+                        <div class="control-row">
+                            <label class="control-label">描边颜色</label>
+                            <input type="color" id="strokeColor" class="control-input color-input" value="#1976D2">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">描边宽度</label>
+                            <input type="range" id="strokeWidth" class="control-input range-input" min="0" max="12" value="2">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">描边透明度</label>
+                            <input type="range" id="strokeOpacity" class="control-input range-input" min="0" max="1" step="0.1" value="1">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">线帽样式</label>
+                            <select id="lineCap" class="control-input">
+                                <option value="butt">butt</option>
+                                <option value="round">round</option>
+                                <option value="square">square</option>
+                            </select>
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">连接样式</label>
+                            <select id="lineJoin" class="control-input">
+                                <option value="miter">miter</option>
+                                <option value="round">round</option>
+                                <option value="bevel">bevel</option>
+                            </select>
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">虚线样式</label>
+                            <select id="dashArray" class="control-input">
+                                <option value="none">无虚线</option>
+                                <option value="5,5">短虚线</option>
+                                <option value="10,5">长虚线</option>
+                                <option value="15,5,5,5">复杂虚线</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="svg-display has-content">
+                    <svg id="demoSVG" width="200" height="180" viewBox="0 0 200 180">
+                        <circle id="demoCircle" cx="60" cy="60" r="25"/>
+                        <rect id="demoRect" x="120" y="35" width="40" height="30"/>
+                        <polyline id="demoLine" points="40,120 100,100 160,120" fill="none"/>
+                        <text x="100" y="155" text-anchor="middle" font-size="12" fill="#666">实时预览</text>
+                    </svg>
+                </div>
+
+                <div class="code-editor">
+                    <div class="code-header">
+                        <div class="code-title">生成的SVG代码</div>
+                        <div class="code-actions">
+                            <button class="code-btn" onclick="copySVGCode()">复制</button>
+                        </div>
+                    </div>
+                    <div class="code-content" id="svgCode">&lt;circle fill="#2196F3" stroke="#1976D2" stroke-width="2" /&gt;</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 导航 -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <a href="../css-styling/" class="btn">← 上一章：CSS样式控制</a>
+                <a href="../gradients/" class="btn btn-primary">下一章：渐变效果 →</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../common/utils.js"></script>
+    <script>
+        // 填充描边编辑器
+        const fillColor = document.getElementById('fillColor');
+        const fillOpacity = document.getElementById('fillOpacity');
+        const noFill = document.getElementById('noFill');
+        const strokeColor = document.getElementById('strokeColor');
+        const strokeWidth = document.getElementById('strokeWidth');
+        const strokeOpacity = document.getElementById('strokeOpacity');
+        const lineCap = document.getElementById('lineCap');
+        const lineJoin = document.getElementById('lineJoin');
+        const dashArray = document.getElementById('dashArray');
+        
+        const demoCircle = document.getElementById('demoCircle');
+        const demoRect = document.getElementById('demoRect');
+        const demoLine = document.getElementById('demoLine');
+        const svgCode = document.getElementById('svgCode');
+
+        function updateStyles() {
+            const fill = noFill.checked ? 'none' : fillColor.value;
+            const fillAlpha = fillOpacity.value;
+            const stroke = strokeColor.value;
+            const strokeAlpha = strokeOpacity.value;
+            const width = strokeWidth.value;
+            const cap = lineCap.value;
+            const join = lineJoin.value;
+            const dash = dashArray.value === 'none' ? '' : dashArray.value;
+            
+            [demoCircle, demoRect].forEach(element => {
+                element.setAttribute('fill', fill);
+                element.setAttribute('fill-opacity', fillAlpha);
+                element.setAttribute('stroke', stroke);
+                element.setAttribute('stroke-width', width);
+                element.setAttribute('stroke-opacity', strokeAlpha);
+                if (dash) {
+                    element.setAttribute('stroke-dasharray', dash);
+                } else {
+                    element.removeAttribute('stroke-dasharray');
+                }
+            });
+            
+            // 线条特殊处理
+            demoLine.setAttribute('stroke', stroke);
+            demoLine.setAttribute('stroke-width', width);
+            demoLine.setAttribute('stroke-opacity', strokeAlpha);
+            demoLine.setAttribute('stroke-linecap', cap);
+            demoLine.setAttribute('stroke-linejoin', join);
+            if (dash) {
+                demoLine.setAttribute('stroke-dasharray', dash);
+            } else {
+                demoLine.removeAttribute('stroke-dasharray');
+            }
+            
+            // 更新代码显示
+            let code = `&lt;circle fill="${fill}"`;
+            if (fillAlpha !== '1') code += ` fill-opacity="${fillAlpha}"`;
+            code += ` stroke="${stroke}" stroke-width="${width}"`;
+            if (strokeAlpha !== '1') code += ` stroke-opacity="${strokeAlpha}"`;
+            if (dash) code += ` stroke-dasharray="${dash}"`;
+            code += ' /&gt;';
+            
+            svgCode.textContent = code;
+        }
+
+        function copySVGCode() {
+            navigator.clipboard.writeText(svgCode.textContent).then(() => {
+                document.querySelector('.code-actions .code-btn').textContent = '已复制!';
+                setTimeout(() => {
+                    document.querySelector('.code-actions .code-btn').textContent = '复制';
+                }, 2000);
+            });
+        }
+
+        // 绑定事件
+        [fillColor, fillOpacity, noFill, strokeColor, strokeWidth, strokeOpacity, lineCap, lineJoin, dashArray].forEach(element => {
+            element.addEventListener('input', updateStyles);
+            element.addEventListener('change', updateStyles);
+        });
+
+        // 初始化
+        updateStyles();
+    </script>
+</body>
+</html> 

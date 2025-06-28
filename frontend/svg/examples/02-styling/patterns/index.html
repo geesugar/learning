@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图案和纹理 - SVG学习示例</title>
+    <link rel="stylesheet" href="../../common/styles.css">
+    <link rel="stylesheet" href="../../common/demo.css">
+    <style>
+        .demo-svg {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+    </style>
+</head>
+<body class="demo-page">
+    <div class="demo-header">
+        <div class="container">
+            <nav class="breadcrumb">
+                <ol class="breadcrumb-list">
+                    <li class="breadcrumb-item"><a href="../../index.html">示例首页</a></li>
+                    <li class="breadcrumb-item"><a href="../index.html">样式与效果</a></li>
+                    <li class="breadcrumb-item active">图案和纹理</li>
+                </ol>
+            </nav>
+            <h1 class="demo-title">图案和纹理</h1>
+            <p class="demo-subtitle">使用SVG pattern元素创建重复图案和复杂纹理效果</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="demo-main">
+            <div class="demo-content">
+                <!-- 基础图案 -->
+                <div class="card">
+                    <h2>🔄 基础图案（pattern）</h2>
+                    <p>pattern元素定义了可以重复使用的图形模式，可以作为填充或描边使用。</p>
+                    
+                    <div class="grid grid-3">
+                        <div>
+                            <h3>圆点图案</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <defs>
+                                        <pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                                            <circle cx="10" cy="10" r="3" fill="#FF5722"/>
+                                        </pattern>
+                                    </defs>
+                                    <rect x="25" y="25" width="100" height="50" fill="url(#dots)"/>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">width="20" height="20"</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>条纹图案</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <defs>
+                                        <pattern id="stripes" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+                                            <rect x="0" y="0" width="5" height="10" fill="#2196F3"/>
+                                            <rect x="5" y="0" width="5" height="10" fill="#1976D2"/>
+                                        </pattern>
+                                    </defs>
+                                    <rect x="25" y="25" width="100" height="50" fill="url(#stripes)"/>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">垂直条纹</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>网格图案</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <defs>
+                                        <pattern id="grid" x="0" y="0" width="15" height="15" patternUnits="userSpaceOnUse">
+                                            <rect x="0" y="0" width="15" height="15" fill="none" stroke="#4CAF50" stroke-width="1"/>
+                                        </pattern>
+                                    </defs>
+                                    <rect x="25" y="25" width="100" height="50" fill="url(#grid)"/>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">网格线条</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 复杂图案 -->
+                <div class="card">
+                    <h2>🎨 复杂图案</h2>
+                    <p>组合多个元素创建更复杂的装饰图案。</p>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <h3>棋盘图案</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="120" viewBox="0 0 200 120" class="demo-svg">
+                                    <defs>
+                                        <pattern id="checkerboard" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                                            <rect x="0" y="0" width="10" height="10" fill="#333"/>
+                                            <rect x="10" y="10" width="10" height="10" fill="#333"/>
+                                            <rect x="0" y="10" width="10" height="10" fill="#FFF"/>
+                                            <rect x="10" y="0" width="10" height="10" fill="#FFF"/>
+                                        </pattern>
+                                    </defs>
+                                    <rect x="25" y="25" width="150" height="70" fill="url(#checkerboard)"/>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>蜂窝图案</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="120" viewBox="0 0 200 120" class="demo-svg">
+                                    <defs>
+                                        <pattern id="honeycomb" x="0" y="0" width="28" height="24" patternUnits="userSpaceOnUse">
+                                            <polygon points="14,2 22,7 22,17 14,22 6,17 6,7" 
+                                                     fill="none" stroke="#FF9800" stroke-width="2"/>
+                                        </pattern>
+                                    </defs>
+                                    <rect x="25" y="25" width="150" height="70" fill="url(#honeycomb)"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 渐变图案 -->
+                <div class="card">
+                    <h2>🌈 渐变图案</h2>
+                    <p>在图案中使用渐变，创建更丰富的视觉效果。</p>
+                    
+                    <div class="svg-example">
+                        <svg width="100%" height="150" viewBox="0 0 400 150" class="demo-svg">
+                            <defs>
+                                <linearGradient id="patternGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#FF5722;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#FF9800;stop-opacity:1" />
+                                </linearGradient>
+                                
+                                <pattern id="gradientDots" x="0" y="0" width="25" height="25" patternUnits="userSpaceOnUse">
+                                    <circle cx="12.5" cy="12.5" r="8" fill="url(#patternGradient)"/>
+                                </pattern>
+                                
+                                <pattern id="gradientStripes" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse">
+                                    <rect x="0" y="0" width="15" height="30" fill="url(#patternGradient)"/>
+                                    <rect x="15" y="0" width="15" height="30" fill="none"/>
+                                </pattern>
+                            </defs>
+                            
+                            <rect x="50" y="25" width="120" height="80" fill="url(#gradientDots)"/>
+                            <text x="110" y="120" text-anchor="middle" font-size="12" fill="#666">渐变圆点</text>
+                            
+                            <rect x="230" y="25" width="120" height="80" fill="url(#gradientStripes)"/>
+                            <text x="290" y="120" text-anchor="middle" font-size="12" fill="#666">渐变条纹</text>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- 图案变换 -->
+                <div class="card">
+                    <h2>🔄 图案变换</h2>
+                    <p>使用patternTransform属性对图案进行旋转、缩放等变换。</p>
+                    
+                    <div class="grid grid-3">
+                        <div>
+                            <h3>旋转图案</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <defs>
+                                        <pattern id="rotatedPattern" x="0" y="0" width="20" height="20" 
+                                                 patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+                                            <rect x="0" y="0" width="10" height="20" fill="#E91E63"/>
+                                            <rect x="10" y="0" width="10" height="20" fill="#F8BBD9"/>
+                                        </pattern>
+                                    </defs>
+                                    <rect x="25" y="25" width="100" height="50" fill="url(#rotatedPattern)"/>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">rotate(45)</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>缩放图案</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <defs>
+                                        <pattern id="scaledPattern" x="0" y="0" width="20" height="20" 
+                                                 patternUnits="userSpaceOnUse" patternTransform="scale(0.5)">
+                                            <circle cx="10" cy="10" r="5" fill="#9C27B0"/>
+                                        </pattern>
+                                    </defs>
+                                    <rect x="25" y="25" width="100" height="50" fill="url(#scaledPattern)"/>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">scale(0.5)</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>倾斜图案</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <defs>
+                                        <pattern id="skewedPattern" x="0" y="0" width="20" height="20" 
+                                                 patternUnits="userSpaceOnUse" patternTransform="skewX(15)">
+                                            <rect x="2" y="2" width="16" height="16" fill="#607D8B"/>
+                                        </pattern>
+                                    </defs>
+                                    <rect x="25" y="25" width="100" height="50" fill="url(#skewedPattern)"/>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">skewX(15)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 纹理效果 -->
+                <div class="card">
+                    <h2>🧱 纹理效果</h2>
+                    <p>创建模拟真实材质的纹理效果。</p>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <h3>砖块纹理</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="120" viewBox="0 0 200 120" class="demo-svg">
+                                    <defs>
+                                        <pattern id="brick" x="0" y="0" width="60" height="30" patternUnits="userSpaceOnUse">
+                                            <!-- 第一行砖块 -->
+                                            <rect x="1" y="1" width="28" height="14" fill="#CD853F" stroke="#8B4513" stroke-width="1"/>
+                                            <rect x="31" y="1" width="28" height="14" fill="#CD853F" stroke="#8B4513" stroke-width="1"/>
+                                            <!-- 第二行砖块（错位） -->
+                                            <rect x="-14" y="16" width="28" height="14" fill="#DEB887" stroke="#8B4513" stroke-width="1"/>
+                                            <rect x="16" y="16" width="28" height="14" fill="#DEB887" stroke="#8B4513" stroke-width="1"/>
+                                            <rect x="46" y="16" width="28" height="14" fill="#DEB887" stroke="#8B4513" stroke-width="1"/>
+                                        </pattern>
+                                    </defs>
+                                    <rect x="25" y="25" width="150" height="70" fill="url(#brick)"/>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>木纹纹理</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="120" viewBox="0 0 200 120" class="demo-svg">
+                                    <defs>
+                                        <pattern id="wood" x="0" y="0" width="40" height="8" patternUnits="userSpaceOnUse">
+                                            <rect x="0" y="0" width="40" height="2" fill="#DEB887"/>
+                                            <rect x="0" y="2" width="40" height="2" fill="#CD853F"/>
+                                            <rect x="0" y="4" width="40" height="2" fill="#DEB887"/>
+                                            <rect x="0" y="6" width="40" height="2" fill="#D2B48C"/>
+                                            <ellipse cx="10" cy="4" rx="3" ry="1" fill="#8B4513" opacity="0.3"/>
+                                            <ellipse cx="30" cy="4" rx="2" ry="1" fill="#8B4513" opacity="0.2"/>
+                                        </pattern>
+                                    </defs>
+                                    <rect x="25" y="25" width="150" height="70" fill="url(#wood)"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 动画图案 -->
+                <div class="card">
+                    <h2>🎬 动画图案</h2>
+                    <p>为图案添加动画效果，创建动态纹理。</p>
+                    
+                    <div class="svg-example">
+                        <svg width="100%" height="150" viewBox="0 0 400 150" class="demo-svg">
+                            <defs>
+                                <pattern id="animatedWave" x="0" y="0" width="50" height="30" patternUnits="userSpaceOnUse">
+                                    <path d="M0,15 Q12.5,5 25,15 T50,15" fill="none" stroke="#2196F3" stroke-width="3">
+                                        <animate attributeName="d" 
+                                                 values="M0,15 Q12.5,5 25,15 T50,15;M0,15 Q12.5,25 25,15 T50,15;M0,15 Q12.5,5 25,15 T50,15" 
+                                                 dur="2s" 
+                                                 repeatCount="indefinite"/>
+                                    </path>
+                                </pattern>
+                                
+                                <pattern id="movingDots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                                    <circle cx="20" cy="20" r="4" fill="#FF5722">
+                                        <animateTransform attributeName="transform" 
+                                                          type="translate" 
+                                                          values="0,0; 10,0; 0,0" 
+                                                          dur="3s" 
+                                                          repeatCount="indefinite"/>
+                                    </circle>
+                                </pattern>
+                            </defs>
+                            
+                            <rect x="50" y="25" width="120" height="80" fill="url(#animatedWave)"/>
+                            <text x="110" y="120" text-anchor="middle" font-size="12" fill="#666">动画波浪</text>
+                            
+                            <rect x="230" y="25" width="120" height="80" fill="url(#movingDots)"/>
+                            <text x="290" y="120" text-anchor="middle" font-size="12" fill="#666">移动圆点</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 侧边栏交互控制器 -->
+            <div class="demo-sidebar">
+                <h3>🎮 图案编辑器</h3>
+                <div class="interactive-controls">
+                    <div class="control-section">
+                        <h4>图案类型</h4>
+                        <div class="control-row">
+                            <label class="control-label">图案类型</label>
+                            <select id="patternType" class="control-input">
+                                <option value="dots">圆点</option>
+                                <option value="stripes">条纹</option>
+                                <option value="grid">网格</option>
+                                <option value="checkerboard">棋盘</option>
+                            </select>
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">图案大小</label>
+                            <input type="range" id="patternSize" class="control-input range-input" min="10" max="50" value="20">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">主色调</label>
+                            <input type="color" id="primaryColor" class="control-input color-input" value="#2196F3">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">辅色调</label>
+                            <input type="color" id="secondaryColor" class="control-input color-input" value="#1976D2">
+                        </div>
+                    </div>
+                    
+                    <div class="control-section">
+                        <h4>变换效果</h4>
+                        <div class="control-row">
+                            <label class="control-label">旋转角度</label>
+                            <input type="range" id="rotateAngle" class="control-input range-input" min="0" max="360" value="0">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">缩放比例</label>
+                            <input type="range" id="scaleValue" class="control-input range-input" min="0.1" max="2" step="0.1" value="1">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="svg-display has-content">
+                    <svg id="demoSVG" width="200" height="150" viewBox="0 0 200 150">
+                        <defs>
+                            <pattern id="demoPattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                                <circle cx="10" cy="10" r="3" fill="#2196F3"/>
+                            </pattern>
+                        </defs>
+                        <rect x="25" y="25" width="150" height="80" fill="url(#demoPattern)"/>
+                        <text x="100" y="125" text-anchor="middle" font-size="12" fill="#666">图案预览</text>
+                    </svg>
+                </div>
+
+                <div class="code-editor">
+                    <div class="code-header">
+                        <div class="code-title">生成的图案代码</div>
+                        <div class="code-actions">
+                            <button class="code-btn" onclick="copyPatternCode()">复制</button>
+                        </div>
+                    </div>
+                    <div class="code-content" id="patternCode">&lt;pattern&gt;...&lt;/pattern&gt;</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 导航 -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <a href="../gradients/" class="btn">← 上一章：渐变效果</a>
+                <a href="../filters/" class="btn btn-primary">下一章：滤镜效果 →</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../common/utils.js"></script>
+    <script>
+        // 图案编辑器
+        const patternType = document.getElementById('patternType');
+        const patternSize = document.getElementById('patternSize');
+        const primaryColor = document.getElementById('primaryColor');
+        const secondaryColor = document.getElementById('secondaryColor');
+        const rotateAngle = document.getElementById('rotateAngle');
+        const scaleValue = document.getElementById('scaleValue');
+        const demoPattern = document.getElementById('demoPattern');
+        const patternCode = document.getElementById('patternCode');
+
+        function updatePattern() {
+            const type = patternType.value;
+            const size = patternSize.value;
+            const primary = primaryColor.value;
+            const secondary = secondaryColor.value;
+            const rotate = rotateAngle.value;
+            const scale = scaleValue.value;
+            
+            // 清除现有图案
+            demoPattern.innerHTML = '';
+            demoPattern.setAttribute('width', size);
+            demoPattern.setAttribute('height', size);
+            
+            // 设置变换
+            const transform = `rotate(${rotate}) scale(${scale})`;
+            if (rotate != 0 || scale != 1) {
+                demoPattern.setAttribute('patternTransform', transform);
+            } else {
+                demoPattern.removeAttribute('patternTransform');
+            }
+            
+            let code = '';
+            
+            switch (type) {
+                case 'dots':
+                    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    circle.setAttribute('cx', size / 2);
+                    circle.setAttribute('cy', size / 2);
+                    circle.setAttribute('r', size / 6);
+                    circle.setAttribute('fill', primary);
+                    demoPattern.appendChild(circle);
+                    
+                    code = `&lt;pattern width="${size}" height="${size}"&gt;
+  &lt;circle cx="${size/2}" cy="${size/2}" r="${size/6}" fill="${primary}"/&gt;
+&lt;/pattern&gt;`;
+                    break;
+                    
+                case 'stripes':
+                    const rect1 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                    rect1.setAttribute('x', '0');
+                    rect1.setAttribute('y', '0');
+                    rect1.setAttribute('width', size / 2);
+                    rect1.setAttribute('height', size);
+                    rect1.setAttribute('fill', primary);
+                    
+                    const rect2 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                    rect2.setAttribute('x', size / 2);
+                    rect2.setAttribute('y', '0');
+                    rect2.setAttribute('width', size / 2);
+                    rect2.setAttribute('height', size);
+                    rect2.setAttribute('fill', secondary);
+                    
+                    demoPattern.appendChild(rect1);
+                    demoPattern.appendChild(rect2);
+                    
+                    code = `&lt;pattern width="${size}" height="${size}"&gt;
+  &lt;rect width="${size/2}" height="${size}" fill="${primary}"/&gt;
+  &lt;rect x="${size/2}" width="${size/2}" height="${size}" fill="${secondary}"/&gt;
+&lt;/pattern&gt;`;
+                    break;
+                    
+                case 'grid':
+                    const gridRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                    gridRect.setAttribute('x', '0');
+                    gridRect.setAttribute('y', '0');
+                    gridRect.setAttribute('width', size);
+                    gridRect.setAttribute('height', size);
+                    gridRect.setAttribute('fill', 'none');
+                    gridRect.setAttribute('stroke', primary);
+                    gridRect.setAttribute('stroke-width', '1');
+                    demoPattern.appendChild(gridRect);
+                    
+                    code = `&lt;pattern width="${size}" height="${size}"&gt;
+  &lt;rect width="${size}" height="${size}" fill="none" stroke="${primary}" stroke-width="1"/&gt;
+&lt;/pattern&gt;`;
+                    break;
+                    
+                case 'checkerboard':
+                    const half = size / 2;
+                    
+                    const check1 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                    check1.setAttribute('x', '0');
+                    check1.setAttribute('y', '0');
+                    check1.setAttribute('width', half);
+                    check1.setAttribute('height', half);
+                    check1.setAttribute('fill', primary);
+                    
+                    const check2 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                    check2.setAttribute('x', half);
+                    check2.setAttribute('y', half);
+                    check2.setAttribute('width', half);
+                    check2.setAttribute('height', half);
+                    check2.setAttribute('fill', primary);
+                    
+                    const check3 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                    check3.setAttribute('x', '0');
+                    check3.setAttribute('y', half);
+                    check3.setAttribute('width', half);
+                    check3.setAttribute('height', half);
+                    check3.setAttribute('fill', secondary);
+                    
+                    const check4 = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                    check4.setAttribute('x', half);
+                    check4.setAttribute('y', '0');
+                    check4.setAttribute('width', half);
+                    check4.setAttribute('height', half);
+                    check4.setAttribute('fill', secondary);
+                    
+                    [check1, check2, check3, check4].forEach(rect => demoPattern.appendChild(rect));
+                    
+                    code = `&lt;pattern width="${size}" height="${size}"&gt;
+  &lt;rect width="${half}" height="${half}" fill="${primary}"/&gt;
+  &lt;rect x="${half}" y="${half}" width="${half}" height="${half}" fill="${primary}"/&gt;
+  &lt;rect y="${half}" width="${half}" height="${half}" fill="${secondary}"/&gt;
+  &lt;rect x="${half}" width="${half}" height="${half}" fill="${secondary}"/&gt;
+&lt;/pattern&gt;`;
+                    break;
+            }
+            
+            patternCode.textContent = code;
+        }
+
+        function copyPatternCode() {
+            navigator.clipboard.writeText(patternCode.textContent).then(() => {
+                document.querySelector('.code-actions .code-btn').textContent = '已复制!';
+                setTimeout(() => {
+                    document.querySelector('.code-actions .code-btn').textContent = '复制';
+                }, 2000);
+            });
+        }
+
+        // 绑定事件
+        [patternType, patternSize, primaryColor, secondaryColor, rotateAngle, scaleValue].forEach(element => {
+            element.addEventListener('input', updatePattern);
+            element.addEventListener('change', updatePattern);
+        });
+
+        // 初始化
+        updatePattern();
+    </script>
+</body>
+</html> 

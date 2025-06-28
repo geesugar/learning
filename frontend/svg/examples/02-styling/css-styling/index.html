@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSS样式控制 - SVG学习示例</title>
+    <link rel="stylesheet" href="../../common/styles.css">
+    <link rel="stylesheet" href="../../common/demo.css">
+    <style>
+        /* SVG专用样式 */
+        .demo-svg {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        
+        .styled-circle {
+            fill: #FF6B9D;
+            stroke: #C2185B;
+            stroke-width: 3;
+            transition: all 0.3s ease;
+        }
+        
+        .styled-circle:hover {
+            fill: #E91E63;
+            stroke-width: 4;
+        }
+        
+        .styled-rect {
+            fill: #42A5F5;
+            stroke: #1976D2;
+            stroke-width: 2;
+        }
+        
+        .styled-text {
+            fill: #4CAF50;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        /* 响应式样式 */
+        @media (max-width: 768px) {
+            .styled-text {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body class="demo-page">
+    <div class="demo-header">
+        <div class="container">
+            <nav class="breadcrumb">
+                <ol class="breadcrumb-list">
+                    <li class="breadcrumb-item"><a href="../../index.html">示例首页</a></li>
+                    <li class="breadcrumb-item"><a href="../index.html">样式与效果</a></li>
+                    <li class="breadcrumb-item active">CSS样式控制</li>
+                </ol>
+            </nav>
+            <h1 class="demo-title">CSS样式控制</h1>
+            <p class="demo-subtitle">学习在SVG中使用CSS进行样式控制和响应式设计</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="demo-main">
+            <div class="demo-content">
+                <!-- 基础CSS样式 -->
+                <div class="card">
+                    <h2>🎨 基础CSS样式</h2>
+                    <p>SVG支持大部分CSS属性，可以像HTML元素一样进行样式控制。</p>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <h3>内联样式</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="100" viewBox="0 0 200 100" class="demo-svg">
+                                    <circle cx="50" cy="50" r="20" 
+                                            style="fill: #FF9800; stroke: #F57C00; stroke-width: 3;"/>
+                                    <rect x="100" y="30" width="40" height="25" 
+                                          style="fill: #2196F3; stroke: #1976D2; stroke-width: 2;"/>
+                                    <text x="140" y="75" style="fill: #4CAF50; font-size: 12px;">内联样式</text>
+                                </svg>
+                            </div>
+                            
+                            <div class="code-editor">
+                                <div class="code-content">&lt;circle cx="50" cy="50" r="20" 
+        style="fill: #FF9800; stroke: #F57C00; stroke-width: 3;"/&gt;</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>CSS类样式</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="100" viewBox="0 0 200 100" class="demo-svg">
+                                    <circle cx="50" cy="50" r="20" class="styled-circle"/>
+                                    <rect x="100" y="30" width="40" height="25" class="styled-rect"/>
+                                    <text x="140" y="75" class="styled-text">CSS类样式</text>
+                                </svg>
+                            </div>
+                            
+                            <div class="code-editor">
+                                <div class="code-content">.styled-circle {
+  fill: #FF6B9D;
+  stroke: #C2185B;
+  stroke-width: 3;
+}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CSS选择器 -->
+                <div class="card">
+                    <h2>🎯 CSS选择器</h2>
+                    <p>SVG支持各种CSS选择器，包括元素选择器、类选择器、ID选择器等。</p>
+                    
+                    <div class="grid grid-3">
+                        <div>
+                            <h3>元素选择器</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <style>
+                                        circle { fill: #E91E63; }
+                                        rect { fill: #3F51B5; }
+                                        text { fill: #FF9800; font-size: 12px; }
+                                    </style>
+                                    <circle cx="40" cy="35" r="15"/>
+                                    <rect x="75" y="20" width="30" height="20"/>
+                                    <text x="75" y="65">元素选择器</text>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>类选择器</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <style>
+                                        .primary { fill: #2196F3; }
+                                        .secondary { fill: #FF5722; }
+                                        .accent { fill: #4CAF50; font-size: 12px; }
+                                    </style>
+                                    <circle cx="40" cy="35" r="15" class="primary"/>
+                                    <rect x="75" y="20" width="30" height="20" class="secondary"/>
+                                    <text x="75" y="65" class="accent">类选择器</text>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>伪类选择器</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <style>
+                                        .interactive:hover { fill: #FF9800; transform: scale(1.1); }
+                                        .interactive { transition: all 0.3s ease; cursor: pointer; }
+                                    </style>
+                                    <circle cx="40" cy="35" r="15" class="interactive" fill="#9C27B0"/>
+                                    <rect x="75" y="20" width="30" height="20" class="interactive" fill="#607D8B"/>
+                                    <text x="75" y="65" style="font-size: 10px; fill: #666;">悬停试试</text>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 样式优先级 -->
+                <div class="card">
+                    <h2>⚖️ 样式优先级</h2>
+                    <p>SVG中的样式优先级规则与HTML相同：内联样式 > ID选择器 > 类选择器 > 元素选择器</p>
+                    
+                    <div class="svg-example">
+                        <svg width="400" height="120" viewBox="0 0 400 120" class="demo-svg">
+                            <style>
+                                circle { fill: #E0E0E0; }  /* 元素选择器 - 最低优先级 */
+                                .circle-class { fill: #2196F3; }  /* 类选择器 */
+                                #circle-id { fill: #4CAF50; }  /* ID选择器 */
+                            </style>
+                            
+                            <!-- 元素选择器 -->
+                            <circle cx="60" cy="60" r="25"/>
+                            <text x="60" y="100" text-anchor="middle" font-size="12">元素选择器</text>
+                            
+                            <!-- 类选择器 -->
+                            <circle cx="160" cy="60" r="25" class="circle-class"/>
+                            <text x="160" y="100" text-anchor="middle" font-size="12">类选择器</text>
+                            
+                            <!-- ID选择器 -->
+                            <circle cx="260" cy="60" r="25" id="circle-id" class="circle-class"/>
+                            <text x="260" y="100" text-anchor="middle" font-size="12">ID选择器</text>
+                            
+                            <!-- 内联样式 -->
+                            <circle cx="360" cy="60" r="25" id="circle-id" class="circle-class" 
+                                    style="fill: #FF5722;"/>
+                            <text x="360" y="100" text-anchor="middle" font-size="12">内联样式</text>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- CSS动画和过渡 -->
+                <div class="card">
+                    <h2>🎬 CSS动画和过渡</h2>
+                    <p>SVG支持CSS动画和过渡效果，可以创建流畅的交互体验。</p>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <h3>CSS过渡</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="100" viewBox="0 0 200 100" class="demo-svg">
+                                    <style>
+                                        .transition-demo {
+                                            fill: #2196F3;
+                                            transition: all 0.5s ease;
+                                            cursor: pointer;
+                                        }
+                                        .transition-demo:hover {
+                                            fill: #FF5722;
+                                            transform: scale(1.2);
+                                        }
+                                    </style>
+                                    <circle cx="60" cy="50" r="20" class="transition-demo"/>
+                                    <rect x="120" y="30" width="30" height="25" class="transition-demo"/>
+                                    <text x="100" y="85" text-anchor="middle" font-size="12">悬停看效果</text>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>CSS关键帧动画</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="100" viewBox="0 0 200 100" class="demo-svg">
+                                    <style>
+                                        @keyframes rotate {
+                                            from { transform: rotate(0deg); }
+                                            to { transform: rotate(360deg); }
+                                        }
+                                        @keyframes pulse {
+                                            0%, 100% { opacity: 1; }
+                                            50% { opacity: 0.5; }
+                                        }
+                                        .rotating {
+                                            animation: rotate 3s linear infinite;
+                                            transform-origin: center;
+                                        }
+                                        .pulsing {
+                                            animation: pulse 2s ease-in-out infinite;
+                                        }
+                                    </style>
+                                    <rect x="45" y="35" width="30" height="30" class="rotating" fill="#9C27B0"/>
+                                    <circle cx="150" cy="50" r="20" class="pulsing" fill="#FF9800"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 响应式SVG -->
+                <div class="card">
+                    <h2>📱 响应式SVG</h2>
+                    <p>使用CSS媒体查询可以创建响应式的SVG设计。</p>
+                    
+                    <div class="svg-example">
+                        <svg width="100%" height="150" viewBox="0 0 400 150" class="demo-svg">
+                            <style>
+                                .responsive-text {
+                                    font-size: 18px;
+                                    fill: #2196F3;
+                                    text-anchor: middle;
+                                }
+                                .responsive-circle {
+                                    fill: #4CAF50;
+                                }
+                                
+                                @media (max-width: 768px) {
+                                    .responsive-text {
+                                        font-size: 14px;
+                                        fill: #FF5722;
+                                    }
+                                    .responsive-circle {
+                                        fill: #FF9800;
+                                    }
+                                }
+                                
+                                @media (max-width: 480px) {
+                                    .responsive-text {
+                                        font-size: 12px;
+                                        fill: #9C27B0;
+                                    }
+                                    .responsive-circle {
+                                        fill: #E91E63;
+                                    }
+                                }
+                            </style>
+                            <circle cx="200" cy="60" r="30" class="responsive-circle"/>
+                            <text x="200" y="120" class="responsive-text">调整窗口大小看效果</text>
+                        </svg>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <strong>提示：</strong>调整浏览器窗口大小，观察SVG元素的颜色和文字大小变化。
+                    </div>
+                </div>
+
+                <!-- 外部样式表 -->
+                <div class="card">
+                    <h2>📄 外部样式表</h2>
+                    <p>SVG可以链接外部CSS文件，便于样式管理和复用。</p>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <h3>内嵌样式表</h3>
+                            <div class="code-editor">
+                                <div class="code-content">&lt;svg&gt;
+  &lt;style&gt;
+    .my-circle { fill: blue; }
+    .my-text { font-size: 14px; }
+  &lt;/style&gt;
+  &lt;circle class="my-circle" .../&gt;
+&lt;/svg&gt;</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>外部样式表</h3>
+                            <div class="code-editor">
+                                <div class="code-content">&lt;?xml-stylesheet type="text/css" href="styles.css"?&gt;
+&lt;svg&gt;
+  &lt;circle class="my-circle" .../&gt;
+&lt;/svg&gt;
+
+/* styles.css */
+.my-circle { fill: blue; }</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 侧边栏交互控制器 -->
+            <div class="demo-sidebar">
+                <h3>🎮 样式实时编辑器</h3>
+                <div class="interactive-controls">
+                    <div class="control-section">
+                        <h4>形状属性</h4>
+                        <div class="control-row">
+                            <label class="control-label">填充颜色</label>
+                            <input type="color" id="fillColor" class="control-input color-input" value="#2196F3">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">描边颜色</label>
+                            <input type="color" id="strokeColor" class="control-input color-input" value="#1976D2">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">描边宽度</label>
+                            <input type="range" id="strokeWidth" class="control-input range-input" min="0" max="8" value="2">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">透明度</label>
+                            <input type="range" id="opacity" class="control-input range-input" min="0" max="1" step="0.1" value="1">
+                        </div>
+                    </div>
+                    
+                    <div class="control-section">
+                        <h4>动画效果</h4>
+                        <div class="control-row">
+                            <label class="control-label">启用悬停效果</label>
+                            <input type="checkbox" id="enableHover" class="control-input checkbox-input" checked>
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">动画速度</label>
+                            <select id="animationSpeed" class="control-input">
+                                <option value="0.1s">快速</option>
+                                <option value="0.3s" selected>中等</option>
+                                <option value="0.6s">慢速</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="svg-display has-content">
+                    <svg id="demoSVG" width="200" height="150" viewBox="0 0 200 150">
+                        <style id="dynamicStyles">
+                            .demo-shape {
+                                fill: #2196F3;
+                                stroke: #1976D2;
+                                stroke-width: 2;
+                                opacity: 1;
+                                transition: all 0.3s ease;
+                                cursor: pointer;
+                            }
+                            .demo-shape:hover {
+                                transform: scale(1.1);
+                            }
+                        </style>
+                        <circle cx="60" cy="60" r="25" class="demo-shape"/>
+                        <rect x="120" y="35" width="40" height="30" class="demo-shape"/>
+                        <text x="100" y="130" text-anchor="middle" font-size="12" fill="#666">实时样式预览</text>
+                    </svg>
+                </div>
+
+                <div class="code-editor">
+                    <div class="code-header">
+                        <div class="code-title">生成的CSS代码</div>
+                        <div class="code-actions">
+                            <button class="code-btn" onclick="copyCSS()">复制</button>
+                        </div>
+                    </div>
+                    <div class="code-content" id="cssCode">.demo-shape {
+  fill: #2196F3;
+  stroke: #1976D2;
+  stroke-width: 2;
+  opacity: 1;
+}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 导航 -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <a href="../index.html" class="btn">← 返回样式与效果</a>
+                <a href="../fill-stroke/" class="btn btn-primary">下一章：填充和描边 →</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../common/utils.js"></script>
+    <script>
+        // 样式实时编辑器
+        const fillColor = document.getElementById('fillColor');
+        const strokeColor = document.getElementById('strokeColor');
+        const strokeWidth = document.getElementById('strokeWidth');
+        const opacity = document.getElementById('opacity');
+        const enableHover = document.getElementById('enableHover');
+        const animationSpeed = document.getElementById('animationSpeed');
+        const dynamicStyles = document.getElementById('dynamicStyles');
+        const cssCode = document.getElementById('cssCode');
+
+        function updateStyles() {
+            const fill = fillColor.value;
+            const stroke = strokeColor.value;
+            const width = strokeWidth.value;
+            const alpha = opacity.value;
+            const hover = enableHover.checked;
+            const speed = animationSpeed.value;
+            
+            const css = `
+                .demo-shape {
+                    fill: ${fill};
+                    stroke: ${stroke};
+                    stroke-width: ${width};
+                    opacity: ${alpha};
+                    transition: all ${speed} ease;
+                    cursor: pointer;
+                }
+                ${hover ? `.demo-shape:hover {
+                    transform: scale(1.1);
+                }` : ''}
+            `;
+            
+            dynamicStyles.textContent = css;
+            
+            // 更新代码显示
+            cssCode.textContent = `.demo-shape {
+  fill: ${fill};
+  stroke: ${stroke};
+  stroke-width: ${width};
+  opacity: ${alpha};
+  transition: all ${speed} ease;
+}${hover ? `
+.demo-shape:hover {
+  transform: scale(1.1);
+}` : ''}`;
+        }
+
+        function copyCSS() {
+            navigator.clipboard.writeText(cssCode.textContent).then(() => {
+                document.querySelector('.code-actions .code-btn').textContent = '已复制!';
+                setTimeout(() => {
+                    document.querySelector('.code-actions .code-btn').textContent = '复制';
+                }, 2000);
+            });
+        }
+
+        // 绑定事件
+        [fillColor, strokeColor, strokeWidth, opacity, enableHover, animationSpeed].forEach(element => {
+            element.addEventListener('input', updateStyles);
+            element.addEventListener('change', updateStyles);
+        });
+
+        // 初始化
+        updateStyles();
+    </script>
+</body>
+</html> 

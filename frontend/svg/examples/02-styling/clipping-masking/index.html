@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>剪裁和遮罩 - SVG学习示例</title>
+    <link rel="stylesheet" href="../../common/styles.css">
+    <link rel="stylesheet" href="../../common/demo.css">
+    <style>
+        .demo-svg {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+    </style>
+</head>
+<body class="demo-page">
+    <div class="demo-header">
+        <div class="container">
+            <nav class="breadcrumb">
+                <ol class="breadcrumb-list">
+                    <li class="breadcrumb-item"><a href="../../index.html">示例首页</a></li>
+                    <li class="breadcrumb-item"><a href="../index.html">样式与效果</a></li>
+                    <li class="breadcrumb-item active">剪裁和遮罩</li>
+                </ol>
+            </nav>
+            <h1 class="demo-title">剪裁和遮罩</h1>
+            <p class="demo-subtitle">掌握SVG中的clipPath和mask，创建精确的裁剪和遮罩效果</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="demo-main">
+            <div class="demo-content">
+                <!-- 基础剪裁 -->
+                <div class="card">
+                    <h2>✂️ 基础剪裁（clipPath）</h2>
+                    <p>clipPath元素定义剪裁路径，只显示路径内部的内容。</p>
+                    
+                    <div class="grid grid-3">
+                        <div>
+                            <h3>圆形剪裁</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <defs>
+                                        <clipPath id="circleClip">
+                                            <circle cx="75" cy="50" r="30"/>
+                                        </clipPath>
+                                    </defs>
+                                    <rect x="25" y="20" width="100" height="60" fill="url(#rainbow)" 
+                                          clip-path="url(#circleClip)"/>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">circle裁剪路径</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>多边形剪裁</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <defs>
+                                        <clipPath id="starClip">
+                                            <polygon points="75,15 85,45 115,45 92,65 102,95 75,80 48,95 58,65 35,45 65,45"/>
+                                        </clipPath>
+                                    </defs>
+                                    <rect x="25" y="10" width="100" height="80" fill="url(#rainbow)" 
+                                          clip-path="url(#starClip)"/>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">星形裁剪</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>路径剪裁</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <defs>
+                                        <clipPath id="heartClip">
+                                            <path d="M75,85 C75,85 115,65 115,40 C115,25 100,15 85,15 C80,15 75,20 75,20 C75,20 70,15 65,15 C50,15 35,25 35,40 C35,65 75,85 75,85 Z"/>
+                                        </clipPath>
+                                    </defs>
+                                    <rect x="25" y="10" width="100" height="80" fill="url(#rainbow)" 
+                                          clip-path="url(#heartClip)"/>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">心形路径裁剪</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 基础遮罩 -->
+                <div class="card">
+                    <h2>🎭 基础遮罩（mask）</h2>
+                    <p>mask元素使用灰度值控制透明度，白色完全显示，黑色完全隐藏。</p>
+                    
+                    <div class="grid grid-3">
+                        <div>
+                            <h3>渐变遮罩</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <defs>
+                                        <linearGradient id="maskGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" style="stop-color:white;stop-opacity:1" />
+                                            <stop offset="100%" style="stop-color:black;stop-opacity:1" />
+                                        </linearGradient>
+                                        <mask id="gradientMask">
+                                            <rect x="0" y="0" width="150" height="100" fill="url(#maskGradient)"/>
+                                        </mask>
+                                    </defs>
+                                    <rect x="25" y="25" width="100" height="50" fill="#FF5722" mask="url(#gradientMask)"/>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">渐变透明度</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>圆形遮罩</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <defs>
+                                        <radialGradient id="radialMask" cx="50%" cy="50%" r="50%">
+                                            <stop offset="0%" style="stop-color:white;stop-opacity:1" />
+                                            <stop offset="70%" style="stop-color:white;stop-opacity:1" />
+                                            <stop offset="100%" style="stop-color:black;stop-opacity:1" />
+                                        </radialGradient>
+                                        <mask id="circleMask">
+                                            <rect x="0" y="0" width="150" height="100" fill="url(#radialMask)"/>
+                                        </mask>
+                                    </defs>
+                                    <rect x="25" y="25" width="100" height="50" fill="#2196F3" mask="url(#circleMask)"/>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">径向透明度</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>文字遮罩</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <defs>
+                                        <mask id="textMask">
+                                            <rect x="0" y="0" width="150" height="100" fill="black"/>
+                                            <text x="75" y="60" text-anchor="middle" font-size="24" font-weight="bold" fill="white">SVG</text>
+                                        </mask>
+                                    </defs>
+                                    <rect x="25" y="25" width="100" height="50" fill="#4CAF50" mask="url(#textMask)"/>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">文字形状遮罩</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 复杂剪裁组合 -->
+                <div class="card">
+                    <h2>🔗 复杂剪裁组合</h2>
+                    <p>组合多个剪裁路径，创建复杂的裁剪效果。</p>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <h3>多层剪裁</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="120" viewBox="0 0 200 120" class="demo-svg">
+                                    <defs>
+                                        <clipPath id="outerClip">
+                                            <circle cx="100" cy="60" r="40"/>
+                                        </clipPath>
+                                        <clipPath id="innerClip" clip-path="url(#outerClip)">
+                                            <rect x="70" y="30" width="60" height="60"/>
+                                        </clipPath>
+                                    </defs>
+                                    <rect x="50" y="20" width="100" height="80" fill="url(#rainbow)" 
+                                          clip-path="url(#innerClip)"/>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>动画剪裁</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="120" viewBox="0 0 200 120" class="demo-svg">
+                                    <defs>
+                                        <clipPath id="animatedClip">
+                                            <circle cx="100" cy="60" r="20">
+                                                <animate attributeName="r" 
+                                                         values="10;40;10" 
+                                                         dur="3s" 
+                                                         repeatCount="indefinite"/>
+                                            </circle>
+                                        </clipPath>
+                                    </defs>
+                                    <rect x="50" y="20" width="100" height="80" fill="#FF9800" 
+                                          clip-path="url(#animatedClip)"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 图像遮罩效果 -->
+                <div class="card">
+                    <h2>🖼️ 图像遮罩效果</h2>
+                    <p>使用复杂的图案和形状创建高级遮罩效果。</p>
+                    
+                    <div class="svg-example">
+                        <svg width="100%" height="200" viewBox="0 0 400 200" class="demo-svg">
+                            <defs>
+                                <!-- 网格遮罩 -->
+                                <pattern id="gridMaskPattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                                    <rect x="0" y="0" width="10" height="10" fill="white"/>
+                                    <rect x="10" y="10" width="10" height="10" fill="white"/>
+                                    <rect x="0" y="10" width="10" height="10" fill="black"/>
+                                    <rect x="10" y="0" width="10" height="10" fill="black"/>
+                                </pattern>
+                                <mask id="gridMask">
+                                    <rect x="0" y="0" width="400" height="200" fill="url(#gridMaskPattern)"/>
+                                </mask>
+                                
+                                <!-- 条纹遮罩 -->
+                                <pattern id="stripeMaskPattern" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+                                    <rect x="0" y="0" width="5" height="10" fill="white"/>
+                                    <rect x="5" y="0" width="5" height="10" fill="black"/>
+                                </pattern>
+                                <mask id="stripeMask">
+                                    <rect x="0" y="0" width="400" height="200" fill="url(#stripeMaskPattern)"/>
+                                </mask>
+                                
+                                <!-- 圆点遮罩 -->
+                                <pattern id="dotMaskPattern" x="0" y="0" width="25" height="25" patternUnits="userSpaceOnUse">
+                                    <rect x="0" y="0" width="25" height="25" fill="black"/>
+                                    <circle cx="12.5" cy="12.5" r="8" fill="white"/>
+                                </pattern>
+                                <mask id="dotMask">
+                                    <rect x="0" y="0" width="400" height="200" fill="url(#dotMaskPattern)"/>
+                                </mask>
+                            </defs>
+                            
+                            <rect x="30" y="50" width="100" height="80" fill="#FF5722" mask="url(#gridMask)"/>
+                            <text x="80" y="145" text-anchor="middle" font-size="12" fill="#666">网格遮罩</text>
+                            
+                            <rect x="150" y="50" width="100" height="80" fill="#2196F3" mask="url(#stripeMask)"/>
+                            <text x="200" y="145" text-anchor="middle" font-size="12" fill="#666">条纹遮罩</text>
+                            
+                            <rect x="270" y="50" width="100" height="80" fill="#4CAF50" mask="url(#dotMask)"/>
+                            <text x="320" y="145" text-anchor="middle" font-size="12" fill="#666">圆点遮罩</text>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- 剪裁与遮罩结合 -->
+                <div class="card">
+                    <h2>🎨 剪裁与遮罩结合</h2>
+                    <p>同时使用剪裁和遮罩，创建更复杂的视觉效果。</p>
+                    
+                    <div class="svg-example">
+                        <svg width="100%" height="180" viewBox="0 0 400 180" class="demo-svg">
+                            <defs>
+                                <!-- 心形剪裁路径 -->
+                                <clipPath id="heartShape">
+                                    <path d="M200,150 C200,150 250,125 250,95 C250,75 230,60 210,60 C205,60 200,65 200,65 C200,65 195,60 190,60 C170,60 150,75 150,95 C150,125 200,150 200,150 Z"/>
+                                </clipPath>
+                                
+                                <!-- 渐变遮罩 -->
+                                <radialGradient id="heartMaskGradient" cx="50%" cy="40%" r="60%">
+                                    <stop offset="0%" style="stop-color:white;stop-opacity:1" />
+                                    <stop offset="80%" style="stop-color:white;stop-opacity:0.8" />
+                                    <stop offset="100%" style="stop-color:black;stop-opacity:1" />
+                                </radialGradient>
+                                <mask id="heartMask">
+                                    <rect x="0" y="0" width="400" height="180" fill="url(#heartMaskGradient)"/>
+                                </mask>
+                                
+                                <!-- 彩虹渐变背景 -->
+                                <linearGradient id="rainbowBg" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#FF0000" />
+                                    <stop offset="16.66%" style="stop-color:#FF8800" />
+                                    <stop offset="33.33%" style="stop-color:#FFFF00" />
+                                    <stop offset="50%" style="stop-color:#00FF00" />
+                                    <stop offset="66.66%" style="stop-color:#0088FF" />
+                                    <stop offset="83.33%" style="stop-color:#0000FF" />
+                                    <stop offset="100%" style="stop-color:#8800FF" />
+                                </linearGradient>
+                            </defs>
+                            
+                            <rect x="50" y="30" width="300" height="120" fill="url(#rainbowBg)" 
+                                  clip-path="url(#heartShape)" mask="url(#heartMask)"/>
+                        </svg>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <strong>效果说明：</strong>首先用心形路径裁剪矩形，再用径向渐变遮罩创建中心发光效果。
+                    </div>
+                </div>
+            </div>
+
+            <!-- 侧边栏交互控制器 -->
+            <div class="demo-sidebar">
+                <h3>🎮 剪裁遮罩编辑器</h3>
+                <div class="interactive-controls">
+                    <div class="control-section">
+                        <h4>效果类型</h4>
+                        <div class="control-row">
+                            <label class="control-label">效果类型</label>
+                            <select id="effectType" class="control-input">
+                                <option value="none">无效果</option>
+                                <option value="clip-circle">圆形剪裁</option>
+                                <option value="clip-rect">矩形剪裁</option>
+                                <option value="mask-gradient">渐变遮罩</option>
+                                <option value="mask-radial">径向遮罩</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="control-section" id="circleControls" style="display: none;">
+                        <h4>圆形参数</h4>
+                        <div class="control-row">
+                            <label class="control-label">圆心X</label>
+                            <input type="range" id="circleX" class="control-input range-input" min="50" max="150" value="100">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">圆心Y</label>
+                            <input type="range" id="circleY" class="control-input range-input" min="25" max="125" value="75">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">半径</label>
+                            <input type="range" id="circleR" class="control-input range-input" min="10" max="60" value="30">
+                        </div>
+                    </div>
+                    
+                    <div class="control-section" id="rectControls" style="display: none;">
+                        <h4>矩形参数</h4>
+                        <div class="control-row">
+                            <label class="control-label">宽度</label>
+                            <input type="range" id="rectWidth" class="control-input range-input" min="20" max="120" value="60">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">高度</label>
+                            <input type="range" id="rectHeight" class="control-input range-input" min="20" max="100" value="40">
+                        </div>
+                    </div>
+                    
+                    <div class="control-section" id="gradientControls" style="display: none;">
+                        <h4>渐变参数</h4>
+                        <div class="control-row">
+                            <label class="control-label">渐变方向</label>
+                            <select id="gradientDirection" class="control-input">
+                                <option value="horizontal">水平</option>
+                                <option value="vertical">垂直</option>
+                                <option value="diagonal">对角</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="control-section">
+                        <h4>形状属性</h4>
+                        <div class="control-row">
+                            <label class="control-label">填充颜色</label>
+                            <input type="color" id="fillColor" class="control-input color-input" value="#2196F3">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="svg-display has-content">
+                    <svg id="demoSVG" width="200" height="150" viewBox="0 0 200 150">
+                        <defs id="effectDefs">
+                            <!-- 动态效果将在这里生成 -->
+                        </defs>
+                        <rect id="demoRect" x="50" y="40" width="100" height="60" fill="#2196F3"/>
+                        <text x="100" y="125" text-anchor="middle" font-size="12" fill="#666">效果预览</text>
+                    </svg>
+                </div>
+
+                <div class="code-editor">
+                    <div class="code-header">
+                        <div class="code-title">生成的效果代码</div>
+                        <div class="code-actions">
+                            <button class="code-btn" onclick="copyEffectCode()">复制</button>
+                        </div>
+                    </div>
+                    <div class="code-content" id="effectCode">无效果</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 导航 -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <a href="../filters/" class="btn">← 上一章：滤镜效果</a>
+                <a href="../index.html" class="btn btn-primary">返回样式与效果 →</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../common/utils.js"></script>
+    <script>
+        // 剪裁遮罩编辑器
+        const effectType = document.getElementById('effectType');
+        const circleX = document.getElementById('circleX');
+        const circleY = document.getElementById('circleY');
+        const circleR = document.getElementById('circleR');
+        const rectWidth = document.getElementById('rectWidth');
+        const rectHeight = document.getElementById('rectHeight');
+        const gradientDirection = document.getElementById('gradientDirection');
+        const fillColor = document.getElementById('fillColor');
+        const effectDefs = document.getElementById('effectDefs');
+        const demoRect = document.getElementById('demoRect');
+        const effectCode = document.getElementById('effectCode');
+
+        function updateEffect() {
+            const type = effectType.value;
+            const color = fillColor.value;
+            
+            // 清除现有效果
+            effectDefs.innerHTML = '';
+            demoRect.removeAttribute('clip-path');
+            demoRect.removeAttribute('mask');
+            demoRect.setAttribute('fill', color);
+            
+            // 显示/隐藏控制面板
+            document.getElementById('circleControls').style.display = type === 'clip-circle' ? 'block' : 'none';
+            document.getElementById('rectControls').style.display = type === 'clip-rect' ? 'block' : 'none';
+            document.getElementById('gradientControls').style.display = (type === 'mask-gradient') ? 'block' : 'none';
+            
+            let code = '';
+            
+            switch (type) {
+                case 'none':
+                    code = '无效果';
+                    break;
+                    
+                case 'clip-circle':
+                    const cx = circleX.value;
+                    const cy = circleY.value;
+                    const r = circleR.value;
+                    
+                    const clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+                    clipPath.setAttribute('id', 'dynamicClip');
+                    
+                    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    circle.setAttribute('cx', cx);
+                    circle.setAttribute('cy', cy);
+                    circle.setAttribute('r', r);
+                    clipPath.appendChild(circle);
+                    
+                    effectDefs.appendChild(clipPath);
+                    demoRect.setAttribute('clip-path', 'url(#dynamicClip)');
+                    
+                    code = `&lt;clipPath id="circleClip"&gt;
+  &lt;circle cx="${cx}" cy="${cy}" r="${r}"/&gt;
+&lt;/clipPath&gt;`;
+                    break;
+                    
+                case 'clip-rect':
+                    const width = rectWidth.value;
+                    const height = rectHeight.value;
+                    const x = 100 - width / 2;
+                    const y = 75 - height / 2;
+                    
+                    const rectClipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+                    rectClipPath.setAttribute('id', 'dynamicClip');
+                    
+                    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                    rect.setAttribute('x', x);
+                    rect.setAttribute('y', y);
+                    rect.setAttribute('width', width);
+                    rect.setAttribute('height', height);
+                    rectClipPath.appendChild(rect);
+                    
+                    effectDefs.appendChild(rectClipPath);
+                    demoRect.setAttribute('clip-path', 'url(#dynamicClip)');
+                    
+                    code = `&lt;clipPath id="rectClip"&gt;
+  &lt;rect x="${x}" y="${y}" width="${width}" height="${height}"/&gt;
+&lt;/clipPath&gt;`;
+                    break;
+                    
+                case 'mask-gradient':
+                    const direction = gradientDirection.value;
+                    let x1 = '0%', y1 = '0%', x2 = '100%', y2 = '0%';
+                    
+                    switch (direction) {
+                        case 'horizontal':
+                            x1 = '0%'; y1 = '0%'; x2 = '100%'; y2 = '0%';
+                            break;
+                        case 'vertical':
+                            x1 = '0%'; y1 = '0%'; x2 = '0%'; y2 = '100%';
+                            break;
+                        case 'diagonal':
+                            x1 = '0%'; y1 = '0%'; x2 = '100%'; y2 = '100%';
+                            break;
+                    }
+                    
+                    const gradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+                    gradient.setAttribute('id', 'dynamicMaskGradient');
+                    gradient.setAttribute('x1', x1);
+                    gradient.setAttribute('y1', y1);
+                    gradient.setAttribute('x2', x2);
+                    gradient.setAttribute('y2', y2);
+                    
+                    const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+                    stop1.setAttribute('offset', '0%');
+                    stop1.setAttribute('style', 'stop-color:white;stop-opacity:1');
+                    
+                    const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+                    stop2.setAttribute('offset', '100%');
+                    stop2.setAttribute('style', 'stop-color:black;stop-opacity:1');
+                    
+                    gradient.appendChild(stop1);
+                    gradient.appendChild(stop2);
+                    
+                    const mask = document.createElementNS('http://www.w3.org/2000/svg', 'mask');
+                    mask.setAttribute('id', 'dynamicMask');
+                    
+                    const maskRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                    maskRect.setAttribute('x', '0');
+                    maskRect.setAttribute('y', '0');
+                    maskRect.setAttribute('width', '200');
+                    maskRect.setAttribute('height', '150');
+                    maskRect.setAttribute('fill', 'url(#dynamicMaskGradient)');
+                    mask.appendChild(maskRect);
+                    
+                    effectDefs.appendChild(gradient);
+                    effectDefs.appendChild(mask);
+                    demoRect.setAttribute('mask', 'url(#dynamicMask)');
+                    
+                    code = `&lt;linearGradient id="maskGradient"&gt;
+  &lt;stop offset="0%" style="stop-color:white"/&gt;
+  &lt;stop offset="100%" style="stop-color:black"/&gt;
+&lt;/linearGradient&gt;
+&lt;mask id="gradientMask"&gt;
+  &lt;rect fill="url(#maskGradient)"/&gt;
+&lt;/mask&gt;`;
+                    break;
+                    
+                case 'mask-radial':
+                    const radialGradient = document.createElementNS('http://www.w3.org/2000/svg', 'radialGradient');
+                    radialGradient.setAttribute('id', 'dynamicRadialMask');
+                    radialGradient.setAttribute('cx', '50%');
+                    radialGradient.setAttribute('cy', '50%');
+                    radialGradient.setAttribute('r', '50%');
+                    
+                    const radialStop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+                    radialStop1.setAttribute('offset', '0%');
+                    radialStop1.setAttribute('style', 'stop-color:white;stop-opacity:1');
+                    
+                    const radialStop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+                    radialStop2.setAttribute('offset', '100%');
+                    radialStop2.setAttribute('style', 'stop-color:black;stop-opacity:1');
+                    
+                    radialGradient.appendChild(radialStop1);
+                    radialGradient.appendChild(radialStop2);
+                    
+                    const radialMask = document.createElementNS('http://www.w3.org/2000/svg', 'mask');
+                    radialMask.setAttribute('id', 'dynamicMask');
+                    
+                    const radialMaskRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                    radialMaskRect.setAttribute('x', '0');
+                    radialMaskRect.setAttribute('y', '0');
+                    radialMaskRect.setAttribute('width', '200');
+                    radialMaskRect.setAttribute('height', '150');
+                    radialMaskRect.setAttribute('fill', 'url(#dynamicRadialMask)');
+                    radialMask.appendChild(radialMaskRect);
+                    
+                    effectDefs.appendChild(radialGradient);
+                    effectDefs.appendChild(radialMask);
+                    demoRect.setAttribute('mask', 'url(#dynamicMask)');
+                    
+                    code = `&lt;radialGradient id="radialMask"&gt;
+  &lt;stop offset="0%" style="stop-color:white"/&gt;
+  &lt;stop offset="100%" style="stop-color:black"/&gt;
+&lt;/radialGradient&gt;
+&lt;mask id="circleMask"&gt;
+  &lt;rect fill="url(#radialMask)"/&gt;
+&lt;/mask&gt;`;
+                    break;
+            }
+            
+            effectCode.textContent = code;
+        }
+
+        function copyEffectCode() {
+            navigator.clipboard.writeText(effectCode.textContent).then(() => {
+                document.querySelector('.code-actions .code-btn').textContent = '已复制!';
+                setTimeout(() => {
+                    document.querySelector('.code-actions .code-btn').textContent = '复制';
+                }, 2000);
+            });
+        }
+
+        // 绑定事件
+        effectType.addEventListener('change', updateEffect);
+        [circleX, circleY, circleR, rectWidth, rectHeight, gradientDirection, fillColor].forEach(element => {
+            element.addEventListener('input', updateEffect);
+            element.addEventListener('change', updateEffect);
+        });
+
+        // 初始化
+        updateEffect();
+    </script>
+</body>
+</html> 

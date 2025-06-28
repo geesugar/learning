@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>渐变效果 - SVG学习示例</title>
+    <link rel="stylesheet" href="../../common/styles.css">
+    <link rel="stylesheet" href="../../common/demo.css">
+    <style>
+        .demo-svg {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+    </style>
+</head>
+<body class="demo-page">
+    <div class="demo-header">
+        <div class="container">
+            <nav class="breadcrumb">
+                <ol class="breadcrumb-list">
+                    <li class="breadcrumb-item"><a href="../../index.html">示例首页</a></li>
+                    <li class="breadcrumb-item"><a href="../index.html">样式与效果</a></li>
+                    <li class="breadcrumb-item active">渐变效果</li>
+                </ol>
+            </nav>
+            <h1 class="demo-title">渐变效果</h1>
+            <p class="demo-subtitle">掌握SVG中的线性渐变和径向渐变，创建动态视觉效果</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="demo-main">
+            <div class="demo-content">
+                <!-- 线性渐变基础 -->
+                <div class="card">
+                    <h2>📐 线性渐变（linearGradient）</h2>
+                    <p>线性渐变沿着直线方向在两个或多个颜色之间创建平滑过渡。</p>
+                    
+                    <div class="grid grid-3">
+                        <div>
+                            <h3>水平渐变</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <defs>
+                                        <linearGradient id="horizontal" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" style="stop-color:#FF5722;stop-opacity:1" />
+                                            <stop offset="100%" style="stop-color:#FF9800;stop-opacity:1" />
+                                        </linearGradient>
+                                    </defs>
+                                    <rect x="25" y="25" width="100" height="50" fill="url(#horizontal)"/>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">x1="0%" x2="100%"</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>垂直渐变</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <defs>
+                                        <linearGradient id="vertical" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%" style="stop-color:#2196F3;stop-opacity:1" />
+                                            <stop offset="100%" style="stop-color:#9C27B0;stop-opacity:1" />
+                                        </linearGradient>
+                                    </defs>
+                                    <rect x="25" y="25" width="100" height="50" fill="url(#vertical)"/>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">y1="0%" y2="100%"</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>对角渐变</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <defs>
+                                        <linearGradient id="diagonal" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" style="stop-color:#4CAF50;stop-opacity:1" />
+                                            <stop offset="100%" style="stop-color:#1976D2;stop-opacity:1" />
+                                        </linearGradient>
+                                    </defs>
+                                    <rect x="25" y="25" width="100" height="50" fill="url(#diagonal)"/>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">x1="0%" y1="0%" x2="100%" y2="100%"</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 径向渐变 -->
+                <div class="card">
+                    <h2>⭕ 径向渐变（radialGradient）</h2>
+                    <p>径向渐变从中心点向外围创建圆形或椭圆形的颜色过渡。</p>
+                    
+                    <div class="grid grid-3">
+                        <div>
+                            <h3>圆形径向渐变</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <defs>
+                                        <radialGradient id="radial1" cx="50%" cy="50%" r="50%">
+                                            <stop offset="0%" style="stop-color:#FF9800;stop-opacity:1" />
+                                            <stop offset="100%" style="stop-color:#FF5722;stop-opacity:1" />
+                                        </radialGradient>
+                                    </defs>
+                                    <circle cx="75" cy="50" r="35" fill="url(#radial1)"/>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">cx="50%" cy="50%" r="50%"</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>椭圆径向渐变</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <defs>
+                                        <radialGradient id="radial2" cx="50%" cy="50%" rx="60%" ry="40%">
+                                            <stop offset="0%" style="stop-color:#E91E63;stop-opacity:1" />
+                                            <stop offset="100%" style="stop-color:#9C27B0;stop-opacity:1" />
+                                        </radialGradient>
+                                    </defs>
+                                    <ellipse cx="75" cy="50" rx="45" ry="30" fill="url(#radial2)"/>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">rx="60%" ry="40%"</div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>偏移中心渐变</h3>
+                            <div class="svg-example">
+                                <svg width="150" height="100" viewBox="0 0 150 100" class="demo-svg">
+                                    <defs>
+                                        <radialGradient id="radial3" cx="30%" cy="30%" r="70%">
+                                            <stop offset="0%" style="stop-color:#4CAF50;stop-opacity:1" />
+                                            <stop offset="100%" style="stop-color:#1976D2;stop-opacity:1" />
+                                        </radialGradient>
+                                    </defs>
+                                    <rect x="25" y="25" width="100" height="50" fill="url(#radial3)"/>
+                                </svg>
+                            </div>
+                            <div class="code-editor">
+                                <div class="code-content">cx="30%" cy="30%"</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 多色渐变 -->
+                <div class="card">
+                    <h2>🌈 多色渐变</h2>
+                    <p>使用多个stop元素创建复杂的多色渐变效果。</p>
+                    
+                    <div class="svg-example">
+                        <svg width="100%" height="200" viewBox="0 0 400 200" class="demo-svg">
+                            <defs>
+                                <linearGradient id="rainbow" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" style="stop-color:#FF0000;stop-opacity:1" />
+                                    <stop offset="16.66%" style="stop-color:#FF8800;stop-opacity:1" />
+                                    <stop offset="33.33%" style="stop-color:#FFFF00;stop-opacity:1" />
+                                    <stop offset="50%" style="stop-color:#00FF00;stop-opacity:1" />
+                                    <stop offset="66.66%" style="stop-color:#0088FF;stop-opacity:1" />
+                                    <stop offset="83.33%" style="stop-color:#0000FF;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#8800FF;stop-opacity:1" />
+                                </linearGradient>
+                                
+                                <radialGradient id="sunset" cx="50%" cy="80%" r="60%">
+                                    <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+                                    <stop offset="40%" style="stop-color:#FF6347;stop-opacity:1" />
+                                    <stop offset="70%" style="stop-color:#FF4500;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#8B0000;stop-opacity:1" />
+                                </radialGradient>
+                            </defs>
+                            
+                            <rect x="20" y="20" width="360" height="40" fill="url(#rainbow)"/>
+                            <text x="200" y="80" text-anchor="middle" font-size="14" fill="#666">彩虹渐变</text>
+                            
+                            <rect x="20" y="110" width="360" height="60" fill="url(#sunset)"/>
+                            <text x="200" y="185" text-anchor="middle" font-size="14" fill="#666">日落渐变</text>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- 渐变动画 -->
+                <div class="card">
+                    <h2>🎬 渐变动画</h2>
+                    <p>通过动画改变渐变的颜色、位置或大小，创建动态效果。</p>
+                    
+                    <div class="grid grid-2">
+                        <div>
+                            <h3>颜色动画</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="120" viewBox="0 0 200 120" class="demo-svg">
+                                    <defs>
+                                        <linearGradient id="animatedGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" style="stop-color:#FF5722;stop-opacity:1">
+                                                <animate attributeName="stop-color" 
+                                                         values="#FF5722;#2196F3;#4CAF50;#FF5722" 
+                                                         dur="3s" 
+                                                         repeatCount="indefinite" />
+                                            </stop>
+                                            <stop offset="100%" style="stop-color:#FF9800;stop-opacity:1">
+                                                <animate attributeName="stop-color" 
+                                                         values="#FF9800;#9C27B0;#1976D2;#FF9800" 
+                                                         dur="3s" 
+                                                         repeatCount="indefinite" />
+                                            </stop>
+                                        </linearGradient>
+                                    </defs>
+                                    <rect x="25" y="25" width="150" height="70" fill="url(#animatedGradient)"/>
+                                </svg>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <h3>位置动画</h3>
+                            <div class="svg-example">
+                                <svg width="200" height="120" viewBox="0 0 200 120" class="demo-svg">
+                                    <defs>
+                                        <linearGradient id="movingGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" style="stop-color:#2196F3;stop-opacity:1">
+                                                <animate attributeName="offset" 
+                                                         values="0%;30%;0%" 
+                                                         dur="2s" 
+                                                         repeatCount="indefinite" />
+                                            </stop>
+                                            <stop offset="50%" style="stop-color:#FF9800;stop-opacity:1">
+                                                <animate attributeName="offset" 
+                                                         values="50%;80%;50%" 
+                                                         dur="2s" 
+                                                         repeatCount="indefinite" />
+                                            </stop>
+                                            <stop offset="100%" style="stop-color:#4CAF50;stop-opacity:1">
+                                                <animate attributeName="offset" 
+                                                         values="100%;70%;100%" 
+                                                         dur="2s" 
+                                                         repeatCount="indefinite" />
+                                            </stop>
+                                        </linearGradient>
+                                    </defs>
+                                    <rect x="25" y="25" width="150" height="70" fill="url(#movingGradient)"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 渐变文本 -->
+                <div class="card">
+                    <h2>✨ 渐变文本</h2>
+                    <p>在文本上应用渐变效果，创建炫酷的文字效果。</p>
+                    
+                    <div class="svg-example">
+                        <svg width="100%" height="120" viewBox="0 0 400 120" class="demo-svg">
+                            <defs>
+                                <linearGradient id="textGradient1" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" style="stop-color:#FF5722;stop-opacity:1" />
+                                    <stop offset="50%" style="stop-color:#FF9800;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#FFC107;stop-opacity:1" />
+                                </linearGradient>
+                                
+                                <linearGradient id="textGradient2" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#2196F3;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#9C27B0;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            
+                            <text x="200" y="40" text-anchor="middle" font-size="24" font-weight="bold" 
+                                  fill="url(#textGradient1)">渐变文字</text>
+                            <text x="200" y="80" text-anchor="middle" font-size="20" font-weight="bold" 
+                                  fill="none" stroke="url(#textGradient2)" stroke-width="1">渐变描边</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 侧边栏交互控制器 -->
+            <div class="demo-sidebar">
+                <h3>🎮 渐变编辑器</h3>
+                <div class="interactive-controls">
+                    <div class="control-section">
+                        <h4>渐变类型</h4>
+                        <div class="control-row">
+                            <label class="control-label">渐变类型</label>
+                            <select id="gradientType" class="control-input">
+                                <option value="linear">线性渐变</option>
+                                <option value="radial">径向渐变</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="control-section" id="linearControls">
+                        <h4>线性渐变</h4>
+                        <div class="control-row">
+                            <label class="control-label">方向</label>
+                            <select id="linearDirection" class="control-input">
+                                <option value="horizontal">水平</option>
+                                <option value="vertical">垂直</option>
+                                <option value="diagonal">对角</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="control-section" id="radialControls" style="display: none;">
+                        <h4>径向渐变</h4>
+                        <div class="control-row">
+                            <label class="control-label">中心X</label>
+                            <input type="range" id="radialCx" class="control-input range-input" min="0" max="100" value="50">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">中心Y</label>
+                            <input type="range" id="radialCy" class="control-input range-input" min="0" max="100" value="50">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">半径</label>
+                            <input type="range" id="radialR" class="control-input range-input" min="10" max="100" value="50">
+                        </div>
+                    </div>
+                    
+                    <div class="control-section">
+                        <h4>颜色控制</h4>
+                        <div class="control-row">
+                            <label class="control-label">起始颜色</label>
+                            <input type="color" id="startColor" class="control-input color-input" value="#FF5722">
+                        </div>
+                        <div class="control-row">
+                            <label class="control-label">结束颜色</label>
+                            <input type="color" id="endColor" class="control-input color-input" value="#FF9800">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="svg-display has-content">
+                    <svg id="demoSVG" width="200" height="150" viewBox="0 0 200 150">
+                        <defs>
+                            <linearGradient id="demoGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#FF5722;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#FF9800;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <rect x="25" y="25" width="150" height="80" fill="url(#demoGradient)"/>
+                        <text x="100" y="125" text-anchor="middle" font-size="12" fill="#666">渐变预览</text>
+                    </svg>
+                </div>
+
+                <div class="code-editor">
+                    <div class="code-header">
+                        <div class="code-title">生成的渐变代码</div>
+                        <div class="code-actions">
+                            <button class="code-btn" onclick="copyGradientCode()">复制</button>
+                        </div>
+                    </div>
+                    <div class="code-content" id="gradientCode">&lt;linearGradient&gt;...&lt;/linearGradient&gt;</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 导航 -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <a href="../fill-stroke/" class="btn">← 上一章：填充和描边</a>
+                <a href="../patterns/" class="btn btn-primary">下一章：图案和纹理 →</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../../common/utils.js"></script>
+    <script>
+        // 渐变编辑器
+        const gradientType = document.getElementById('gradientType');
+        const linearDirection = document.getElementById('linearDirection');
+        const radialCx = document.getElementById('radialCx');
+        const radialCy = document.getElementById('radialCy');
+        const radialR = document.getElementById('radialR');
+        const startColor = document.getElementById('startColor');
+        const endColor = document.getElementById('endColor');
+        const demoGradient = document.getElementById('demoGradient');
+        const gradientCode = document.getElementById('gradientCode');
+
+        function updateGradient() {
+            const type = gradientType.value;
+            const start = startColor.value;
+            const end = endColor.value;
+            
+            // 清除现有渐变
+            demoGradient.innerHTML = '';
+            
+            if (type === 'linear') {
+                // 线性渐变
+                const direction = linearDirection.value;
+                let x1 = '0%', y1 = '0%', x2 = '100%', y2 = '0%';
+                
+                switch (direction) {
+                    case 'horizontal':
+                        x1 = '0%'; y1 = '0%'; x2 = '100%'; y2 = '0%';
+                        break;
+                    case 'vertical':
+                        x1 = '0%'; y1 = '0%'; x2 = '0%'; y2 = '100%';
+                        break;
+                    case 'diagonal':
+                        x1 = '0%'; y1 = '0%'; x2 = '100%'; y2 = '100%';
+                        break;
+                }
+                
+                demoGradient.setAttribute('x1', x1);
+                demoGradient.setAttribute('y1', y1);
+                demoGradient.setAttribute('x2', x2);
+                demoGradient.setAttribute('y2', y2);
+                
+                // 创建stop元素
+                const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+                stop1.setAttribute('offset', '0%');
+                stop1.setAttribute('style', `stop-color:${start};stop-opacity:1`);
+                
+                const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+                stop2.setAttribute('offset', '100%');
+                stop2.setAttribute('style', `stop-color:${end};stop-opacity:1`);
+                
+                demoGradient.appendChild(stop1);
+                demoGradient.appendChild(stop2);
+                
+                // 更新代码
+                gradientCode.textContent = `&lt;linearGradient x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"&gt;
+  &lt;stop offset="0%" style="stop-color:${start};stop-opacity:1" /&gt;
+  &lt;stop offset="100%" style="stop-color:${end};stop-opacity:1" /&gt;
+&lt;/linearGradient&gt;`;
+                
+            } else {
+                // 径向渐变
+                const cx = radialCx.value + '%';
+                const cy = radialCy.value + '%';
+                const r = radialR.value + '%';
+                
+                // 转换为径向渐变
+                const radialGradient = document.createElementNS('http://www.w3.org/2000/svg', 'radialGradient');
+                radialGradient.setAttribute('id', 'demoGradient');
+                radialGradient.setAttribute('cx', cx);
+                radialGradient.setAttribute('cy', cy);
+                radialGradient.setAttribute('r', r);
+                
+                const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+                stop1.setAttribute('offset', '0%');
+                stop1.setAttribute('style', `stop-color:${start};stop-opacity:1`);
+                
+                const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
+                stop2.setAttribute('offset', '100%');
+                stop2.setAttribute('style', `stop-color:${end};stop-opacity:1`);
+                
+                radialGradient.appendChild(stop1);
+                radialGradient.appendChild(stop2);
+                
+                // 替换现有渐变
+                demoGradient.parentNode.replaceChild(radialGradient, demoGradient);
+                
+                // 更新代码
+                gradientCode.textContent = `&lt;radialGradient cx="${cx}" cy="${cy}" r="${r}"&gt;
+  &lt;stop offset="0%" style="stop-color:${start};stop-opacity:1" /&gt;
+  &lt;stop offset="100%" style="stop-color:${end};stop-opacity:1" /&gt;
+&lt;/radialGradient&gt;`;
+            }
+        }
+
+        function toggleGradientControls() {
+            const type = gradientType.value;
+            const linearControls = document.getElementById('linearControls');
+            const radialControls = document.getElementById('radialControls');
+            
+            if (type === 'linear') {
+                linearControls.style.display = 'block';
+                radialControls.style.display = 'none';
+            } else {
+                linearControls.style.display = 'none';
+                radialControls.style.display = 'block';
+            }
+            
+            updateGradient();
+        }
+
+        function copyGradientCode() {
+            navigator.clipboard.writeText(gradientCode.textContent).then(() => {
+                document.querySelector('.code-actions .code-btn').textContent = '已复制!';
+                setTimeout(() => {
+                    document.querySelector('.code-actions .code-btn').textContent = '复制';
+                }, 2000);
+            });
+        }
+
+        // 绑定事件
+        gradientType.addEventListener('change', toggleGradientControls);
+        [linearDirection, radialCx, radialCy, radialR, startColor, endColor].forEach(element => {
+            element.addEventListener('input', updateGradient);
+            element.addEventListener('change', updateGradient);
+        });
+
+        // 初始化
+        updateGradient();
+    </script>
+</body>
+</html> 
