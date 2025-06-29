@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas交互控制示例</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .example-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .example-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .description {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            margin-bottom: 20px;
+            border-radius: 0 5px 5px 0;
+        }
+        canvas {
+            border: 2px solid #34495e;
+            margin: 10px 0;
+            display: block;
+            background: white;
+            cursor: crosshair;
+        }
+        canvas.dragging {
+            cursor: grabbing;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        .controls {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .status {
+            background: #ecf0f1;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            margin: 10px 0;
+        }
+        .color-picker {
+            display: flex;
+            gap: 5px;
+            margin: 10px 0;
+        }
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+        }
+        .color-option.active {
+            border-color: #333;
+        }
+        .tools {
+            display: flex;
+            gap: 5px;
+            margin: 10px 0;
+        }
+        .tool-btn {
+            padding: 8px 12px;
+            background: #95a5a6;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .tool-btn.active {
+            background: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Canvas交互控制示例</h1>
+        
+        <!-- 示例1: 鼠标事件管理 -->
+        <div class="example-section">
+            <div class="example-title">1. 鼠标事件管理</div>
+            <div class="description">
+                <strong>功能说明：</strong>演示鼠标点击、移动、拖拽等事件的处理。<br>
+                <strong>技术要点：</strong>鼠标事件监听、坐标转换、状态管理
+                <br><strong>操作说明：</strong>点击创建圆形，拖拽移动圆形，右键删除圆形
+            </div>
+            
+            <canvas id="mouseCanvas" width="600" height="300"></canvas>
+            
+            <div class="status" id="mouseStatus">
+                鼠标状态: 就绪 | 坐标: (0, 0) | 操作: 无
+            </div>
+            
+            <div class="controls">
+                <button onclick="clearCanvas('mouseCanvas')">🗑️ 清除画布</button>
+                <button onclick="resetMouseDemo()">🔄 重置演示</button>
+                <span>圆形数量: <span id="circleCount">0</span></span>
+            </div>
+        </div>
+
+        <!-- 示例2: 键盘控制 -->
+        <div class="example-section">
+            <div class="example-title">2. 键盘控制系统</div>
+            <div class="description">
+                <strong>功能说明：</strong>使用键盘控制对象移动和状态改变。<br>
+                <strong>技术要点：</strong>键盘事件监听、按键状态管理、多键同时检测
+                <br><strong>操作说明：</strong>WASD/方向键移动，空格键变色，ESC重置
+            </div>
+            
+            <canvas id="keyboardCanvas" width="600" height="300"></canvas>
+            
+            <div class="status" id="keyboardStatus">
+                按键状态: 无 | 位置: (300, 150) | 速度: 5px/帧
+            </div>
+            
+            <div class="controls">
+                <button onclick="toggleKeyboardDemo()">▶️ 开始/暂停</button>
+                <button onclick="resetKeyboardDemo()">🔄 重置位置</button>
+                <span>焦点在这里才能接收键盘事件 → </span>
+                <input type="text" placeholder="点击这里获得焦点" style="border: 2px solid #3498db;">
+            </div>
+        </div>
+
+        <!-- 示例3: 高级拖拽系统 -->
+        <div class="example-section">
+            <div class="example-title">3. 高级拖拽系统</div>
+            <div class="description">
+                <strong>功能说明：</strong>实现精确的拖拽检测、碰撞处理和视觉反馈。<br>
+                <strong>技术要点：</strong>碰撞检测、拖拽状态管理、视觉反馈
+                <br><strong>操作说明：</strong>拖拽移动方块，观察碰撞效果和边界处理
+            </div>
+            
+            <canvas id="dragCanvas" width="600" height="300"></canvas>
+            
+            <div class="status" id="dragStatus">
+                拖拽状态: 空闲 | 选中对象: 无 | 碰撞检测: 开启
+            </div>
+            
+            <div class="controls">
+                <button onclick="addDragObject()">➕ 添加方块</button>
+                <button onclick="clearDragObjects()">🗑️ 清除方块</button>
+                <button onclick="toggleCollision()">🔄 切换碰撞检测</button>
+                <span>方块数量: <span id="dragObjectCount">0</span></span>
+            </div>
+        </div>
+
+        <!-- 示例4: 绘画板应用 -->
+        <div class="example-section">
+            <div class="example-title">4. 交互式绘画板</div>
+            <div class="description">
+                <strong>功能说明：</strong>完整的绘画应用，支持多种工具和颜色选择。<br>
+                <strong>技术要点：</strong>路径绘制、工具切换、颜色管理、撤销功能
+            </div>
+            
+            <div class="tools">
+                <button class="tool-btn active" data-tool="brush" onclick="selectTool('brush')">🖌️ 画笔</button>
+                <button class="tool-btn" data-tool="eraser" onclick="selectTool('eraser')">🧽 橡皮</button>
+                <button class="tool-btn" data-tool="line" onclick="selectTool('line')">📏 直线</button>
+                <button class="tool-btn" data-tool="circle" onclick="selectTool('circle')">⭕ 圆形</button>
+                <button class="tool-btn" data-tool="rect" onclick="selectTool('rect')">⬜ 矩形</button>
+            </div>
+            
+            <div class="color-picker">
+                <div class="color-option active" style="background: #000000;" data-color="#000000" onclick="selectColor('#000000')"></div>
+                <div class="color-option" style="background: #e74c3c;" data-color="#e74c3c" onclick="selectColor('#e74c3c')"></div>
+                <div class="color-option" style="background: #3498db;" data-color="#3498db" onclick="selectColor('#3498db')"></div>
+                <div class="color-option" style="background: #2ecc71;" data-color="#2ecc71" onclick="selectColor('#2ecc71')"></div>
+                <div class="color-option" style="background: #f39c12;" data-color="#f39c12" onclick="selectColor('#f39c12')"></div>
+                <div class="color-option" style="background: #9b59b6;" data-color="#9b59b6" onclick="selectColor('#9b59b6')"></div>
+            </div>
+            
+            <canvas id="drawCanvas" width="600" height="400"></canvas>
+            
+            <div class="controls">
+                <button onclick="undoDraw()">↶ 撤销</button>
+                <button onclick="clearDrawCanvas()">🗑️ 清空</button>
+                <button onclick="saveDrawing()">💾 保存</button>
+                <label>笔刷大小: <input type="range" id="brushSize" min="1" max="50" value="5" oninput="updateBrushSize()"></label>
+                <span id="brushSizeValue">5px</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let mouseCircles = [];
+        let keyboardObject = { x: 300, y: 150, color: '#e74c3c', size: 30 };
+        let keyboardAnimation = false;
+        let keys = {};
+        let dragObjects = [];
+        let dragState = { isDragging: false, dragObject: null, offset: { x: 0, y: 0 } };
+        let collisionEnabled = true;
+        
+        // 绘画板变量
+        let currentTool = 'brush';
+        let currentColor = '#000000';
+        let brushSize = 5;
+        let isDrawing = false;
+        let drawingHistory = [];
+        let drawPath = [];
+        let startPoint = null;
+        
+        // 鼠标事件管理示例
+        function initMouseDemo() {
+            const canvas = document.getElementById('mouseCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // 鼠标移动事件
+            canvas.addEventListener('mousemove', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                document.getElementById('mouseStatus').textContent = 
+                    `鼠标状态: 移动中 | 坐标: (${Math.round(x)}, ${Math.round(y)}) | 操作: 跟踪`;
+            });
+            
+            // 鼠标点击事件
+            canvas.addEventListener('click', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                // 创建新的圆形
+                const circle = {
+                    x: x,
+                    y: y,
+                    radius: 20 + Math.random() * 20,
+                    color: `hsl(${Math.random() * 360}, 70%, 60%)`,
+                    isDragging: false
+                };
+                
+                mouseCircles.push(circle);
+                updateCircleCount();
+                drawMouseCircles();
+                
+                document.getElementById('mouseStatus').textContent = 
+                    `鼠标状态: 点击 | 坐标: (${Math.round(x)}, ${Math.round(y)}) | 操作: 创建圆形`;
+            });
+            
+            // 右键删除
+            canvas.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                // 查找点击的圆形
+                for (let i = mouseCircles.length - 1; i >= 0; i--) {
+                    const circle = mouseCircles[i];
+                    const dist = Math.sqrt((x - circle.x) ** 2 + (y - circle.y) ** 2);
+                    if (dist <= circle.radius) {
+                        mouseCircles.splice(i, 1);
+                        updateCircleCount();
+                        drawMouseCircles();
+                        break;
+                    }
+                }
+                
+                document.getElementById('mouseStatus').textContent = 
+                    `鼠标状态: 右键点击 | 坐标: (${Math.round(x)}, ${Math.round(y)}) | 操作: 删除圆形`;
+            });
+            
+            // 拖拽功能
+            let dragCircle = null;
+            let dragOffset = { x: 0, y: 0 };
+            
+            canvas.addEventListener('mousedown', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                // 查找可拖拽的圆形
+                for (let circle of mouseCircles) {
+                    const dist = Math.sqrt((x - circle.x) ** 2 + (y - circle.y) ** 2);
+                    if (dist <= circle.radius) {
+                        dragCircle = circle;
+                        dragOffset.x = x - circle.x;
+                        dragOffset.y = y - circle.y;
+                        circle.isDragging = true;
+                        canvas.style.cursor = 'grabbing';
+                        break;
+                    }
+                }
+            });
+            
+            canvas.addEventListener('mousemove', (e) => {
+                if (dragCircle) {
+                    const rect = canvas.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    dragCircle.x = x - dragOffset.x;
+                    dragCircle.y = y - dragOffset.y;
+                    
+                    // 边界检测
+                    dragCircle.x = Math.max(dragCircle.radius, Math.min(canvas.width - dragCircle.radius, dragCircle.x));
+                    dragCircle.y = Math.max(dragCircle.radius, Math.min(canvas.height - dragCircle.radius, dragCircle.y));
+                    
+                    drawMouseCircles();
+                    
+                    document.getElementById('mouseStatus').textContent = 
+                        `鼠标状态: 拖拽中 | 坐标: (${Math.round(x)}, ${Math.round(y)}) | 操作: 移动圆形`;
+                }
+            });
+            
+            canvas.addEventListener('mouseup', () => {
+                if (dragCircle) {
+                    dragCircle.isDragging = false;
+                    dragCircle = null;
+                    canvas.style.cursor = 'crosshair';
+                }
+            });
+        }
+        
+        function drawMouseCircles() {
+            const canvas = document.getElementById('mouseCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            mouseCircles.forEach(circle => {
+                // 绘制圆形
+                ctx.fillStyle = circle.color;
+                ctx.beginPath();
+                ctx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI);
+                ctx.fill();
+                
+                // 如果正在拖拽，添加边框
+                if (circle.isDragging) {
+                    ctx.strokeStyle = '#333';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                }
+                
+                // 添加高光
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.beginPath();
+                ctx.arc(circle.x - circle.radius * 0.3, circle.y - circle.radius * 0.3, circle.radius * 0.3, 0, 2 * Math.PI);
+                ctx.fill();
+            });
+        }
+        
+        function updateCircleCount() {
+            document.getElementById('circleCount').textContent = mouseCircles.length;
+        }
+        
+        function resetMouseDemo() {
+            mouseCircles = [];
+            updateCircleCount();
+            drawMouseCircles();
+            document.getElementById('mouseStatus').textContent = 
+                '鼠标状态: 就绪 | 坐标: (0, 0) | 操作: 无';
+        }
+        
+        // 键盘控制示例
+        function initKeyboardDemo() {
+            // 键盘事件监听
+            document.addEventListener('keydown', (e) => {
+                keys[e.key.toLowerCase()] = true;
+                
+                // 特殊按键处理
+                if (e.key === ' ') {
+                    e.preventDefault();
+                    keyboardObject.color = `hsl(${Math.random() * 360}, 70%, 60%)`;
+                }
+                
+                if (e.key === 'Escape') {
+                    keyboardObject.x = 300;
+                    keyboardObject.y = 150;
+                }
+                
+                updateKeyboardStatus();
+            });
+            
+            document.addEventListener('keyup', (e) => {
+                keys[e.key.toLowerCase()] = false;
+                updateKeyboardStatus();
+            });
+        }
+        
+        function updateKeyboardObject() {
+            const canvas = document.getElementById('keyboardCanvas');
+            const speed = 5;
+            
+            // WASD 或 方向键移动
+            if (keys['w'] || keys['arrowup']) keyboardObject.y -= speed;
+            if (keys['s'] || keys['arrowdown']) keyboardObject.y += speed;
+            if (keys['a'] || keys['arrowleft']) keyboardObject.x -= speed;
+            if (keys['d'] || keys['arrowright']) keyboardObject.x += speed;
+            
+            // 边界检测
+            keyboardObject.x = Math.max(keyboardObject.size, Math.min(canvas.width - keyboardObject.size, keyboardObject.x));
+            keyboardObject.y = Math.max(keyboardObject.size, Math.min(canvas.height - keyboardObject.size, keyboardObject.y));
+            
+            drawKeyboardObject();
+        }
+        
+        function drawKeyboardObject() {
+            const canvas = document.getElementById('keyboardCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制控制对象
+            ctx.fillStyle = keyboardObject.color;
+            ctx.fillRect(
+                keyboardObject.x - keyboardObject.size / 2,
+                keyboardObject.y - keyboardObject.size / 2,
+                keyboardObject.size,
+                keyboardObject.size
+            );
+            
+            // 绘制方向指示器
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(keyboardObject.x, keyboardObject.y - keyboardObject.size / 2 - 10);
+            ctx.lineTo(keyboardObject.x, keyboardObject.y - keyboardObject.size / 2 - 20);
+            ctx.stroke();
+            
+            // 绘制按键提示
+            ctx.fillStyle = '#666';
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('WASD/方向键移动', canvas.width / 2, 30);
+            ctx.fillText('空格键变色, ESC重置', canvas.width / 2, 50);
+        }
+        
+        function updateKeyboardStatus() {
+            const activeKeys = Object.keys(keys).filter(key => keys[key]);
+            const keyText = activeKeys.length > 0 ? activeKeys.join(', ') : '无';
+            
+            document.getElementById('keyboardStatus').textContent = 
+                `按键状态: ${keyText} | 位置: (${Math.round(keyboardObject.x)}, ${Math.round(keyboardObject.y)}) | 速度: 5px/帧`;
+        }
+        
+        let keyboardAnimationId;
+        
+        function toggleKeyboardDemo() {
+            if (!keyboardAnimation) {
+                keyboardAnimation = true;
+                startKeyboardAnimation();
+            } else {
+                keyboardAnimation = false;
+                if (keyboardAnimationId) {
+                    cancelAnimationFrame(keyboardAnimationId);
+                }
+            }
+        }
+        
+        function startKeyboardAnimation() {
+            function animate() {
+                if (!keyboardAnimation) return;
+                
+                updateKeyboardObject();
+                keyboardAnimationId = requestAnimationFrame(animate);
+            }
+            animate();
+        }
+        
+        function resetKeyboardDemo() {
+            keyboardObject.x = 300;
+            keyboardObject.y = 150;
+            keyboardObject.color = '#e74c3c';
+            drawKeyboardObject();
+        }
+        
+        // 高级拖拽系统
+        function initDragDemo() {
+            const canvas = document.getElementById('dragCanvas');
+            
+            // 初始化一些拖拽对象
+            for (let i = 0; i < 3; i++) {
+                addDragObject();
+            }
+            
+            canvas.addEventListener('mousedown', handleDragStart);
+            canvas.addEventListener('mousemove', handleDragMove);
+            canvas.addEventListener('mouseup', handleDragEnd);
+        }
+        
+        function addDragObject() {
+            const canvas = document.getElementById('dragCanvas');
+            const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6'];
+            
+            const obj = {
+                x: Math.random() * (canvas.width - 100) + 50,
+                y: Math.random() * (canvas.height - 100) + 50,
+                width: 60,
+                height: 60,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                isDragging: false,
+                isHovered: false
+            };
+            
+            dragObjects.push(obj);
+            updateDragObjectCount();
+            drawDragObjects();
+        }
+        
+        function handleDragStart(e) {
+            const canvas = document.getElementById('dragCanvas');
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // 从上到下检查对象
+            for (let i = dragObjects.length - 1; i >= 0; i--) {
+                const obj = dragObjects[i];
+                if (x >= obj.x && x <= obj.x + obj.width && 
+                    y >= obj.y && y <= obj.y + obj.height) {
+                    
+                    dragState.isDragging = true;
+                    dragState.dragObject = obj;
+                    dragState.offset.x = x - obj.x;
+                    dragState.offset.y = y - obj.y;
+                    
+                    obj.isDragging = true;
+                    canvas.classList.add('dragging');
+                    
+                    // 移到最前面
+                    dragObjects.splice(i, 1);
+                    dragObjects.push(obj);
+                    
+                    drawDragObjects();
+                    break;
+                }
+            }
+            
+            updateDragStatus();
+        }
+        
+        function handleDragMove(e) {
+            const canvas = document.getElementById('dragCanvas');
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            if (dragState.isDragging && dragState.dragObject) {
+                const obj = dragState.dragObject;
+                obj.x = x - dragState.offset.x;
+                obj.y = y - dragState.offset.y;
+                
+                // 边界检测
+                obj.x = Math.max(0, Math.min(canvas.width - obj.width, obj.x));
+                obj.y = Math.max(0, Math.min(canvas.height - obj.height, obj.y));
+                
+                // 碰撞检测
+                if (collisionEnabled) {
+                    checkCollisions(obj);
+                }
+                
+                drawDragObjects();
+            } else {
+                // 悬停检测
+                let hoveredObj = null;
+                for (let obj of dragObjects) {
+                    const isHovered = x >= obj.x && x <= obj.x + obj.width && 
+                                     y >= obj.y && y <= obj.y + obj.height;
+                    if (isHovered) {
+                        hoveredObj = obj;
+                    }
+                    obj.isHovered = isHovered;
+                }
+                
+                canvas.style.cursor = hoveredObj ? 'grab' : 'default';
+                drawDragObjects();
+            }
+            
+            updateDragStatus();
+        }
+        
+        function handleDragEnd() {
+            if (dragState.isDragging && dragState.dragObject) {
+                dragState.dragObject.isDragging = false;
+                dragState.isDragging = false;
+                dragState.dragObject = null;
+                
+                const canvas = document.getElementById('dragCanvas');
+                canvas.classList.remove('dragging');
+                canvas.style.cursor = 'default';
+                
+                drawDragObjects();
+            }
+            
+            updateDragStatus();
+        }
+        
+        function checkCollisions(obj) {
+            for (let other of dragObjects) {
+                if (other === obj) continue;
+                
+                if (obj.x < other.x + other.width &&
+                    obj.x + obj.width > other.x &&
+                    obj.y < other.y + other.height &&
+                    obj.y + obj.height > other.y) {
+                    
+                    // 简单的推挤效果
+                    const centerX1 = obj.x + obj.width / 2;
+                    const centerY1 = obj.y + obj.height / 2;
+                    const centerX2 = other.x + other.width / 2;
+                    const centerY2 = other.y + other.height / 2;
+                    
+                    const dx = centerX1 - centerX2;
+                    const dy = centerY1 - centerY2;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance > 0) {
+                        const pushDistance = 5;
+                        other.x -= (dx / distance) * pushDistance;
+                        other.y -= (dy / distance) * pushDistance;
+                        
+                        // 边界检测
+                        const canvas = document.getElementById('dragCanvas');
+                        other.x = Math.max(0, Math.min(canvas.width - other.width, other.x));
+                        other.y = Math.max(0, Math.min(canvas.height - other.height, other.y));
+                    }
+                }
+            }
+        }
+        
+        function drawDragObjects() {
+            const canvas = document.getElementById('dragCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            dragObjects.forEach(obj => {
+                // 绘制阴影
+                if (obj.isDragging) {
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
+                    ctx.fillRect(obj.x + 5, obj.y + 5, obj.width, obj.height);
+                }
+                
+                // 绘制对象
+                ctx.fillStyle = obj.color;
+                ctx.fillRect(obj.x, obj.y, obj.width, obj.height);
+                
+                // 悬停或拖拽状态的边框
+                if (obj.isHovered || obj.isDragging) {
+                    ctx.strokeStyle = obj.isDragging ? '#e74c3c' : '#3498db';
+                    ctx.lineWidth = 3;
+                    ctx.strokeRect(obj.x, obj.y, obj.width, obj.height);
+                }
+                
+                // 绘制高光
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.fillRect(obj.x, obj.y, obj.width / 3, obj.height / 3);
+            });
+        }
+        
+        function updateDragStatus() {
+            const status = dragState.isDragging ? '拖拽中' : '空闲';
+            const selected = dragState.dragObject ? '有' : '无';
+            const collision = collisionEnabled ? '开启' : '关闭';
+            
+            document.getElementById('dragStatus').textContent = 
+                `拖拽状态: ${status} | 选中对象: ${selected} | 碰撞检测: ${collision}`;
+        }
+        
+        function updateDragObjectCount() {
+            document.getElementById('dragObjectCount').textContent = dragObjects.length;
+        }
+        
+        function clearDragObjects() {
+            dragObjects = [];
+            updateDragObjectCount();
+            drawDragObjects();
+            updateDragStatus();
+        }
+        
+        function toggleCollision() {
+            collisionEnabled = !collisionEnabled;
+            updateDragStatus();
+        }
+        
+        // 绘画板功能
+        function initDrawingBoard() {
+            const canvas = document.getElementById('drawCanvas');
+            
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+            
+            // 保存初始状态
+            saveDrawingState();
+        }
+        
+        function startDrawing(e) {
+            const canvas = document.getElementById('drawCanvas');
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            isDrawing = true;
+            startPoint = { x, y };
+            
+            if (currentTool === 'brush' || currentTool === 'eraser') {
+                drawPath = [{ x, y }];
+            }
+        }
+        
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            const canvas = document.getElementById('drawCanvas');
+            const ctx = canvas.getContext('2d');
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            if (currentTool === 'brush') {
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.strokeStyle = currentColor;
+                ctx.lineWidth = brushSize;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                
+                if (drawPath.length > 1) {
+                    ctx.beginPath();
+                    ctx.moveTo(drawPath[drawPath.length - 2].x, drawPath[drawPath.length - 2].y);
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                }
+                
+                drawPath.push({ x, y });
+            } else if (currentTool === 'eraser') {
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.beginPath();
+                ctx.arc(x, y, brushSize, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+        }
+        
+        function stopDrawing(e) {
+            if (!isDrawing) return;
+            
+            isDrawing = false;
+            
+            const canvas = document.getElementById('drawCanvas');
+            const ctx = canvas.getContext('2d');
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // 绘制形状工具
+            if (currentTool === 'line' && startPoint) {
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.strokeStyle = currentColor;
+                ctx.lineWidth = brushSize;
+                ctx.beginPath();
+                ctx.moveTo(startPoint.x, startPoint.y);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+            } else if (currentTool === 'circle' && startPoint) {
+                const radius = Math.sqrt(Math.pow(x - startPoint.x, 2) + Math.pow(y - startPoint.y, 2));
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.strokeStyle = currentColor;
+                ctx.lineWidth = brushSize;
+                ctx.beginPath();
+                ctx.arc(startPoint.x, startPoint.y, radius, 0, 2 * Math.PI);
+                ctx.stroke();
+            } else if (currentTool === 'rect' && startPoint) {
+                ctx.globalCompositeOperation = 'source-over';
+                ctx.strokeStyle = currentColor;
+                ctx.lineWidth = brushSize;
+                ctx.strokeRect(startPoint.x, startPoint.y, x - startPoint.x, y - startPoint.y);
+            }
+            
+            // 保存状态
+            saveDrawingState();
+            drawPath = [];
+            startPoint = null;
+        }
+        
+        function selectTool(tool) {
+            currentTool = tool;
+            
+            // 更新按钮状态
+            document.querySelectorAll('.tool-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-tool="${tool}"]`).classList.add('active');
+        }
+        
+        function selectColor(color) {
+            currentColor = color;
+            
+            // 更新颜色选择器状态
+            document.querySelectorAll('.color-option').forEach(option => {
+                option.classList.remove('active');
+            });
+            document.querySelector(`[data-color="${color}"]`).classList.add('active');
+        }
+        
+        function updateBrushSize() {
+            brushSize = parseInt(document.getElementById('brushSize').value);
+            document.getElementById('brushSizeValue').textContent = brushSize + 'px';
+        }
+        
+        function saveDrawingState() {
+            const canvas = document.getElementById('drawCanvas');
+            drawingHistory.push(canvas.toDataURL());
+            
+            // 限制历史记录数量
+            if (drawingHistory.length > 20) {
+                drawingHistory.shift();
+            }
+        }
+        
+        function undoDraw() {
+            if (drawingHistory.length > 1) {
+                drawingHistory.pop(); // 移除当前状态
+                const previousState = drawingHistory[drawingHistory.length - 1];
+                
+                const canvas = document.getElementById('drawCanvas');
+                const ctx = canvas.getContext('2d');
+                const img = new Image();
+                img.onload = function() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0);
+                };
+                img.src = previousState;
+            }
+        }
+        
+        function clearDrawCanvas() {
+            const canvas = document.getElementById('drawCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawingHistory = [];
+            saveDrawingState();
+        }
+        
+        function saveDrawing() {
+            const canvas = document.getElementById('drawCanvas');
+            const link = document.createElement('a');
+            link.download = 'canvas-drawing.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+        
+        // 清除画布通用函数
+        function clearCanvas(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        
+        // 页面加载完成后初始化所有示例
+        window.addEventListener('load', function() {
+            initMouseDemo();
+            initKeyboardDemo();
+            initDragDemo();
+            initDrawingBoard();
+            
+            drawMouseCircles();
+            drawKeyboardObject();
+            drawDragObjects();
+            
+            console.log('Canvas交互控制示例页面加载完成');
+        });
+    </script>
+</body>
+</html> 

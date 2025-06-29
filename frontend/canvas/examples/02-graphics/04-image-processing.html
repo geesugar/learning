@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas图像处理示例</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .example-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .example-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .description {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            margin-bottom: 20px;
+            border-radius: 0 5px 5px 0;
+        }
+        canvas {
+            border: 2px solid #34495e;
+            margin: 10px 0;
+            display: block;
+            background: white;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        .controls {
+            margin: 15px 0;
+        }
+        .slider-control {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .slider-control label {
+            width: 100px;
+            font-weight: bold;
+        }
+        input[type="range"] {
+            flex: 1;
+            max-width: 200px;
+        }
+        input[type="file"] {
+            margin: 10px 0;
+        }
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖼️ Canvas图像处理示例</h1>
+        
+        <!-- 示例1: 图像加载和基本操作 -->
+        <div class="example-section">
+            <div class="example-title">1. 图像加载和基本操作</div>
+            <div class="description">
+                <strong>功能说明：</strong>演示如何加载图像、绘制图像和基本的图像操作。<br>
+                <strong>技术要点：</strong>Image对象、drawImage()、图像缩放、裁剪
+            </div>
+            
+            <div class="controls">
+                <input type="file" id="imageInput" accept="image/*" onchange="loadImage(event)">
+                <button onclick="loadSampleImage()">🖼️ 加载示例图像</button>
+                <button onclick="resetImage()">🔄 重置</button>
+            </div>
+            
+            <canvas id="imageCanvas" width="600" height="400"></canvas>
+            
+            <div class="controls">
+                <div class="slider-control">
+                    <label>缩放:</label>
+                    <input type="range" id="scaleSlider" min="0.1" max="3" step="0.1" value="1" oninput="updateImageScale()">
+                    <span id="scaleValue">1.0x</span>
+                </div>
+                <div class="slider-control">
+                    <label>旋转:</label>
+                    <input type="range" id="rotateSlider" min="0" max="360" value="0" oninput="updateImageRotation()">
+                    <span id="rotateValue">0°</span>
+                </div>
+                <div class="slider-control">
+                    <label>透明度:</label>
+                    <input type="range" id="alphaSlider" min="0" max="1" step="0.1" value="1" oninput="updateImageAlpha()">
+                    <span id="alphaValue">1.0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 示例2: 像素级操作 -->
+        <div class="example-section">
+            <div class="example-title">2. 像素级操作和滤镜效果</div>
+            <div class="description">
+                <strong>功能说明：</strong>通过getImageData和putImageData进行像素级图像处理。<br>
+                <strong>技术要点：</strong>ImageData、像素操作、颜色通道处理
+            </div>
+            
+            <canvas id="filterCanvas" width="600" height="400"></canvas>
+            
+            <div class="filter-buttons">
+                <button onclick="applyFilter('original')">🖼️ 原图</button>
+                <button onclick="applyFilter('grayscale')">⚫ 灰度</button>
+                <button onclick="applyFilter('sepia')">🟫 棕褐色</button>
+                <button onclick="applyFilter('invert')">🔄 反色</button>
+                <button onclick="applyFilter('blur')">🌫️ 模糊</button>
+                <button onclick="applyFilter('sharpen')">🔍 锐化</button>
+                <button onclick="applyFilter('edge')">📐 边缘检测</button>
+            </div>
+            
+            <div class="controls">
+                <div class="slider-control">
+                    <label>亮度:</label>
+                    <input type="range" id="brightnessSlider" min="-100" max="100" value="0" oninput="applyAdjustments()">
+                    <span id="brightnessValue">0</span>
+                </div>
+                <div class="slider-control">
+                    <label>对比度:</label>
+                    <input type="range" id="contrastSlider" min="-100" max="100" value="0" oninput="applyAdjustments()">
+                    <span id="contrastValue">0</span>
+                </div>
+                <div class="slider-control">
+                    <label>饱和度:</label>
+                    <input type="range" id="saturationSlider" min="-100" max="100" value="0" oninput="applyAdjustments()">
+                    <span id="saturationValue">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 示例3: 图像合成 -->
+        <div class="example-section">
+            <div class="example-title">3. 图像合成和混合模式</div>
+            <div class="description">
+                <strong>功能说明：</strong>演示不同的图像合成模式和混blend效果。<br>
+                <strong>技术要点：</strong>globalCompositeOperation、图像混合、遮罩效果
+            </div>
+            
+            <canvas id="compositeCanvas" width="600" height="300"></canvas>
+            
+            <div class="controls">
+                <button onclick="drawCompositeDemo('source-over')">📊 source-over</button>
+                <button onclick="drawCompositeDemo('multiply')">✖️ multiply</button>
+                <button onclick="drawCompositeDemo('screen')">📺 screen</button>
+                <button onclick="drawCompositeDemo('overlay')">🔄 overlay</button>
+                <button onclick="drawCompositeDemo('mask')">🎭 遮罩效果</button>
+                <button onclick="animateComposite()">✨ 动画演示</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let originalImage = null;
+        let imageScale = 1;
+        let imageRotation = 0;
+        let imageAlpha = 1;
+        
+        // 加载用户选择的图像
+        function loadImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        originalImage = img;
+                        drawImage();
+                        drawFilterImage();
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        // 加载示例图像
+        function loadSampleImage() {
+            // 创建一个程序生成的示例图像
+            const canvas = document.createElement('canvas');
+            canvas.width = 300;
+            canvas.height = 200;
+            const ctx = canvas.getContext('2d');
+            
+            // 绘制彩色渐变背景
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, '#ff6b6b');
+            gradient.addColorStop(0.5, '#4ecdc4');
+            gradient.addColorStop(1, '#45b7d1');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制几何图形
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(150, 100, 50, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            ctx.fillStyle = '#333333';
+            ctx.fillRect(200, 50, 80, 60);
+            
+            // 转换为图像
+            const img = new Image();
+            img.onload = function() {
+                originalImage = img;
+                drawImage();
+                drawFilterImage();
+            };
+            img.src = canvas.toDataURL();
+        }
+        
+        // 绘制图像（基本操作画布）
+        function drawImage() {
+            if (!originalImage) return;
+            
+            const canvas = document.getElementById('imageCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 保存状态
+            ctx.save();
+            
+            // 应用变换
+            ctx.globalAlpha = imageAlpha;
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.scale(imageScale, imageScale);
+            ctx.rotate(imageRotation * Math.PI / 180);
+            
+            // 绘制图像
+            const imgWidth = Math.min(originalImage.width, 400);
+            const imgHeight = (originalImage.height * imgWidth) / originalImage.width;
+            
+            ctx.drawImage(originalImage, -imgWidth / 2, -imgHeight / 2, imgWidth, imgHeight);
+            
+            // 恢复状态
+            ctx.restore();
+        }
+        
+        // 绘制滤镜图像
+        function drawFilterImage() {
+            if (!originalImage) return;
+            
+            const canvas = document.getElementById('filterCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 计算适合画布的尺寸
+            const imgWidth = Math.min(originalImage.width, canvas.width);
+            const imgHeight = (originalImage.height * imgWidth) / originalImage.width;
+            const x = (canvas.width - imgWidth) / 2;
+            const y = (canvas.height - imgHeight) / 2;
+            
+            // 绘制原始图像
+            ctx.drawImage(originalImage, x, y, imgWidth, imgHeight);
+        }
+        
+        // 更新图像缩放
+        function updateImageScale() {
+            imageScale = parseFloat(document.getElementById('scaleSlider').value);
+            document.getElementById('scaleValue').textContent = imageScale.toFixed(1) + 'x';
+            drawImage();
+        }
+        
+        // 更新图像旋转
+        function updateImageRotation() {
+            imageRotation = parseInt(document.getElementById('rotateSlider').value);
+            document.getElementById('rotateValue').textContent = imageRotation + '°';
+            drawImage();
+        }
+        
+        // 更新图像透明度
+        function updateImageAlpha() {
+            imageAlpha = parseFloat(document.getElementById('alphaSlider').value);
+            document.getElementById('alphaValue').textContent = imageAlpha.toFixed(1);
+            drawImage();
+        }
+        
+        // 重置图像
+        function resetImage() {
+            imageScale = 1;
+            imageRotation = 0;
+            imageAlpha = 1;
+            
+            document.getElementById('scaleSlider').value = '1';
+            document.getElementById('rotateSlider').value = '0';
+            document.getElementById('alphaSlider').value = '1';
+            
+            updateImageScale();
+            updateImageRotation();
+            updateImageAlpha();
+        }
+        
+        // 应用滤镜
+        function applyFilter(filterType) {
+            if (!originalImage) return;
+            
+            const canvas = document.getElementById('filterCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // 重新绘制原始图像
+            drawFilterImage();
+            
+            if (filterType === 'original') return;
+            
+            // 获取图像数据
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            
+            // 应用不同的滤镜
+            switch (filterType) {
+                case 'grayscale':
+                    applyGrayscale(data);
+                    break;
+                case 'sepia':
+                    applySepia(data);
+                    break;
+                case 'invert':
+                    applyInvert(data);
+                    break;
+                case 'blur':
+                    applySimpleBlur(ctx, canvas);
+                    return;
+                case 'sharpen':
+                    applySharpen(ctx, canvas);
+                    return;
+                case 'edge':
+                    applyEdgeDetection(ctx, canvas);
+                    return;
+            }
+            
+            // 将处理后的数据写回画布
+            ctx.putImageData(imageData, 0, 0);
+        }
+        
+        // 灰度滤镜
+        function applyGrayscale(data) {
+            for (let i = 0; i < data.length; i += 4) {
+                const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+                data[i] = gray;
+                data[i + 1] = gray;
+                data[i + 2] = gray;
+            }
+        }
+        
+        // 棕褐色滤镜
+        function applySepia(data) {
+            for (let i = 0; i < data.length; i += 4) {
+                const r = data[i];
+                const g = data[i + 1];
+                const b = data[i + 2];
+                
+                data[i] = Math.min(255, (r * 0.393) + (g * 0.769) + (b * 0.189));
+                data[i + 1] = Math.min(255, (r * 0.349) + (g * 0.686) + (b * 0.168));
+                data[i + 2] = Math.min(255, (r * 0.272) + (g * 0.534) + (b * 0.131));
+            }
+        }
+        
+        // 反色滤镜
+        function applyInvert(data) {
+            for (let i = 0; i < data.length; i += 4) {
+                data[i] = 255 - data[i];
+                data[i + 1] = 255 - data[i + 1];
+                data[i + 2] = 255 - data[i + 2];
+            }
+        }
+        
+        // 简单模糊效果
+        function applySimpleBlur(ctx, canvas) {
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            const blurRadius = 2;
+            const newData = new Uint8ClampedArray(data);
+            
+            for (let y = blurRadius; y < height - blurRadius; y++) {
+                for (let x = blurRadius; x < width - blurRadius; x++) {
+                    let r = 0, g = 0, b = 0, count = 0;
+                    
+                    for (let dy = -blurRadius; dy <= blurRadius; dy++) {
+                        for (let dx = -blurRadius; dx <= blurRadius; dx++) {
+                            const idx = ((y + dy) * width + (x + dx)) * 4;
+                            r += data[idx];
+                            g += data[idx + 1];
+                            b += data[idx + 2];
+                            count++;
+                        }
+                    }
+                    
+                    const idx = (y * width + x) * 4;
+                    newData[idx] = r / count;
+                    newData[idx + 1] = g / count;
+                    newData[idx + 2] = b / count;
+                }
+            }
+            
+            const newImageData = new ImageData(newData, width, height);
+            ctx.putImageData(newImageData, 0, 0);
+        }
+        
+        // 锐化效果
+        function applySharpen(ctx, canvas) {
+            const kernel = [
+                0, -1, 0,
+                -1, 5, -1,
+                0, -1, 0
+            ];
+            applyConvolution(ctx, canvas, kernel);
+        }
+        
+        // 边缘检测
+        function applyEdgeDetection(ctx, canvas) {
+            const kernel = [
+                -1, -1, -1,
+                -1, 8, -1,
+                -1, -1, -1
+            ];
+            applyConvolution(ctx, canvas, kernel);
+        }
+        
+        // 卷积操作
+        function applyConvolution(ctx, canvas, kernel) {
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            const width = canvas.width;
+            const height = canvas.height;
+            const newData = new Uint8ClampedArray(data);
+            
+            for (let y = 1; y < height - 1; y++) {
+                for (let x = 1; x < width - 1; x++) {
+                    let r = 0, g = 0, b = 0;
+                    
+                    for (let ky = -1; ky <= 1; ky++) {
+                        for (let kx = -1; kx <= 1; kx++) {
+                            const idx = ((y + ky) * width + (x + kx)) * 4;
+                            const weight = kernel[(ky + 1) * 3 + (kx + 1)];
+                            r += data[idx] * weight;
+                            g += data[idx + 1] * weight;
+                            b += data[idx + 2] * weight;
+                        }
+                    }
+                    
+                    const idx = (y * width + x) * 4;
+                    newData[idx] = Math.max(0, Math.min(255, r));
+                    newData[idx + 1] = Math.max(0, Math.min(255, g));
+                    newData[idx + 2] = Math.max(0, Math.min(255, b));
+                }
+            }
+            
+            const newImageData = new ImageData(newData, width, height);
+            ctx.putImageData(newImageData, 0, 0);
+        }
+        
+        // 应用调整（亮度、对比度、饱和度）
+        function applyAdjustments() {
+            if (!originalImage) return;
+            
+            const brightness = parseInt(document.getElementById('brightnessSlider').value);
+            const contrast = parseInt(document.getElementById('contrastSlider').value);
+            const saturation = parseInt(document.getElementById('saturationSlider').value);
+            
+            document.getElementById('brightnessValue').textContent = brightness;
+            document.getElementById('contrastValue').textContent = contrast;
+            document.getElementById('saturationValue').textContent = saturation;
+            
+            // 重新绘制并应用调整
+            drawFilterImage();
+            
+            const canvas = document.getElementById('filterCanvas');
+            const ctx = canvas.getContext('2d');
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const data = imageData.data;
+            
+            const contrastFactor = (259 * (contrast + 255)) / (255 * (259 - contrast));
+            
+            for (let i = 0; i < data.length; i += 4) {
+                // 亮度调整
+                let r = data[i] + brightness;
+                let g = data[i + 1] + brightness;
+                let b = data[i + 2] + brightness;
+                
+                // 对比度调整
+                r = contrastFactor * (r - 128) + 128;
+                g = contrastFactor * (g - 128) + 128;
+                b = contrastFactor * (b - 128) + 128;
+                
+                // 饱和度调整（简化版）
+                const gray = r * 0.299 + g * 0.587 + b * 0.114;
+                const satFactor = (saturation + 100) / 100;
+                r = gray + (r - gray) * satFactor;
+                g = gray + (g - gray) * satFactor;
+                b = gray + (b - gray) * satFactor;
+                
+                // 限制范围
+                data[i] = Math.max(0, Math.min(255, r));
+                data[i + 1] = Math.max(0, Math.min(255, g));
+                data[i + 2] = Math.max(0, Math.min(255, b));
+            }
+            
+            ctx.putImageData(imageData, 0, 0);
+        }
+        
+        // 图像合成演示
+        function drawCompositeDemo(mode) {
+            const canvas = document.getElementById('compositeCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            if (mode === 'mask') {
+                // 遮罩效果演示
+                drawMaskDemo(ctx, canvas);
+                return;
+            }
+            
+            // 绘制背景图形
+            ctx.fillStyle = '#ff6b6b';
+            ctx.fillRect(100, 50, 150, 150);
+            
+            // 设置合成模式
+            ctx.globalCompositeOperation = mode;
+            
+            // 绘制前景图形
+            ctx.fillStyle = '#4ecdc4';
+            ctx.beginPath();
+            ctx.arc(250, 125, 75, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // 重置合成模式
+            ctx.globalCompositeOperation = 'source-over';
+            
+            // 添加说明文字
+            ctx.fillStyle = '#333';
+            ctx.font = '16px Arial';
+            ctx.fillText(`合成模式: ${mode}`, 350, 100);
+            ctx.font = '12px Arial';
+            ctx.fillText('红色矩形 + 青色圆形', 350, 120);
+        }
+        
+        // 遮罩效果演示
+        function drawMaskDemo(ctx, canvas) {
+            // 创建遮罩
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 48px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('MASK', canvas.width / 2, canvas.height / 2);
+            
+            // 使用遮罩
+            ctx.globalCompositeOperation = 'source-in';
+            
+            // 绘制彩色渐变
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
+            gradient.addColorStop(0, '#ff6b6b');
+            gradient.addColorStop(0.5, '#4ecdc4');
+            gradient.addColorStop(1, '#45b7d1');
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 重置
+            ctx.globalCompositeOperation = 'source-over';
+            ctx.textAlign = 'left';
+        }
+        
+        // 动画合成演示
+        function animateComposite() {
+            const modes = ['source-over', 'multiply', 'screen', 'overlay'];
+            let index = 0;
+            
+            function nextMode() {
+                drawCompositeDemo(modes[index]);
+                index = (index + 1) % modes.length;
+                
+                if (index !== 0) {
+                    setTimeout(nextMode, 1500);
+                }
+            }
+            
+            nextMode();
+        }
+        
+        // 页面加载完成后初始化
+        window.addEventListener('load', function() {
+            loadSampleImage();
+            console.log('Canvas图像处理示例页面加载完成');
+        });
+    </script>
+</body>
+</html> 

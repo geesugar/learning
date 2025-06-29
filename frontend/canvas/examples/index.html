@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas学习示例集合</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 15px 25px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #3498db;
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #3498db;
+        }
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        .example-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .example-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(45deg, #3498db, #2ecc71);
+        }
+        .example-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .card-icon {
+            font-size: 2em;
+            margin-right: 15px;
+        }
+        .card-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 0;
+        }
+        .card-category {
+            background: #3498db;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            margin-left: auto;
+        }
+        .card-description {
+            color: #7f8c8d;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        .card-features {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0;
+        }
+        .card-features li {
+            padding: 5px 0;
+            color: #555;
+            display: flex;
+            align-items: center;
+        }
+        .card-features li::before {
+            content: '✓';
+            color: #2ecc71;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .card-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .card-button:hover {
+            background: linear-gradient(45deg, #2980b9, #3498db);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        .navigation {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        .nav-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .nav-link {
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            transition: background 0.3s ease;
+        }
+        .nav-link:hover {
+            background: #2980b9;
+        }
+        .footer {
+            text-align: center;
+            padding: 30px 0;
+            border-top: 1px solid #e9ecef;
+            margin-top: 40px;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 页面头部 -->
+        <div class="header">
+            <h1>🎨 Canvas学习示例集合</h1>
+            <p>从基础绘图到高级应用的完整Canvas学习之旅</p>
+        </div>
+
+        <!-- 统计信息 -->
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-number">15+</div>
+                <div class="stat-label">实例演示</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">4</div>
+                <div class="stat-label">学习阶段</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">100+</div>
+                <div class="stat-label">代码示例</div>
+            </div>
+        </div>
+
+        <!-- 快速导航 -->
+        <div class="navigation">
+            <div class="nav-title">📚 快速导航</div>
+            <div class="nav-links">
+                <a href="#foundations" class="nav-link">基础入门</a>
+                <a href="#graphics" class="nav-link">图形绘制</a>
+                <a href="#animation" class="nav-link">动画效果</a>
+                <a href="#advanced" class="nav-link">高级应用</a>
+                <a href="../README.md" class="nav-link">学习文档</a>
+                <a href="../NAVIGATION.md" class="nav-link">完整导航</a>
+            </div>
+        </div>
+
+        <!-- 示例网格 -->
+        <div class="examples-grid">
+            
+            <!-- 基础入门示例 -->
+            <div class="example-card" id="foundations">
+                <div class="card-header">
+                    <div class="card-icon">🎯</div>
+                    <h3 class="card-title">Canvas入门基础</h3>
+                    <span class="card-category">基础</span>
+                </div>
+                <div class="card-description">
+                    学习Canvas的基本概念、坐标系统、绘图上下文和高分辨率适配。包含完整的入门教程和交互式演示。
+                </div>
+                <ul class="card-features">
+                    <li>Canvas元素创建和初始化</li>
+                    <li>坐标系统可视化演示</li>
+                    <li>基本绘图方法展示</li>
+                    <li>高DPI屏幕适配对比</li>
+                </ul>
+                <a href="01-foundations/01-canvas-basics.html" class="card-button">🚀 开始学习</a>
+            </div>
+
+            <!-- 绘图上下文示例 -->
+            <div class="example-card">
+                <div class="card-header">
+                    <div class="card-icon">🎛️</div>
+                    <h3 class="card-title">绘图上下文控制</h3>
+                    <span class="card-category">基础</span>
+                </div>
+                <div class="card-description">
+                    深入学习Canvas绘图上下文的状态管理、坐标变换、复合操作和阴影效果。
+                </div>
+                <ul class="card-features">
+                    <li>状态保存与恢复机制</li>
+                    <li>坐标变换交互演示</li>
+                    <li>全局复合操作模式</li>
+                    <li>阴影效果实时调节</li>
+                </ul>
+                <a href="01-foundations/02-drawing-context.html" class="card-button">🎛️ 探索上下文</a>
+            </div>
+
+            <!-- 基本图形示例 -->
+            <div class="example-card" id="graphics">
+                <div class="card-header">
+                    <div class="card-icon">🔷</div>
+                    <h3 class="card-title">基本图形绘制</h3>
+                    <span class="card-category">图形</span>
+                </div>
+                <div class="card-description">
+                    掌握各种基本图形的绘制方法，从简单的矩形圆形到复杂的贝塞尔曲线和组合图形。
+                </div>
+                <ul class="card-features">
+                    <li>矩形、圆形、椭圆绘制</li>
+                    <li>路径和贝塞尔曲线</li>
+                    <li>复杂图形组合设计</li>
+                    <li>动画绘制过程演示</li>
+                </ul>
+                <a href="01-foundations/03-basic-shapes.html" class="card-button">🔷 绘制图形</a>
+            </div>
+
+            <!-- 动画基础示例 -->
+            <div class="example-card" id="animation">
+                <div class="card-header">
+                    <div class="card-icon">🎬</div>
+                    <h3 class="card-title">动画基础</h3>
+                    <span class="card-category">动画</span>
+                </div>
+                <div class="card-description">
+                    学习Canvas动画的核心概念，包括动画循环、缓动函数、物理动画和时间管理。
+                </div>
+                <ul class="card-features">
+                    <li>requestAnimationFrame循环</li>
+                    <li>多种缓动函数演示</li>
+                    <li>物理弹跳球动画</li>
+                    <li>时间管理和FPS监控</li>
+                </ul>
+                <a href="03-animation/01-animation-basics.html" class="card-button">🎬 动画世界</a>
+            </div>
+
+            <!-- 交互控制示例 -->
+            <div class="example-card">
+                <div class="card-header">
+                    <div class="card-icon">🎮</div>
+                    <h3 class="card-title">交互控制</h3>
+                    <span class="card-category">交互</span>
+                </div>
+                <div class="card-description">
+                    实现丰富的用户交互功能，包括鼠标事件处理、键盘控制、拖拽系统和绘画板应用。
+                </div>
+                <ul class="card-features">
+                    <li>鼠标事件完整管理</li>
+                    <li>键盘控制系统</li>
+                    <li>高级拖拽和碰撞检测</li>
+                    <li>交互式绘画板应用</li>
+                </ul>
+                <a href="03-animation/03-interactive-control.html" class="card-button">🎮 互动体验</a>
+            </div>
+
+            <!-- 高级路径示例 -->
+            <div class="example-card">
+                <div class="card-header">
+                    <div class="card-icon">🌟</div>
+                    <h3 class="card-title">高级路径操作</h3>
+                    <span class="card-category">高级</span>
+                </div>
+                <div class="card-description">
+                    掌握复杂路径绘制、碰撞检测、路径动画和形状识别等高级技术。
+                </div>
+                <ul class="card-features">
+                    <li>复杂路径和镂空效果</li>
+                    <li>路径碰撞检测算法</li>
+                    <li>路径动画和变形</li>
+                    <li>交互式碰撞演示</li>
+                </ul>
+                <a href="#" class="card-button" onclick="alert('该示例正在开发中...')">🌟 探索路径</a>
+            </div>
+
+            <!-- 颜色样式示例 -->
+            <div class="example-card">
+                <div class="card-header">
+                    <div class="card-icon">🎨</div>
+                    <h3 class="card-title">颜色与样式</h3>
+                    <span class="card-category">图形</span>
+                </div>
+                <div class="card-description">
+                    学习Canvas的颜色系统、渐变效果、图案生成和各种视觉特效的实现方法。
+                </div>
+                <ul class="card-features">
+                    <li>完整颜色系统和转换</li>
+                    <li>线性和径向渐变</li>
+                    <li>图案生成器类库</li>
+                    <li>霓虹灯和发光效果</li>
+                </ul>
+                <a href="#" class="card-button" onclick="alert('该示例正在开发中...')">🎨 色彩世界</a>
+            </div>
+
+            <!-- 文本渲染示例 -->
+            <div class="example-card">
+                <div class="card-header">
+                    <div class="card-icon">📝</div>
+                    <h3 class="card-title">文本渲染</h3>
+                    <span class="card-category">图形</span>
+                </div>
+                <div class="card-description">
+                    掌握Canvas文本绘制、样式设置、自动排版和各种文字特效的实现技巧。
+                </div>
+                <ul class="card-features">
+                    <li>基本文本绘制和测量</li>
+                    <li>渐变和3D文字效果</li>
+                    <li>自动换行和富文本</li>
+                    <li>动态文字动画效果</li>
+                </ul>
+                <a href="#" class="card-button" onclick="alert('该示例正在开发中...')">📝 文字艺术</a>
+            </div>
+
+            <!-- 性能优化示例 -->
+            <div class="example-card" id="advanced">
+                <div class="card-header">
+                    <div class="card-icon">⚡</div>
+                    <h3 class="card-title">性能优化</h3>
+                    <span class="card-category">高级</span>
+                </div>
+                <div class="card-description">
+                    学习Canvas性能优化技巧，包括脏矩形渲染、图层管理、批量绘制和内存优化。
+                </div>
+                <ul class="card-features">
+                    <li>脏矩形增量渲染</li>
+                    <li>图层分离和合成</li>
+                    <li>对象池和内存管理</li>
+                    <li>性能分析和监控</li>
+                </ul>
+                <a href="#" class="card-button" onclick="alert('该示例正在开发中...')">⚡ 优化技巧</a>
+            </div>
+
+            <!-- 数据可视化示例 -->
+            <div class="example-card">
+                <div class="card-header">
+                    <div class="card-icon">📊</div>
+                    <h3 class="card-title">数据可视化</h3>
+                    <span class="card-category">应用</span>
+                </div>
+                <div class="card-description">
+                    构建专业的数据可视化图表，包括折线图、柱状图、饼图和实时数据流处理。
+                </div>
+                <ul class="card-features">
+                    <li>完整图表库架构</li>
+                    <li>多种图表类型实现</li>
+                    <li>实时数据流管理</li>
+                    <li>交互式数据探索</li>
+                </ul>
+                <a href="#" class="card-button" onclick="alert('该示例正在开发中...')">📊 数据之美</a>
+            </div>
+
+            <!-- 游戏开发示例 -->
+            <div class="example-card">
+                <div class="card-header">
+                    <div class="card-icon">🎯</div>
+                    <h3 class="card-title">游戏开发</h3>
+                    <span class="card-category">应用</span>
+                </div>
+                <div class="card-description">
+                    使用Canvas开发游戏，学习游戏引擎核心架构、物理系统和碰撞检测。
+                </div>
+                <ul class="card-features">
+                    <li>游戏引擎架构设计</li>
+                    <li>精灵动画和状态管理</li>
+                    <li>场景管理系统</li>
+                    <li>完整弹球游戏实现</li>
+                </ul>
+                <a href="#" class="card-button" onclick="alert('该示例正在开发中...')">🎯 游戏世界</a>
+            </div>
+
+            <!-- WebGL集成示例 -->
+            <div class="example-card">
+                <div class="card-header">
+                    <div class="card-icon">🌐</div>
+                    <h3 class="card-title">WebGL集成</h3>
+                    <span class="card-category">高级</span>
+                </div>
+                <div class="card-description">
+                    学习Canvas 2D与WebGL的结合使用，实现3D图形渲染和高性能计算。
+                </div>
+                <ul class="card-features">
+                    <li>WebGL渲染管线封装</li>
+                    <li>3D几何体实现</li>
+                    <li>Canvas 2D混合渲染</li>
+                    <li>3D数据可视化</li>
+                </ul>
+                <a href="#" class="card-button" onclick="alert('该示例正在开发中...')">🌐 3D世界</a>
+            </div>
+
+        </div>
+
+        <!-- 页脚 -->
+        <div class="footer">
+            <p>🎨 Canvas学习示例集合 - 从零开始掌握Canvas技术</p>
+            <p>💡 每个示例都包含完整的源代码和详细注释，可以直接运行和学习</p>
+            <p>📚 配合学习文档使用效果更佳 | 🚀 持续更新中...</p>
+        </div>
+    </div>
+
+    <script>
+        // 页面加载动画
+        window.addEventListener('load', function() {
+            console.log('🎨 Canvas示例集合页面加载完成');
+            
+            // 添加卡片动画效果
+            const cards = document.querySelectorAll('.example-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+            
+            // 更新统计数据
+            updateStats();
+        });
+        
+        // 更新统计信息
+        function updateStats() {
+            const totalExamples = document.querySelectorAll('.example-card').length;
+            document.querySelector('.stat-number').textContent = totalExamples + '+';
+        }
+        
+        // 平滑滚动到指定部分
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // 卡片悬停效果增强
+        document.querySelectorAll('.example-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-5px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    </script>
+</body>
+</html> 

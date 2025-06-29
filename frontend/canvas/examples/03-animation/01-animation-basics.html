@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas动画基础示例</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .example-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .example-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .description {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            margin-bottom: 20px;
+            border-radius: 0 5px 5px 0;
+        }
+        canvas {
+            border: 2px solid #34495e;
+            margin: 10px 0;
+            display: block;
+            background: white;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        button.active {
+            background: #e74c3c;
+        }
+        .fps-counter {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .relative {
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Canvas动画基础示例</h1>
+        
+        <!-- 示例1: 基本动画循环 -->
+        <div class="example-section">
+            <div class="example-title">1. 基本动画循环</div>
+            <div class="description">
+                <strong>功能说明：</strong>演示requestAnimationFrame的使用和基本动画循环结构。<br>
+                <strong>技术要点：</strong>requestAnimationFrame、动画循环、FPS监控
+            </div>
+            
+            <div class="relative">
+                <canvas id="basicAnimationCanvas" width="600" height="200"></canvas>
+                <div class="fps-counter" id="fpsCounter1">FPS: 0</div>
+            </div>
+            
+            <div>
+                <button id="startBasicBtn" onclick="toggleBasicAnimation()">▶️ 开始动画</button>
+                <button onclick="resetBasicAnimation()">🔄 重置动画</button>
+            </div>
+        </div>
+
+        <!-- 示例2: 缓动函数演示 -->
+        <div class="example-section">
+            <div class="example-title">2. 缓动函数演示</div>
+            <div class="description">
+                <strong>功能说明：</strong>演示不同的缓动函数效果，包括线性、二次、三次、正弦等。<br>
+                <strong>技术要点：</strong>缓动函数、数学曲线、动画插值
+            </div>
+            
+            <canvas id="easingCanvas" width="600" height="350"></canvas>
+            
+            <div>
+                <button onclick="startEasingDemo('linear')">📏 线性</button>
+                <button onclick="startEasingDemo('quadratic')">📈 二次</button>
+                <button onclick="startEasingDemo('cubic')">📊 三次</button>
+                <button onclick="startEasingDemo('sine')">🌊 正弦</button>
+                <button onclick="startEasingDemo('elastic')">🏀 弹性</button>
+                <button onclick="startEasingDemo('bounce')">⚽ 反弹</button>
+                <button onclick="startAllEasing()">🎯 全部演示</button>
+            </div>
+        </div>
+
+        <!-- 示例3: 弹跳球动画 -->
+        <div class="example-section">
+            <div class="example-title">3. 弹跳球物理动画</div>
+            <div class="description">
+                <strong>功能说明：</strong>实现具有重力和碰撞检测的弹跳球动画。<br>
+                <strong>技术要点：</strong>物理运动、重力模拟、碰撞检测、能量损失
+            </div>
+            
+            <div class="relative">
+                <canvas id="ballCanvas" width="600" height="300"></canvas>
+                <div class="fps-counter" id="fpsCounter2">FPS: 0</div>
+            </div>
+            
+            <div>
+                <button id="ballBtn" onclick="toggleBallAnimation()">▶️ 开始弹跳</button>
+                <button onclick="addBall()">➕ 添加球</button>
+                <button onclick="resetBalls()">🔄 重置</button>
+                <button onclick="toggleTrail()">🌟 轨迹模式</button>
+            </div>
+        </div>
+
+        <!-- 示例4: 时间管理和增量时间 -->
+        <div class="example-section">
+            <div class="example-title">4. 时间管理和增量时间</div>
+            <div class="description">
+                <strong>功能说明：</strong>演示基于时间的动画和deltaTime的使用。<br>
+                <strong>技术要点：</strong>performance.now()、deltaTime、帧率无关动画
+            </div>
+            
+            <canvas id="timeCanvas" width="600" height="200"></canvas>
+            
+            <div>
+                <button onclick="startTimeBasedAnimation()">⏱️ 时间动画</button>
+                <button onclick="startFrameBasedAnimation()">🎞️ 帧动画</button>
+                <button onclick="stopTimeAnimations()">⏹️ 停止</button>
+                <span style="margin-left: 20px;">左侧：基于时间 | 右侧：基于帧数</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let animationStates = {
+            basic: false,
+            ball: false,
+            time: false
+        };
+        
+        let balls = [];
+        let trailMode = false;
+        
+        // FPS 计数器
+        class FPSCounter {
+            constructor() {
+                this.fps = 0;
+                this.lastTime = performance.now();
+                this.frameCount = 0;
+                this.fpsUpdateTime = 0;
+            }
+            
+            update() {
+                const now = performance.now();
+                this.frameCount++;
+                this.fpsUpdateTime += now - this.lastTime;
+                
+                if (this.fpsUpdateTime >= 1000) {
+                    this.fps = Math.round((this.frameCount * 1000) / this.fpsUpdateTime);
+                    this.frameCount = 0;
+                    this.fpsUpdateTime = 0;
+                }
+                
+                this.lastTime = now;
+            }
+            
+            getFPS() {
+                return this.fps;
+            }
+        }
+        
+        const fpsCounter1 = new FPSCounter();
+        const fpsCounter2 = new FPSCounter();
+        
+        // 缓动函数
+        const easingFunctions = {
+            linear: t => t,
+            quadratic: t => t * t,
+            cubic: t => t * t * t,
+            sine: t => 1 - Math.cos(t * Math.PI / 2),
+            elastic: t => {
+                if (t === 0) return 0;
+                if (t === 1) return 1;
+                const p = 0.3;
+                const s = p / 4;
+                return Math.pow(2, -10 * t) * Math.sin((t - s) * (2 * Math.PI) / p) + 1;
+            },
+            bounce: t => {
+                if (t < 1/2.75) {
+                    return 7.5625 * t * t;
+                } else if (t < 2/2.75) {
+                    return 7.5625 * (t -= 1.5/2.75) * t + 0.75;
+                } else if (t < 2.5/2.75) {
+                    return 7.5625 * (t -= 2.25/2.75) * t + 0.9375;
+                } else {
+                    return 7.5625 * (t -= 2.625/2.75) * t + 0.984375;
+                }
+            }
+        };
+        
+        // 基本动画
+        let basicAnimationId;
+        let basicX = 0;
+        
+        function toggleBasicAnimation() {
+            const btn = document.getElementById('startBasicBtn');
+            
+            if (!animationStates.basic) {
+                animationStates.basic = true;
+                btn.textContent = '⏸️ 暂停动画';
+                btn.classList.add('active');
+                startBasicAnimationLoop();
+            } else {
+                animationStates.basic = false;
+                btn.textContent = '▶️ 开始动画';
+                btn.classList.remove('active');
+                if (basicAnimationId) {
+                    cancelAnimationFrame(basicAnimationId);
+                }
+            }
+        }
+        
+        function startBasicAnimationLoop() {
+            const canvas = document.getElementById('basicAnimationCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            function animate() {
+                if (!animationStates.basic) return;
+                
+                fpsCounter1.update();
+                
+                // 清除画布
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // 移动对象
+                basicX += 3;
+                if (basicX > canvas.width + 50) {
+                    basicX = -50;
+                }
+                
+                // 绘制移动的圆形
+                ctx.fillStyle = '#e74c3c';
+                ctx.beginPath();
+                ctx.arc(basicX, 100, 25, 0, 2 * Math.PI);
+                ctx.fill();
+                
+                // 绘制轨迹点
+                ctx.fillStyle = 'rgba(52, 152, 219, 0.3)';
+                for (let i = 1; i <= 5; i++) {
+                    const trailX = basicX - i * 15;
+                    if (trailX >= 0) {
+                        ctx.beginPath();
+                        ctx.arc(trailX, 100, 25 - i * 3, 0, 2 * Math.PI);
+                        ctx.fill();
+                    }
+                }
+                
+                // 更新FPS显示
+                document.getElementById('fpsCounter1').textContent = `FPS: ${fpsCounter1.getFPS()}`;
+                
+                basicAnimationId = requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+        
+        function resetBasicAnimation() {
+            basicX = 0;
+            const canvas = document.getElementById('basicAnimationCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        
+        // 缓动函数演示
+        let easingAnimationId;
+        
+        function startEasingDemo(easingType) {
+            if (easingAnimationId) {
+                cancelAnimationFrame(easingAnimationId);
+            }
+            
+            const canvas = document.getElementById('easingCanvas');
+            const ctx = canvas.getContext('2d');
+            const startTime = performance.now();
+            const duration = 2000; // 2秒
+            
+            function animate() {
+                const elapsed = performance.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // 绘制轨道
+                ctx.strokeStyle = '#ddd';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(50, 100);
+                ctx.lineTo(550, 100);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                
+                // 计算位置
+                const easedProgress = easingFunctions[easingType](progress);
+                const x = 50 + easedProgress * 500;
+                
+                // 绘制移动的球
+                ctx.fillStyle = '#e74c3c';
+                ctx.beginPath();
+                ctx.arc(x, 100, 20, 0, 2 * Math.PI);
+                ctx.fill();
+                
+                // 绘制缓动曲线
+                drawEasingCurve(ctx, easingType, progress);
+                
+                // 显示信息
+                ctx.fillStyle = '#333';
+                ctx.font = '16px Arial';
+                ctx.fillText(`缓动类型: ${easingType}`, 50, 50);
+                ctx.fillText(`进度: ${Math.round(progress * 100)}%`, 200, 50);
+                ctx.fillText(`缓动值: ${easedProgress.toFixed(3)}`, 350, 50);
+                
+                if (progress < 1) {
+                    easingAnimationId = requestAnimationFrame(animate);
+                }
+            }
+            
+            animate();
+        }
+        
+        function drawEasingCurve(ctx, easingType, currentProgress) {
+            const startX = 50;
+            const startY = 200;
+            const width = 200;
+            const height = 100;
+            
+            // 绘制坐标轴
+            ctx.strokeStyle = '#666';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(startX + width, startY);
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(startX, startY - height);
+            ctx.stroke();
+            
+            // 绘制缓动曲线
+            ctx.strokeStyle = '#3498db';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            
+            for (let i = 0; i <= 100; i++) {
+                const t = i / 100;
+                const easedT = easingFunctions[easingType](t);
+                const x = startX + t * width;
+                const y = startY - easedT * height;
+                
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.stroke();
+            
+            // 标记当前进度点
+            if (currentProgress > 0) {
+                const easedProgress = easingFunctions[easingType](currentProgress);
+                const currentX = startX + currentProgress * width;
+                const currentY = startY - easedProgress * height;
+                
+                ctx.fillStyle = '#e74c3c';
+                ctx.beginPath();
+                ctx.arc(currentX, currentY, 4, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+            
+            // 添加标签
+            ctx.fillStyle = '#666';
+            ctx.font = '12px Arial';
+            ctx.fillText('时间', startX + width - 20, startY + 15);
+            ctx.save();
+            ctx.translate(startX - 15, startY - height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('值', 0, 0);
+            ctx.restore();
+        }
+        
+        function startAllEasing() {
+            const easings = Object.keys(easingFunctions);
+            let index = 0;
+            
+            function nextEasing() {
+                if (index >= easings.length) {
+                    index = 0;
+                }
+                
+                startEasingDemo(easings[index]);
+                index++;
+                
+                setTimeout(nextEasing, 3000);
+            }
+            
+            nextEasing();
+        }
+        
+        // 弹跳球动画
+        class Ball {
+            constructor(x, y, radius, color) {
+                this.x = x;
+                this.y = y;
+                this.vx = (Math.random() - 0.5) * 10;
+                this.vy = Math.random() * -10 - 5;
+                this.radius = radius;
+                this.color = color;
+                this.gravity = 0.5;
+                this.bounce = 0.8;
+                this.friction = 0.99;
+                this.trail = [];
+            }
+            
+            update(canvas) {
+                // 应用重力
+                this.vy += this.gravity;
+                
+                // 更新位置
+                this.x += this.vx;
+                this.y += this.vy;
+                
+                // 边界碰撞检测
+                if (this.x + this.radius > canvas.width) {
+                    this.x = canvas.width - this.radius;
+                    this.vx *= -this.bounce;
+                }
+                if (this.x - this.radius < 0) {
+                    this.x = this.radius;
+                    this.vx *= -this.bounce;
+                }
+                if (this.y + this.radius > canvas.height) {
+                    this.y = canvas.height - this.radius;
+                    this.vy *= -this.bounce;
+                    this.vx *= this.friction; // 地面摩擦
+                }
+                if (this.y - this.radius < 0) {
+                    this.y = this.radius;
+                    this.vy *= -this.bounce;
+                }
+                
+                // 更新轨迹
+                if (trailMode) {
+                    this.trail.push({x: this.x, y: this.y});
+                    if (this.trail.length > 20) {
+                        this.trail.shift();
+                    }
+                }
+            }
+            
+            draw(ctx) {
+                // 绘制轨迹
+                if (trailMode && this.trail.length > 1) {
+                    ctx.strokeStyle = this.color;
+                    ctx.lineWidth = 2;
+                    ctx.globalAlpha = 0.3;
+                    ctx.beginPath();
+                    ctx.moveTo(this.trail[0].x, this.trail[0].y);
+                    for (let i = 1; i < this.trail.length; i++) {
+                        ctx.lineTo(this.trail[i].x, this.trail[i].y);
+                    }
+                    ctx.stroke();
+                    ctx.globalAlpha = 1;
+                }
+                
+                // 绘制球
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+                ctx.fill();
+                
+                // 绘制高光
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+                ctx.beginPath();
+                ctx.arc(this.x - this.radius * 0.3, this.y - this.radius * 0.3, this.radius * 0.3, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+        }
+        
+        let ballAnimationId;
+        
+        function toggleBallAnimation() {
+            const btn = document.getElementById('ballBtn');
+            
+            if (!animationStates.ball) {
+                animationStates.ball = true;
+                btn.textContent = '⏸️ 暂停弹跳';
+                btn.classList.add('active');
+                if (balls.length === 0) {
+                    addBall();
+                }
+                startBallAnimation();
+            } else {
+                animationStates.ball = false;
+                btn.textContent = '▶️ 开始弹跳';
+                btn.classList.remove('active');
+                if (ballAnimationId) {
+                    cancelAnimationFrame(ballAnimationId);
+                }
+            }
+        }
+        
+        function startBallAnimation() {
+            const canvas = document.getElementById('ballCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            function animate() {
+                if (!animationStates.ball) return;
+                
+                fpsCounter2.update();
+                
+                // 清除画布
+                if (!trailMode) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                } else {
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                }
+                
+                // 更新和绘制所有球
+                balls.forEach(ball => {
+                    ball.update(canvas);
+                    ball.draw(ctx);
+                });
+                
+                // 更新FPS显示
+                document.getElementById('fpsCounter2').textContent = `FPS: ${fpsCounter2.getFPS()}`;
+                
+                ballAnimationId = requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+        
+        function addBall() {
+            const canvas = document.getElementById('ballCanvas');
+            const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            const radius = 15 + Math.random() * 20;
+            const x = radius + Math.random() * (canvas.width - radius * 2);
+            const y = radius;
+            
+            balls.push(new Ball(x, y, radius, color));
+        }
+        
+        function resetBalls() {
+            balls = [];
+            const canvas = document.getElementById('ballCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        
+        function toggleTrail() {
+            trailMode = !trailMode;
+            balls.forEach(ball => ball.trail = []);
+        }
+        
+        // 时间管理动画
+        let timeAnimationId1, timeAnimationId2;
+        let timeBasedX = 0, frameBasedX = 0;
+        let lastTime = 0, frameCount = 0;
+        
+        function startTimeBasedAnimation() {
+            const canvas = document.getElementById('timeCanvas');
+            const ctx = canvas.getContext('2d');
+            const speed = 100; // 像素/秒
+            
+            function animate(currentTime) {
+                const deltaTime = currentTime - lastTime;
+                lastTime = currentTime;
+                
+                // 基于时间的移动
+                timeBasedX += speed * (deltaTime / 1000);
+                if (timeBasedX > canvas.width / 2 - 25) {
+                    timeBasedX = 25;
+                }
+                
+                // 清除左半部分
+                ctx.clearRect(0, 0, canvas.width / 2, canvas.height);
+                
+                // 绘制基于时间的动画
+                ctx.fillStyle = '#e74c3c';
+                ctx.beginPath();
+                ctx.arc(timeBasedX, 100, 20, 0, 2 * Math.PI);
+                ctx.fill();
+                
+                // 标签
+                ctx.fillStyle = '#333';
+                ctx.font = '14px Arial';
+                ctx.fillText('基于时间 (恒定速度)', 10, 30);
+                ctx.fillText(`deltaTime: ${deltaTime.toFixed(1)}ms`, 10, 50);
+                
+                if (animationStates.time) {
+                    timeAnimationId1 = requestAnimationFrame(animate);
+                }
+            }
+            
+            animationStates.time = true;
+            lastTime = performance.now();
+            animate(lastTime);
+        }
+        
+        function startFrameBasedAnimation() {
+            const canvas = document.getElementById('timeCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            function animate() {
+                frameCount++;
+                
+                // 基于帧的移动
+                frameBasedX += 2; // 每帧移动2像素
+                if (frameBasedX > canvas.width - 25) {
+                    frameBasedX = canvas.width / 2 + 25;
+                }
+                
+                // 清除右半部分
+                ctx.clearRect(canvas.width / 2, 0, canvas.width / 2, canvas.height);
+                
+                // 绘制基于帧的动画
+                ctx.fillStyle = '#3498db';
+                ctx.beginPath();
+                ctx.arc(frameBasedX, 100, 20, 0, 2 * Math.PI);
+                ctx.fill();
+                
+                // 分割线
+                ctx.strokeStyle = '#ddd';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(canvas.width / 2, 0);
+                ctx.lineTo(canvas.width / 2, canvas.height);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                
+                // 标签
+                ctx.fillStyle = '#333';
+                ctx.font = '14px Arial';
+                ctx.fillText('基于帧数 (速度随帧率变化)', canvas.width / 2 + 10, 30);
+                ctx.fillText(`帧数: ${frameCount}`, canvas.width / 2 + 10, 50);
+                
+                if (animationStates.time) {
+                    timeAnimationId2 = requestAnimationFrame(animate);
+                }
+            }
+            
+            animate();
+        }
+        
+        function stopTimeAnimations() {
+            animationStates.time = false;
+            if (timeAnimationId1) cancelAnimationFrame(timeAnimationId1);
+            if (timeAnimationId2) cancelAnimationFrame(timeAnimationId2);
+        }
+        
+        // 页面加载完成后初始化
+        window.addEventListener('load', function() {
+            console.log('Canvas动画基础示例页面加载完成');
+        });
+    </script>
+</body>
+</html> 

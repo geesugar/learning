@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas入门基础示例</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .example-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .example-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .description {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            margin-bottom: 20px;
+            border-radius: 0 5px 5px 0;
+        }
+        canvas {
+            border: 2px solid #34495e;
+            margin: 10px 0;
+            display: block;
+            background: white;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        .code-hint {
+            font-family: 'Courier New', monospace;
+            background: #f4f4f4;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Canvas入门基础示例</h1>
+        
+        <!-- 示例1: 坐标系统演示 -->
+        <div class="example-section">
+            <div class="example-title">1. Canvas坐标系统演示</div>
+            <div class="description">
+                <strong>功能说明：</strong>展示Canvas的坐标系统，原点(0,0)在左上角，X轴向右递增，Y轴向下递增。<br>
+                <strong>技术要点：</strong>
+                <span class="code-hint">strokeStyle</span>、
+                <span class="code-hint">fillText()</span>、
+                <span class="code-hint">beginPath()</span>
+            </div>
+            
+            <canvas id="coordinateCanvas" width="500" height="300"></canvas>
+            
+            <div>
+                <button onclick="drawCoordinateSystem()">🔄 重新绘制坐标系</button>
+                <button onclick="clearCanvas('coordinateCanvas')">🗑️ 清除画布</button>
+            </div>
+        </div>
+
+        <!-- 示例2: 基本绘图演示 -->
+        <div class="example-section">
+            <div class="example-title">2. 基本绘图方法演示</div>
+            <div class="description">
+                <strong>功能说明：</strong>演示Canvas的基本绘图方法，包括矩形、圆形、直线的绘制。<br>
+                <strong>技术要点：</strong>
+                <span class="code-hint">fillRect()</span>、
+                <span class="code-hint">arc()</span>、
+                <span class="code-hint">moveTo()/lineTo()</span>
+            </div>
+            
+            <canvas id="shapesCanvas" width="600" height="250"></canvas>
+            
+            <div>
+                <button onclick="drawBasicShapes()">🎨 绘制基本图形</button>
+                <button onclick="animateShapes()">✨ 动态绘制演示</button>
+                <button onclick="clearCanvas('shapesCanvas')">🗑️ 清除画布</button>
+            </div>
+        </div>
+
+        <!-- 示例3: 高DPI适配演示 -->
+        <div class="example-section">
+            <div class="example-title">3. 高分辨率屏幕适配演示</div>
+            <div class="description">
+                <strong>功能说明：</strong>演示如何适配高分辨率屏幕，确保图形清晰度。<br>
+                <strong>技术要点：</strong>
+                <span class="code-hint">devicePixelRatio</span>、
+                <span class="code-hint">canvas.style.width</span>、
+                <span class="code-hint">ctx.scale()</span>
+            </div>
+            
+            <div style="display: flex; gap: 20px;">
+                <div>
+                    <h4>普通分辨率 (可能模糊)</h4>
+                    <canvas id="normalCanvas" width="200" height="150"></canvas>
+                </div>
+                <div>
+                    <h4>高分辨率适配 (清晰)</h4>
+                    <canvas id="highDPICanvas" width="200" height="150"></canvas>
+                </div>
+            </div>
+            
+            <div>
+                <button onclick="drawDPIComparison()">🔍 绘制对比效果</button>
+                <p>当前设备像素比：<span id="pixelRatio"></span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 绘制坐标系统
+        function drawCoordinateSystem() {
+            const canvas = document.getElementById('coordinateCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // 清除画布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 设置网格样式
+            ctx.strokeStyle = '#ddd';
+            ctx.lineWidth = 1;
+            const gridSize = 50;
+            
+            // 绘制网格线
+            for (let x = 0; x <= canvas.width; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+                
+                if (x > 0 && x < canvas.width) {
+                    ctx.fillStyle = '#666';
+                    ctx.font = '12px Arial';
+                    ctx.fillText(x.toString(), x - 8, 15);
+                }
+            }
+            
+            for (let y = 0; y <= canvas.height; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+                
+                if (y > 0 && y < canvas.height) {
+                    ctx.fillStyle = '#666';
+                    ctx.font = '12px Arial';
+                    ctx.fillText(y.toString(), 5, y - 5);
+                }
+            }
+            
+            // 标注原点
+            ctx.fillStyle = '#e74c3c';
+            ctx.fillRect(0, 0, 8, 8);
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText('(0,0)', 12, 20);
+            
+            // 绘制坐标轴箭头
+            drawArrow(ctx, 0, 25, 80, 25, '#2c3e50');
+            drawArrow(ctx, 25, 0, 25, 80, '#2c3e50');
+            
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = 'bold 12px Arial';
+            ctx.fillText('X轴→', 85, 30);
+            ctx.fillText('Y轴↓', 30, 15);
+        }
+        
+        // 辅助函数：绘制箭头
+        function drawArrow(ctx, fromX, fromY, toX, toY, color) {
+            const headlen = 8;
+            const angle = Math.atan2(toY - fromY, toX - fromX);
+            
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            
+            ctx.beginPath();
+            ctx.moveTo(fromX, fromY);
+            ctx.lineTo(toX, toY);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(toX, toY);
+            ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI/6), toY - headlen * Math.sin(angle - Math.PI/6));
+            ctx.moveTo(toX, toY);
+            ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI/6), toY - headlen * Math.sin(angle + Math.PI/6));
+            ctx.stroke();
+        }
+        
+        // 绘制基本图形
+        function drawBasicShapes() {
+            const canvas = document.getElementById('shapesCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 1. 填充矩形
+            ctx.fillStyle = '#e74c3c';
+            ctx.fillRect(50, 50, 100, 80);
+            ctx.fillStyle = '#fff';
+            ctx.font = '14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('fillRect()', 100, 95);
+            
+            // 2. 描边矩形
+            ctx.strokeStyle = '#3498db';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(200, 50, 100, 80);
+            ctx.fillStyle = '#3498db';
+            ctx.fillText('strokeRect()', 250, 145);
+            
+            // 3. 圆形
+            ctx.fillStyle = '#2ecc71';
+            ctx.beginPath();
+            ctx.arc(400, 90, 40, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.fillStyle = '#fff';
+            ctx.fillText('arc()', 400, 95);
+            
+            // 4. 直线
+            ctx.strokeStyle = '#f39c12';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(100, 180);
+            ctx.lineTo(400, 180);
+            ctx.stroke();
+            ctx.fillStyle = '#f39c12';
+            ctx.fillText('moveTo() + lineTo()', 250, 200);
+            
+            // 5. 三角形
+            ctx.fillStyle = '#9b59b6';
+            ctx.beginPath();
+            ctx.moveTo(500, 50);
+            ctx.lineTo(470, 130);
+            ctx.lineTo(530, 130);
+            ctx.closePath();
+            ctx.fill();
+            ctx.fillStyle = '#fff';
+            ctx.fillText('路径', 500, 95);
+        }
+        
+        // 动画绘制
+        function animateShapes() {
+            const canvas = document.getElementById('shapesCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            let step = 0;
+            function nextStep() {
+                if (step > 4) return;
+                
+                setTimeout(() => {
+                    switch(step) {
+                        case 0:
+                            ctx.fillStyle = '#e74c3c';
+                            ctx.fillRect(50, 50, 100, 80);
+                            break;
+                        case 1:
+                            ctx.strokeStyle = '#3498db';
+                            ctx.lineWidth = 3;
+                            ctx.strokeRect(200, 50, 100, 80);
+                            break;
+                        case 2:
+                            ctx.fillStyle = '#2ecc71';
+                            ctx.beginPath();
+                            ctx.arc(400, 90, 40, 0, 2 * Math.PI);
+                            ctx.fill();
+                            break;
+                        case 3:
+                            ctx.strokeStyle = '#f39c12';
+                            ctx.lineWidth = 4;
+                            ctx.beginPath();
+                            ctx.moveTo(100, 180);
+                            ctx.lineTo(400, 180);
+                            ctx.stroke();
+                            break;
+                        case 4:
+                            ctx.fillStyle = '#9b59b6';
+                            ctx.beginPath();
+                            ctx.moveTo(500, 50);
+                            ctx.lineTo(470, 130);
+                            ctx.lineTo(530, 130);
+                            ctx.closePath();
+                            ctx.fill();
+                            break;
+                    }
+                    step++;
+                    nextStep();
+                }, 600);
+            }
+            nextStep();
+        }
+        
+        // 高DPI对比
+        function drawDPIComparison() {
+            // 普通分辨率
+            const normalCanvas = document.getElementById('normalCanvas');
+            const normalCtx = normalCanvas.getContext('2d');
+            normalCtx.clearRect(0, 0, normalCanvas.width, normalCanvas.height);
+            
+            normalCtx.strokeStyle = '#333';
+            normalCtx.lineWidth = 1;
+            for (let i = 10; i < normalCanvas.width; i += 20) {
+                normalCtx.beginPath();
+                normalCtx.moveTo(i, 0);
+                normalCtx.lineTo(i, normalCanvas.height);
+                normalCtx.stroke();
+            }
+            normalCtx.font = '12px Arial';
+            normalCtx.fillStyle = '#333';
+            normalCtx.fillText('普通分辨率', 10, 20);
+            
+            // 高分辨率适配
+            const highDPICanvas = document.getElementById('highDPICanvas');
+            const highDPICtx = highDPICanvas.getContext('2d');
+            const dpr = window.devicePixelRatio || 1;
+            
+            const rect = highDPICanvas.getBoundingClientRect();
+            highDPICanvas.width = rect.width * dpr;
+            highDPICanvas.height = rect.height * dpr;
+            highDPICtx.scale(dpr, dpr);
+            highDPICanvas.style.width = rect.width + 'px';
+            highDPICanvas.style.height = rect.height + 'px';
+            
+            highDPICtx.clearRect(0, 0, highDPICanvas.width, highDPICanvas.height);
+            highDPICtx.strokeStyle = '#333';
+            highDPICtx.lineWidth = 1;
+            for (let i = 10; i < rect.width; i += 20) {
+                highDPICtx.beginPath();
+                highDPICtx.moveTo(i, 0);
+                highDPICtx.lineTo(i, rect.height);
+                highDPICtx.stroke();
+            }
+            highDPICtx.font = '12px Arial';
+            highDPICtx.fillStyle = '#333';
+            highDPICtx.fillText('高分辨率适配', 10, 20);
+            
+            document.getElementById('pixelRatio').textContent = dpr;
+        }
+        
+        // 清除画布
+        function clearCanvas(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        
+        // 页面加载完成后初始化
+        window.addEventListener('load', function() {
+            drawCoordinateSystem();
+            drawBasicShapes();
+            drawDPIComparison();
+        });
+    </script>
+</body>
+</html> 

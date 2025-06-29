@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas绘图上下文示例</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .example-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .example-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+        .description {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            margin-bottom: 20px;
+            border-radius: 0 5px 5px 0;
+        }
+        canvas {
+            border: 2px solid #34495e;
+            margin: 10px 0;
+            display: block;
+            background: white;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        .controls {
+            margin: 15px 0;
+        }
+        .slider-control {
+            margin: 10px 0;
+        }
+        .slider-control label {
+            display: inline-block;
+            width: 100px;
+            font-weight: bold;
+        }
+        input[type="range"] {
+            width: 200px;
+            margin: 0 10px;
+        }
+        .code-hint {
+            font-family: 'Courier New', monospace;
+            background: #f4f4f4;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎛️ Canvas绘图上下文示例</h1>
+        
+        <!-- 示例1: 状态保存与恢复 -->
+        <div class="example-section">
+            <div class="example-title">1. Canvas状态保存与恢复</div>
+            <div class="description">
+                <strong>功能说明：</strong>演示如何使用save()和restore()管理Canvas绘图状态。<br>
+                <strong>技术要点：</strong>
+                <span class="code-hint">ctx.save()</span>、
+                <span class="code-hint">ctx.restore()</span>、
+                状态栈管理
+            </div>
+            
+            <canvas id="stateCanvas" width="600" height="200"></canvas>
+            
+            <div class="controls">
+                <button onclick="demonstrateState()">🔄 演示状态管理</button>
+                <button onclick="clearCanvas('stateCanvas')">🗑️ 清除画布</button>
+            </div>
+        </div>
+
+        <!-- 示例2: 坐标变换 -->
+        <div class="example-section">
+            <div class="example-title">2. 坐标变换操作</div>
+            <div class="description">
+                <strong>功能说明：</strong>演示平移、旋转、缩放等坐标变换操作。<br>
+                <strong>技术要点：</strong>
+                <span class="code-hint">translate()</span>、
+                <span class="code-hint">rotate()</span>、
+                <span class="code-hint">scale()</span>
+            </div>
+            
+            <canvas id="transformCanvas" width="600" height="400"></canvas>
+            
+            <div class="controls">
+                <div class="slider-control">
+                    <label>平移X:</label>
+                    <input type="range" id="translateX" min="-200" max="200" value="0" oninput="updateTransforms()">
+                    <span id="translateXValue">0</span>
+                </div>
+                <div class="slider-control">
+                    <label>平移Y:</label>
+                    <input type="range" id="translateY" min="-200" max="200" value="0" oninput="updateTransforms()">
+                    <span id="translateYValue">0</span>
+                </div>
+                <div class="slider-control">
+                    <label>旋转角度:</label>
+                    <input type="range" id="rotation" min="0" max="360" value="0" oninput="updateTransforms()">
+                    <span id="rotationValue">0</span>°
+                </div>
+                <div class="slider-control">
+                    <label>缩放比例:</label>
+                    <input type="range" id="scale" min="0.5" max="3" step="0.1" value="1" oninput="updateTransforms()">
+                    <span id="scaleValue">1</span>
+                </div>
+                <button onclick="resetTransforms()">🔄 重置变换</button>
+                <button onclick="animateTransforms()">✨ 动画演示</button>
+            </div>
+        </div>
+
+        <!-- 示例3: 复合操作 -->
+        <div class="example-section">
+            <div class="example-title">3. 全局复合操作</div>
+            <div class="description">
+                <strong>功能说明：</strong>演示不同的globalCompositeOperation效果。<br>
+                <strong>技术要点：</strong>
+                <span class="code-hint">globalCompositeOperation</span>、
+                图形混合模式
+            </div>
+            
+            <canvas id="compositeCanvas" width="600" height="300"></canvas>
+            
+            <div class="controls">
+                <button onclick="showCompositeMode('source-over')">source-over (默认)</button>
+                <button onclick="showCompositeMode('multiply')">multiply (正片叠底)</button>
+                <button onclick="showCompositeMode('screen')">screen (滤色)</button>
+                <button onclick="showCompositeMode('overlay')">overlay (叠加)</button>
+                <button onclick="showCompositeMode('xor')">xor (异或)</button>
+                <button onclick="showAllComposites()">📊 显示所有模式</button>
+            </div>
+        </div>
+
+        <!-- 示例4: 阴影效果 -->
+        <div class="example-section">
+            <div class="example-title">4. 阴影效果演示</div>
+            <div class="description">
+                <strong>功能说明：</strong>演示如何创建各种阴影效果。<br>
+                <strong>技术要点：</strong>
+                <span class="code-hint">shadowColor</span>、
+                <span class="code-hint">shadowBlur</span>、
+                <span class="code-hint">shadowOffsetX/Y</span>
+            </div>
+            
+            <canvas id="shadowCanvas" width="600" height="250"></canvas>
+            
+            <div class="controls">
+                <div class="slider-control">
+                    <label>阴影模糊:</label>
+                    <input type="range" id="shadowBlur" min="0" max="50" value="10" oninput="updateShadows()">
+                    <span id="shadowBlurValue">10</span>
+                </div>
+                <div class="slider-control">
+                    <label>阴影偏移X:</label>
+                    <input type="range" id="shadowOffsetX" min="-30" max="30" value="5" oninput="updateShadows()">
+                    <span id="shadowOffsetXValue">5</span>
+                </div>
+                <div class="slider-control">
+                    <label>阴影偏移Y:</label>
+                    <input type="range" id="shadowOffsetY" min="-30" max="30" value="5" oninput="updateShadows()">
+                    <span id="shadowOffsetYValue">5</span>
+                </div>
+                <button onclick="demoShadowEffects()">🎨 预设效果演示</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 状态管理演示
+        function demonstrateState() {
+            const canvas = document.getElementById('stateCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 原始状态 - 红色矩形
+            ctx.fillStyle = '#e74c3c';
+            ctx.fillRect(50, 50, 100, 100);
+            ctx.fillStyle = '#333';
+            ctx.font = '14px Arial';
+            ctx.fillText('原始状态', 60, 170);
+            
+            // 保存状态
+            ctx.save();
+            
+            // 修改状态 - 蓝色、旋转
+            ctx.fillStyle = '#3498db';
+            ctx.translate(250, 100);
+            ctx.rotate(Math.PI / 6);
+            ctx.fillRect(-50, -50, 100, 100);
+            
+            // 恢复原点来绘制文字
+            ctx.restore();
+            ctx.fillStyle = '#333';
+            ctx.fillText('保存/恢复后', 210, 170);
+            
+            // 再次保存状态
+            ctx.save();
+            
+            // 多重变换
+            ctx.fillStyle = '#2ecc71';
+            ctx.translate(450, 100);
+            ctx.scale(1.2, 0.8);
+            ctx.rotate(-Math.PI / 8);
+            ctx.fillRect(-50, -50, 100, 100);
+            
+            // 恢复状态
+            ctx.restore();
+            ctx.fillStyle = '#333';
+            ctx.fillText('多重变换', 410, 170);
+        }
+        
+        // 更新变换
+        function updateTransforms() {
+            const canvas = document.getElementById('transformCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            // 获取控制值
+            const translateX = parseInt(document.getElementById('translateX').value);
+            const translateY = parseInt(document.getElementById('translateY').value);
+            const rotation = parseInt(document.getElementById('rotation').value);
+            const scale = parseFloat(document.getElementById('scale').value);
+            
+            // 更新显示值
+            document.getElementById('translateXValue').textContent = translateX;
+            document.getElementById('translateYValue').textContent = translateY;
+            document.getElementById('rotationValue').textContent = rotation;
+            document.getElementById('scaleValue').textContent = scale;
+            
+            // 清除画布
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制原始坐标系参考
+            ctx.save();
+            drawCoordinateReference(ctx, 150, 150, 50);
+            ctx.restore();
+            
+            // 应用变换并绘制
+            ctx.save();
+            ctx.translate(300 + translateX, 200 + translateY);
+            ctx.rotate(rotation * Math.PI / 180);
+            ctx.scale(scale, scale);
+            
+            // 绘制变换后的图形
+            ctx.fillStyle = '#e74c3c';
+            ctx.fillRect(-25, -25, 50, 50);
+            
+            ctx.fillStyle = '#3498db';
+            ctx.beginPath();
+            ctx.arc(0, 0, 30, 0, 2 * Math.PI);
+            ctx.stroke();
+            
+            // 绘制坐标轴
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(-40, 0);
+            ctx.lineTo(40, 0);
+            ctx.moveTo(0, -40);
+            ctx.lineTo(0, 40);
+            ctx.stroke();
+            
+            ctx.restore();
+        }
+        
+        // 绘制坐标参考
+        function drawCoordinateReference(ctx, x, y, size) {
+            ctx.strokeStyle = '#ccc';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            
+            ctx.beginPath();
+            ctx.moveTo(x - size, y);
+            ctx.lineTo(x + size, y);
+            ctx.moveTo(x, y - size);
+            ctx.lineTo(x, y + size);
+            ctx.stroke();
+            
+            ctx.setLineDash([]);
+            ctx.fillStyle = '#999';
+            ctx.font = '12px Arial';
+            ctx.fillText('参考原点', x - 30, y - 60);
+        }
+        
+        // 重置变换
+        function resetTransforms() {
+            document.getElementById('translateX').value = '0';
+            document.getElementById('translateY').value = '0';
+            document.getElementById('rotation').value = '0';
+            document.getElementById('scale').value = '1';
+            updateTransforms();
+        }
+        
+        // 动画变换
+        function animateTransforms() {
+            let frame = 0;
+            const maxFrames = 120;
+            
+            function animate() {
+                if (frame >= maxFrames) return;
+                
+                const progress = frame / maxFrames;
+                const angle = progress * 720; // 两圈
+                const scaleValue = 1 + 0.5 * Math.sin(progress * Math.PI * 4);
+                
+                document.getElementById('rotation').value = angle % 360;
+                document.getElementById('scale').value = scaleValue.toFixed(1);
+                document.getElementById('translateX').value = Math.sin(progress * Math.PI * 2) * 100;
+                document.getElementById('translateY').value = Math.cos(progress * Math.PI * 2) * 50;
+                
+                updateTransforms();
+                
+                frame++;
+                requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+        
+        // 显示复合操作模式
+        function showCompositeMode(mode) {
+            const canvas = document.getElementById('compositeCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 绘制背景图形（蓝色圆形）
+            ctx.fillStyle = '#3498db';
+            ctx.beginPath();
+            ctx.arc(200, 150, 80, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // 设置复合操作模式
+            ctx.globalCompositeOperation = mode;
+            
+            // 绘制前景图形（红色矩形）
+            ctx.fillStyle = '#e74c3c';
+            ctx.fillRect(160, 110, 160, 80);
+            
+            // 重置复合操作
+            ctx.globalCompositeOperation = 'source-over';
+            
+            // 添加标签
+            ctx.fillStyle = '#333';
+            ctx.font = '16px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(`复合模式: ${mode}`, 240, 50);
+            
+            // 添加说明文字
+            ctx.font = '12px Arial';
+            ctx.fillText('蓝色圆形（背景） + 红色矩形（前景）', 240, 280);
+        }
+        
+        // 显示所有复合模式
+        function showAllComposites() {
+            const canvas = document.getElementById('compositeCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const modes = ['source-over', 'multiply', 'screen', 'overlay', 'darken', 'lighten'];
+            const cols = 3;
+            const rows = 2;
+            const cellWidth = canvas.width / cols;
+            const cellHeight = canvas.height / rows;
+            
+            modes.forEach((mode, index) => {
+                const x = (index % cols) * cellWidth;
+                const y = Math.floor(index / cols) * cellHeight;
+                
+                ctx.save();
+                ctx.translate(x, y);
+                
+                // 绘制背景图形
+                ctx.fillStyle = '#3498db';
+                ctx.beginPath();
+                ctx.arc(cellWidth/2, cellHeight/2, 30, 0, 2 * Math.PI);
+                ctx.fill();
+                
+                // 设置复合模式
+                ctx.globalCompositeOperation = mode;
+                
+                // 绘制前景图形
+                ctx.fillStyle = '#e74c3c';
+                ctx.fillRect(cellWidth/2 - 20, cellHeight/2 - 15, 40, 30);
+                
+                // 重置复合模式
+                ctx.globalCompositeOperation = 'source-over';
+                
+                // 添加标签
+                ctx.fillStyle = '#333';
+                ctx.font = '10px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(mode, cellWidth/2, cellHeight - 10);
+                
+                ctx.restore();
+            });
+        }
+        
+        // 更新阴影效果
+        function updateShadows() {
+            const canvas = document.getElementById('shadowCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            const blur = parseInt(document.getElementById('shadowBlur').value);
+            const offsetX = parseInt(document.getElementById('shadowOffsetX').value);
+            const offsetY = parseInt(document.getElementById('shadowOffsetY').value);
+            
+            document.getElementById('shadowBlurValue').textContent = blur;
+            document.getElementById('shadowOffsetXValue').textContent = offsetX;
+            document.getElementById('shadowOffsetYValue').textContent = offsetY;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // 设置阴影属性
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+            ctx.shadowBlur = blur;
+            ctx.shadowOffsetX = offsetX;
+            ctx.shadowOffsetY = offsetY;
+            
+            // 绘制有阴影的图形
+            ctx.fillStyle = '#e74c3c';
+            ctx.fillRect(100, 50, 80, 80);
+            
+            ctx.fillStyle = '#3498db';
+            ctx.beginPath();
+            ctx.arc(250, 90, 40, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            ctx.fillStyle = '#2ecc71';
+            ctx.font = 'bold 24px Arial';
+            ctx.fillText('阴影文字', 350, 90);
+            
+            // 清除阴影设置
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+            
+            // 添加说明
+            ctx.fillStyle = '#333';
+            ctx.font = '12px Arial';
+            ctx.fillText(`模糊: ${blur}, 偏移: (${offsetX}, ${offsetY})`, 50, 200);
+        }
+        
+        // 阴影效果演示
+        function demoShadowEffects() {
+            const effects = [
+                { blur: 0, offsetX: 0, offsetY: 0 },
+                { blur: 10, offsetX: 5, offsetY: 5 },
+                { blur: 20, offsetX: 0, offsetY: 0 },
+                { blur: 5, offsetX: -10, offsetY: -10 },
+                { blur: 15, offsetX: 10, offsetY: -5 }
+            ];
+            
+            let index = 0;
+            function nextEffect() {
+                if (index >= effects.length) return;
+                
+                const effect = effects[index];
+                document.getElementById('shadowBlur').value = effect.blur;
+                document.getElementById('shadowOffsetX').value = effect.offsetX;
+                document.getElementById('shadowOffsetY').value = effect.offsetY;
+                
+                updateShadows();
+                
+                index++;
+                if (index < effects.length) {
+                    setTimeout(nextEffect, 1500);
+                }
+            }
+            
+            nextEffect();
+        }
+        
+        // 清除画布
+        function clearCanvas(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        
+        // 页面加载完成后初始化
+        window.addEventListener('load', function() {
+            demonstrateState();
+            updateTransforms();
+            showCompositeMode('source-over');
+            updateShadows();
+        });
+    </script>
+</body>
+</html> 
