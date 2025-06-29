@@ -412,6 +412,77 @@ viewBox="min-x min-y width height"
 - 文本元素没有被其他元素覆盖
 - 使用了适当的user-select CSS属性
 
+## 🛠️ 开发工具推荐
+
+### 在线工具
+- **[SVG Editor](https://boxy-svg.com/app)** - 专业的在线SVG编辑器
+- **[SVG Path Visualizer](https://svg-path-visualizer.netlify.app/)** - 路径数据可视化工具  
+- **[SVG Optimizer](https://jakearchibald.github.io/svgomg/)** - 在线SVG优化工具
+- **[SVG Viewer](https://www.svgviewer.dev/)** - SVG代码预览工具
+
+### 桌面应用
+- **Adobe Illustrator** - 专业矢量图形设计
+- **Inkscape** - 免费开源SVG编辑器
+- **Sketch** - Mac平台设计工具
+- **Figma** - 协作设计平台
+
+### VS Code扩展
+- **SVG Preview** - SVG文件预览
+- **SVG** - SVG语法高亮
+- **Auto Complete SVG** - SVG属性自动补全
+
+## 🔧 实用代码片段
+
+### 响应式SVG模板
+```svg
+<svg xmlns="http://www.w3.org/2000/svg" 
+     viewBox="0 0 400 300" 
+     class="responsive-svg">
+  <style>
+    .responsive-svg {
+      width: 100%;
+      height: auto;
+      max-width: 400px;
+    }
+  </style>
+  
+  <!-- SVG内容 -->
+</svg>
+```
+
+### 可访问性增强模板
+```svg
+<svg xmlns="http://www.w3.org/2000/svg" 
+     viewBox="0 0 100 100"
+     role="img" 
+     aria-labelledby="title desc">
+  
+  <title id="title">图标标题</title>
+  <desc id="desc">详细描述SVG图标的含义</desc>
+  
+  <!-- 图标内容 -->
+  <circle cx="50" cy="50" r="40" fill="blue"/>
+</svg>
+```
+
+### 交互式SVG事件处理
+```html
+<svg width="200" height="200" onclick="handleClick(event)">
+  <circle cx="100" cy="100" r="50" 
+          fill="blue" 
+          onmouseover="this.style.fill='red'" 
+          onmouseout="this.style.fill='blue'">
+    <title>点击我</title>
+  </circle>
+</svg>
+
+<script>
+function handleClick(event) {
+  console.log('SVG被点击了！', event.target);
+}
+</script>
+```
+
 ## 🎯 本章小结
 
 通过本章学习，您应该掌握：
@@ -431,11 +502,26 @@ viewBox="min-x min-y width height"
 - 创建基本的SVG文档
 - 理解并应用视口概念
 
+### ✅ 开发工具
+- 了解常用的SVG工具
+- 掌握开发环境配置
+- 学会使用实用代码片段
+
 ## 📖 拓展阅读
 
+### 官方文档
 - [SVG规范文档](https://www.w3.org/TR/SVG2/) - W3C官方规范
-- [SVG坐标系统详解](https://developer.mozilla.org/zh-CN/docs/Web/SVG/Tutorial/Positions) - MDN教程
-- [SVG优化指南](https://web.dev/optimize-svg/) - Google Web.dev
+- [MDN SVG教程](https://developer.mozilla.org/zh-CN/docs/Web/SVG/Tutorial) - Mozilla开发者文档
+
+### 深入学习
+- [SVG坐标系统详解](https://developer.mozilla.org/zh-CN/docs/Web/SVG/Tutorial/Positions) - 坐标系统专题
+- [SVG优化指南](https://web.dev/optimize-svg/) - Google Web.dev性能优化
+- [SVG可访问性指南](https://www.w3.org/WAI/tutorials/images/complex/) - W3C可访问性教程
+
+### 实用资源
+- [SVG图标库](https://heroicons.com/) - 高质量SVG图标
+- [SVG动画案例](https://codepen.io/collection/nMgKxJ/) - CodePen动画集合
+- [SVG最佳实践](https://css-tricks.com/svg-use-external-source/) - CSS-Tricks实践指南
 
 ---
 
