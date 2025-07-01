@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGL 学习示例</title>
+    <link rel="stylesheet" href="common/demo-styles.css">
+    <style>
+        .examples-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .example-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .example-card:hover {
+            transform: translateY(-5px);
+        }
+        .example-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .tag {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin: 2px;
+            display: inline-block;
+        }
+        .example-link {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>WebGL 学习示例</h1>
+        
+        <div class="info">
+            <h2>欢迎来到 WebGL 学习之旅！</h2>
+            <p>这里提供了从基础到高级的 WebGL 示例，每个示例都包含详细的代码注释和交互式控制。</p>
+        </div>
+        
+        <h2>🚀 基础概念</h2>
+        <div class="examples-grid">
+            <div class="example-card">
+                <h3>第一个三角形</h3>
+                <p>学习 WebGL 的基本渲染流程，包括着色器创建、缓冲区管理和基本绘制调用。</p>
+                <div>
+                    <span class="tag">顶点着色器</span>
+                    <span class="tag">片段着色器</span>
+                    <span class="tag">缓冲区</span>
+                </div>
+                <a href="01-foundations/first-triangle/index.html" class="example-link">查看示例</a>
+            </div>
+            
+            <div class="example-card">
+                <h3>彩色立方体</h3>
+                <p>掌握 3D 渲染基础，包括矩阵变换、深度测试和索引缓冲区的使用。</p>
+                <div>
+                    <span class="tag">3D变换</span>
+                    <span class="tag">矩阵运算</span>
+                    <span class="tag">深度测试</span>
+                </div>
+                <a href="01-foundations/colored-cube/index.html" class="example-link">查看示例</a>
+            </div>
+        </div>
+        
+        <h2>🎨 图形渲染</h2>
+        <div class="examples-grid">
+            <div class="example-card">
+                <h3>光照模型</h3>
+                <p>实现 Phong 光照模型，学习环境光、漫反射和镜面反射的计算。</p>
+                <div>
+                    <span class="tag">Phong光照</span>
+                    <span class="tag">法线计算</span>
+                    <span class="tag">材质系统</span>
+                </div>
+                <a href="03-graphics/lighting-demo/index.html" class="example-link">查看示例</a>
+            </div>
+            
+            <div class="example-card">
+                <h3>纹理映射</h3>
+                <p>学习纹理的加载、应用和过滤，实现逼真的表面效果。</p>
+                <div>
+                    <span class="tag">纹理加载</span>
+                    <span class="tag">UV坐标</span>
+                    <span class="tag">纹理过滤</span>
+                </div>
+                <span style="opacity: 0.6;">开发中...</span>
+            </div>
+        </div>
+        
+        <div class="info">
+            <h2>学习建议</h2>
+            <p><strong>初学者</strong>：第一个三角形 → 彩色立方体</p>
+            <p><strong>进阶</strong>：光照模型 → 纹理映射 → 材质系统</p>
+            
+            <h3>技术要求</h3>
+            <ul>
+                <li>支持 WebGL 1.0 的现代浏览器</li>
+                <li>推荐使用 Chrome、Firefox、Safari、Edge</li>
+                <li>部分高级示例需要 WebGL 2.0 支持</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html> 

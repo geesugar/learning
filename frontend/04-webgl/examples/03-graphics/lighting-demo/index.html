@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>光照模型演示 - Phong 光照</title>
+    <link rel="stylesheet" href="../../common/demo-styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>光照模型演示</h1>
+        
+        <div class="demo-area">
+            <canvas id="webgl-canvas" width="800" height="600"></canvas>
+        </div>
+        
+        <div class="controls">
+            <h2>光源设置</h2>
+            <div class="control-group">
+                <label>光源位置 X：</label>
+                <input type="range" id="lightX" min="-5" max="5" value="2" step="0.1">
+                <span id="lightXValue">2.0</span>
+            </div>
+            
+            <div class="control-group">
+                <label>光源位置 Y：</label>
+                <input type="range" id="lightY" min="-5" max="5" value="2" step="0.1">
+                <span id="lightYValue">2.0</span>
+            </div>
+            
+            <div class="control-group">
+                <label>光源位置 Z：</label>
+                <input type="range" id="lightZ" min="-5" max="5" value="3" step="0.1">
+                <span id="lightZValue">3.0</span>
+            </div>
+            
+            <div class="control-group">
+                <label>光源颜色：</label>
+                <input type="color" id="lightColor" value="#ffffff">
+            </div>
+            
+            <div class="control-group">
+                <label>光源强度：</label>
+                <input type="range" id="lightIntensity" min="0" max="2" value="1" step="0.1">
+                <span id="lightIntensityValue">1.0</span>
+            </div>
+            
+            <h2>材质设置</h2>
+            <div class="control-group">
+                <label>环境光系数：</label>
+                <input type="range" id="ambient" min="0" max="1" value="0.3" step="0.1">
+                <span id="ambientValue">0.3</span>
+            </div>
+            
+            <div class="control-group">
+                <label>漫反射系数：</label>
+                <input type="range" id="diffuse" min="0" max="1" value="0.7" step="0.1">
+                <span id="diffuseValue">0.7</span>
+            </div>
+            
+            <div class="control-group">
+                <label>镜面反射系数：</label>
+                <input type="range" id="specular" min="0" max="1" value="1.0" step="0.1">
+                <span id="specularValue">1.0</span>
+            </div>
+            
+            <div class="control-group">
+                <label>光泽度：</label>
+                <input type="range" id="shininess" min="1" max="128" value="32" step="1">
+                <span id="shininessValue">32</span>
+            </div>
+            
+            <div class="control-group">
+                <label>物体颜色：</label>
+                <input type="color" id="objectColor" value="#ff6b6b">
+            </div>
+            
+            <h2>显示选项</h2>
+            <div class="control-group">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="showLightSource" checked>
+                    <label for="showLightSource">显示光源</label>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="showNormals">
+                    <label for="showNormals">显示法线</label>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="autoRotate" checked>
+                    <label for="autoRotate">自动旋转</label>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label>几何体类型：</label>
+                <select id="geometryType">
+                    <option value="sphere">球体</option>
+                    <option value="cube">立方体</option>
+                    <option value="plane">平面</option>
+                </select>
+            </div>
+            
+            <div class="control-group">
+                <button id="resetBtn">重置</button>
+                <button id="pauseBtn">暂停</button>
+            </div>
+        </div>
+        
+        <div class="info">
+            <h2>Phong 光照模型</h2>
+            <p><strong>环境光</strong>：模拟环境中的散射光照</p>
+            <p><strong>漫反射</strong>：表面向各个方向均匀反射光线</p>
+            <p><strong>镜面反射</strong>：表面像镜子一样反射光线</p>
+            <p><strong>光泽度</strong>：控制镜面反射的锐利程度</p>
+            
+            <h3>光照计算公式</h3>
+            <p><code>最终颜色 = 环境光 + 漫反射 + 镜面反射</code></p>
+            
+            <h3>技术要点</h3>
+            <ul>
+                <li>顶点法线计算和传递</li>
+                <li>光源方向和视线方向计算</li>
+                <li>点积和反射向量计算</li>
+                <li>材质属性和光照参数</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- 性能监控 -->
+    <div class="performance" id="performance">
+        <div class="fps">FPS: <span id="fps">0</span></div>
+        <div class="frame-time">帧时间: <span id="frameTime">0</span>ms</div>
+    </div>
+    
+    <script src="../../common/utils.js"></script>
+    <script src="../../common/math.js"></script>
+    <script src="main.js"></script>
+</body>
+</html> 

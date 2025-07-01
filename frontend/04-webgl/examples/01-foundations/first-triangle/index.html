@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第一个三角形 - WebGL 基础</title>
+    <link rel="stylesheet" href="../../common/demo-styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>第一个三角形</h1>
+        
+        <div class="demo-area">
+            <canvas id="webgl-canvas" width="800" height="600"></canvas>
+        </div>
+        
+        <div class="controls">
+            <h2>控制面板</h2>
+            <div class="control-group">
+                <label>旋转速度：</label>
+                <input type="range" id="rotationSpeed" min="0" max="5" value="1" step="0.1">
+                <span id="rotationSpeedValue">1.0</span>
+            </div>
+            
+            <div class="control-group">
+                <label>三角形颜色：</label>
+                <input type="color" id="triangleColor" value="#ff6b6b">
+            </div>
+            
+            <div class="control-group">
+                <button id="resetBtn">重置</button>
+                <button id="pauseBtn">暂停</button>
+            </div>
+        </div>
+        
+        <div class="info">
+            <h2>关键概念</h2>
+            <p><strong>顶点着色器</strong>：处理每个顶点的位置变换</p>
+            <p><strong>片段着色器</strong>：处理每个像素的颜色计算</p>
+            <p><strong>缓冲区</strong>：存储顶点数据的内存对象</p>
+            <p><strong>着色器程序</strong>：编译链接后的着色器组合</p>
+            
+            <h3>技术要点</h3>
+            <ul>
+                <li>WebGL 上下文初始化</li>
+                <li>着色器编译和程序链接</li>
+                <li>顶点缓冲区创建和绑定</li>
+                <li>渲染循环和动画</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- 性能监控 -->
+    <div class="performance" id="performance">
+        <div class="fps">FPS: <span id="fps">0</span></div>
+        <div class="frame-time">帧时间: <span id="frameTime">0</span>ms</div>
+    </div>
+    
+    <script src="../../common/utils.js"></script>
+    <script src="../../common/math.js"></script>
+    <script src="main.js"></script>
+</body>
+</html> 

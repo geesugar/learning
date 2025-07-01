@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>彩色立方体 - 3D 渲染基础</title>
+    <link rel="stylesheet" href="../../common/demo-styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>彩色立方体</h1>
+        
+        <div class="demo-area">
+            <canvas id="webgl-canvas" width="800" height="600"></canvas>
+        </div>
+        
+        <div class="controls">
+            <h2>变换控制</h2>
+            <div class="control-group">
+                <label>X轴旋转：</label>
+                <input type="range" id="rotationX" min="0" max="360" value="30" step="1">
+                <span id="rotationXValue">30°</span>
+            </div>
+            
+            <div class="control-group">
+                <label>Y轴旋转：</label>
+                <input type="range" id="rotationY" min="0" max="360" value="45" step="1">
+                <span id="rotationYValue">45°</span>
+            </div>
+            
+            <div class="control-group">
+                <label>Z轴旋转：</label>
+                <input type="range" id="rotationZ" min="0" max="360" value="0" step="1">
+                <span id="rotationZValue">0°</span>
+            </div>
+            
+            <div class="control-group">
+                <label>缩放：</label>
+                <input type="range" id="scale" min="0.5" max="3" value="1" step="0.1">
+                <span id="scaleValue">1.0</span>
+            </div>
+            
+            <div class="control-group">
+                <label>视野角度（FOV）：</label>
+                <input type="range" id="fov" min="30" max="120" value="60" step="5">
+                <span id="fovValue">60°</span>
+            </div>
+            
+            <h2>动画控制</h2>
+            <div class="control-group">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="autoRotate" checked>
+                    <label for="autoRotate">自动旋转</label>
+                </div>
+                
+                <label>旋转速度：</label>
+                <input type="range" id="rotationSpeed" min="0" max="5" value="1" step="0.1">
+                <span id="rotationSpeedValue">1.0</span>
+            </div>
+            
+            <h2>渲染选项</h2>
+            <div class="control-group">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="wireframe">
+                    <label for="wireframe">线框模式</label>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="depthTest" checked>
+                    <label for="depthTest">深度测试</label>
+                </div>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="backfaceCulling" checked>
+                    <label for="backfaceCulling">背面剔除</label>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <button id="resetBtn">重置</button>
+                <button id="pauseBtn">暂停</button>
+            </div>
+        </div>
+        
+        <div class="info">
+            <h2>3D 渲染概念</h2>
+            <p><strong>矩阵变换</strong>：模型、视图、投影矩阵的组合使用</p>
+            <p><strong>深度测试</strong>：确定哪些像素在前面，哪些在后面</p>
+            <p><strong>背面剔除</strong>：不渲染朝向相机背面的三角形</p>
+            <p><strong>索引缓冲区</strong>：通过索引复用顶点数据</p>
+            
+            <h3>技术要点</h3>
+            <ul>
+                <li>3D 坐标系统和变换</li>
+                <li>透视投影矩阵</li>
+                <li>顶点索引和复用</li>
+                <li>面的方向和剔除</li>
+                <li>Z-缓冲和深度测试</li>
+            </ul>
+            
+            <h3>立方体信息</h3>
+            <ul>
+                <li>顶点数：8个</li>
+                <li>面数：6个</li>
+                <li>三角形数：12个</li>
+                <li>索引数：36个</li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- 性能监控 -->
+    <div class="performance" id="performance">
+        <div class="fps">FPS: <span id="fps">0</span></div>
+        <div class="frame-time">帧时间: <span id="frameTime">0</span>ms</div>
+        <div>三角形: <span id="triangleCount">12</span></div>
+        <div>顶点: <span id="vertexCount">8</span></div>
+    </div>
+    
+    <script src="../../common/utils.js"></script>
+    <script src="../../common/math.js"></script>
+    <script src="main.js"></script>
+</body>
+</html> 
