@@ -102,58 +102,298 @@ fn main() {
 }
 ```
 
-## 代码解析
+## 详细Rust语法解析
 
-### 1. 导入模块
+### 1. 模块导入和使用
+
+#### 标准库导入
 ```rust
-use std::cmp::Ordering;  // 用于比较
-use std::io;             // 用于输入输出
-use rand::Rng;           // 用于生成随机数
+use std::cmp::Ordering;  // 导入比较结果枚举
+use std::io;             // 导入输入输出模块
 ```
 
-### 2. 生成随机数
+#### 外部crate导入
+```rust
+use rand::Rng;           // 导入随机数生成trait
+```
+
+**语法要点：**
+- `use` 关键字将模块或类型引入当前作用域
+- `std::` 前缀表示标准库模块
+- `cmp::Ordering` 是用于比较结果的枚举类型
+- `rand::Rng` 是trait，提供随机数生成方法
+
+### 2. 变量声明和可变性
+
+#### 不可变变量
+```rust
+let secret_number = rand::thread_rng().gen_range(1..=100);
+println!("秘密数字是: {}", secret_number); // 编译错误：在实际游戏中不应该打印
+```
+
+#### 可变变量
+```rust
+let mut attempts = 0;    // 声明可变变量
+attempts += 1;           // 可以修改
+```
+
+**语法要点：**
+- Rust变量默认不可变（immutable）
+- `mut` 关键字使变量可变
+- 不可变性是Rust安全性的核心特性
+
+### 3. 随机数生成和范围
+
+#### 随机数API使用
 ```rust
 let secret_number = rand::thread_rng().gen_range(1..=100);
 ```
-- `thread_rng()`: 获取线程本地的随机数生成器
-- `gen_range(1..=100)`: 生成 1 到 100 之间的随机数（包含 100）
 
-### 3. 读取用户输入
+**语法要点：**
+- `thread_rng()` 获取线程本地随机数生成器
+- `gen_range()` 需要`Rng` trait在作用域中
+- `1..=100` 是包含范围语法（inclusive range）
+- `1..100` 是排他范围语法（exclusive range）
+
+### 4. 字符串类型和所有权
+
+#### String类型操作
 ```rust
-let mut guess = String::new();
+let mut guess = String::new();           // 创建空String
+io::stdin()
+    .read_line(&mut guess)               // 可变借用
+    .expect("读取输入失败");
+
+let guess = guess.trim();                // 变量遮蔽，创建&str
+```
+
+**语法要点：**
+- `String::new()` 创建拥有所有权的空字符串
+- `&mut guess` 创建可变引用，允许函数修改字符串
+- `trim()` 方法返回字符串切片`&str`
+- 变量遮蔽（shadowing）：用同名变量绑定新值
+
+### 5. 错误处理基础
+
+#### expect方法
+```rust
 io::stdin()
     .read_line(&mut guess)
-    .expect("读取输入失败");
+    .expect("读取输入失败");             // 错误时panic
 ```
-- `String::new()`: 创建一个空字符串
-- `read_line(&mut guess)`: 读取一行输入到 guess 中
-- `.expect()`: 处理可能的错误
 
-### 4. 字符串解析
+#### Result类型和match
 ```rust
 let guess: u32 = match guess.trim().parse() {
+    Ok(num) => num,                      // 成功时提取值
+    Err(_) => {                         // 错误时执行
+        println!("请输入一个有效的数字！");
+        continue;                        // 跳过本次循环
+    }
+};
+```
+
+**语法要点：**
+- `expect()` 在错误时panic并显示消息
+- `Result<T, E>` 是枚举，有`Ok(T)`和`Err(E)`两个变体
+- `match` 必须处理所有可能的情况
+- `_` 通配符忽略错误的具体内容
+
+### 6. 类型转换和推断
+
+#### 显式类型注解
+```rust
+let guess: u32 = match guess.trim().parse() {
+    //    ^^^^ 显式类型注解
     Ok(num) => num,
     Err(_) => {
-        println!("请输入一个有效的数字！");
         continue;
     }
 };
 ```
-- `trim()`: 去除字符串首尾空白
-- `parse()`: 尝试将字符串解析为数字
-- `match` 表达式处理解析结果
 
-### 5. 比较和匹配
+#### 类型推断
+```rust
+let secret_number = rand::thread_rng().gen_range(1..=100);
+//                                                ^^^^^^^ 
+// Rust推断这是u32类型，因为后面与guess（u32）比较
+```
+
+**语法要点：**
+- `parse()` 方法需要知道目标类型
+- 类型注解格式：`variable: type`
+- Rust有强大的类型推断能力
+- 编译时确定所有类型
+
+### 7. 循环控制结构
+
+#### loop无限循环
+```rust
+loop {                              // 无条件循环
+    // 处理用户输入
+    
+    match guess.cmp(&secret_number) {
+        Ordering::Equal => {
+            println!("恭喜你！");
+            break;                  // 退出循环
+        }
+        _ => continue,              // 继续下一次迭代
+    }
+}
+```
+
+**语法要点：**
+- `loop` 创建无限循环，比`while true`更惯用
+- `break` 立即退出当前循环
+- `continue` 跳过当前迭代，开始下一次
+
+### 8. 模式匹配和枚举
+
+#### Ordering枚举匹配
 ```rust
 match guess.cmp(&secret_number) {
     Ordering::Less => println!("太小了！"),
     Ordering::Greater => println!("太大了！"),
     Ordering::Equal => {
-        println!("恭喜你！你猜对了！");
+        println!("恭喜你！你猜对了！用了 {} 次尝试", attempts);
         break;
     }
 }
 ```
+
+**语法要点：**
+- `cmp()` 方法返回`std::cmp::Ordering`枚举
+- `Ordering` 有三个变体：`Less`、`Greater`、`Equal`
+- `match` 表达式必须穷尽所有可能性
+- 可以在匹配臂中执行多个语句
+
+### 9. 借用和引用
+
+#### 不可变借用
+```rust
+match guess.cmp(&secret_number) {
+    //            ^^^^^^^^^^^^^^ 创建不可变引用
+    // ...
+}
+```
+
+**语法要点：**
+- `&` 操作符创建引用（借用）
+- `cmp()` 方法需要引用作为参数
+- 借用不转移所有权
+- 可以同时有多个不可变借用
+
+### 10. 方法调用链
+
+#### 链式方法调用
+```rust
+io::stdin()
+    .read_line(&mut guess)
+    .expect("读取输入失败");
+```
+
+**语法要点：**
+- 方法可以链式调用
+- 每个方法返回适当的类型供下一个方法使用
+- `read_line()` 返回`Result`
+- `expect()` 消费`Result`并返回内容或panic
+
+### 11. 宏的使用
+
+#### println!宏
+```rust
+println!("猜数字游戏！");
+println!("你猜测的数字是: {}", guess);
+println!("恭喜你！用了 {} 次尝试", attempts);
+```
+
+**语法要点：**
+- `!` 表示这是宏，不是函数
+- `{}` 是格式化占位符
+- 可以有多个占位符对应多个参数
+- 宏在编译时展开
+
+### 12. 范围语法详解
+
+#### 包含和排他范围
+```rust
+let range1 = 1..100;     // 1到99（排他）
+let range2 = 1..=100;    // 1到100（包含）
+
+// 在match中使用
+match diff {
+    1..=5 => println!("非常接近！"),   // 包含1和5
+    6..10 => println!("比较接近"),     // 包含6，不包含10
+    _ => println!("还很远"),
+}
+```
+
+**语法要点：**
+- `..` 创建排他范围（不包含结束值）
+- `..=` 创建包含范围（包含结束值）
+- 范围可以用在模式匹配中
+- 范围是惰性的，只在需要时生成值
+
+### 13. 整数类型和运算
+
+#### 无符号整数
+```rust
+let mut attempts = 0u32;    // 明确指定u32类型
+attempts += 1;              // 算术运算
+
+// 或者使用类型推断
+let mut attempts: u32 = 0;
+```
+
+**语法要点：**
+- `u32` 是32位无符号整数
+- 后缀`u32`可以直接指定字面量类型
+- `+=` 是复合赋值运算符
+- Rust防止整数溢出（debug模式会panic）
+
+### 14. 作用域和生命周期
+
+#### 变量作用域
+```rust
+{
+    let temp_var = "临时变量";
+    println!("{}", temp_var);
+}  // temp_var在这里被drop
+
+loop {
+    let mut guess = String::new();    // 每次循环都创建新的guess
+    // ...
+}  // guess在循环结束时被drop
+```
+
+**语法要点：**
+- 变量在其作用域结束时被自动清理
+- `{}` 花括号定义作用域
+- 每次循环迭代都是独立的作用域
+
+### 关键语法概念总结
+
+#### 1. 所有权系统基础
+- 每个值都有一个所有者
+- 值可以被移动或借用
+- 借用分为可变和不可变借用
+
+#### 2. 模式匹配威力
+- `match` 表达式确保处理所有情况
+- 可以匹配字面量、范围、枚举变体
+- 守卫条件可以添加额外逻辑
+
+#### 3. 错误处理哲学
+- 使用`Result`类型显式处理错误
+- `panic!` 用于不可恢复的错误
+- `expect()` 和 `unwrap()` 用于原型开发
+
+#### 4. 类型系统强度
+- 编译时类型检查
+- 类型推断减少冗余注解
+- 零成本抽象
+
+这些基础语法构成了Rust编程的核心，为学习更高级的概念（如生命周期、trait、泛型等）奠定坚实基础。
 
 ## 运行项目
 
